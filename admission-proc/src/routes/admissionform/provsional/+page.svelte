@@ -3,7 +3,7 @@
 
 </script>
 <div class="font-bold m-2 px-2 text-lg flex items-center bg-blue-500 rounded shadow-lg shadow-slate-500 text-white py-2 text-center">
-    <img class="w-24 rounded" src="logo.svg" alt="logo">
+    <img class="w-24 rounded" src="../logo.png" alt="logo">
     <div class="w-full text-center">
         <h1 class="lg:text-2xl text-xl">{data?.college?.name}</h1>
         <h2 class="text-xl font-bold">Provisional Admission Form</h2>
