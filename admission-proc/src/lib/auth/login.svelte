@@ -1,9 +1,8 @@
 <script>
-    import supabase from '$lib/db'
+    import {supabase} from '$lib/db'
 
     let email,password
     let mesg='',loading=false
-
     const handleLogin=async()=>{
         try{
                 loading = true
@@ -26,20 +25,46 @@
     }
 </script>
 <div class="m-2 px-2">
-    <div class="font-bold  text-lg flex items-center bg-blue-500 rounded shadow shadow-slate-500 text-white py-2 text-center">
-
-        <img class="ml-2 shadow rounded w-24" src="../logo.png" alt="logo">
+    <div class="font-bold  text-lg flex items-center text-slate-800 pt-2 pb-4 text-center border-slate-800 border-b-2">
+        <img class="ml-2 w-24" src="../logo.png" alt="logo">
         <div class="w-full text-center">
-            <h1 class="lg:text-2xl text-xl">Sardar Vallbhbhai Patel Institute of Technlogy,Vasad.</h1>
-            <h2 class="text-xl font-bold">Provisional Admission Form</h2>
+            <h1 class="lg:text-4xl text-xl">Sardar Vallbhbhai Patel Institute,Vasad.</h1>
         </div>
     </div>
-
-
-
-    <form class="mx-auto mt-4 flex text-center" on:submit={handleLogin}>
-        <input bind:value={email} type="email" required placeholder="Email">
-        <input bind:value={password} type="password" required placeholder="Password">
-        <button>Login</button>
-    </form>
+    <div class="mt-4 h-screen rounded">
+        <section>
+            <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">               
+                {#if mesg}                
+                    <div class="md:mt-0 sm:max-w-md py-4 m-4 w-full p-4 text-center text-orange-800 text-xl bg-white shadow shadow-slate-500 rounded-lg">{mesg}</div>
+                {/if}
+                <div class="w-full bg-gradient-to-br from-slate-500 to-slate-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+                        Sign in to your account
+                    </h1>
+                    <form class="space-y-4 md:space-y-7" on:submit={handleLogin}>
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-white">Your email</label>
+                            <input bind:value={email} type="email" name="email" id="email" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Email" required>
+                        </div>
+                        <div>
+                            <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
+                            <input bind:value={password} type="password" name="password" id="password" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <a href="/" class="text-sm font-medium text-white hover:underline">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
+                            {#if loading}
+                                Please Wait....
+                            {:else}
+                                Login
+                            {/if}
+                        </button>                      
+                    </form>
+                </div>
+            </div>
+        </div>
+        </section>
+    </div>
 </div>
