@@ -9,8 +9,8 @@
                 const { error } = await supabase.auth.signInWithPassword({ email,password })
                 if (error) {
                     if(error instanceof Error)
-
                         mesg=error.message
+
                 }                
                 else{
                     mesg=''

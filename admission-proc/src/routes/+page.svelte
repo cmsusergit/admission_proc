@@ -1,7 +1,7 @@
 <script>
     import { goto } from '$app/navigation'
 
-    import { college } from '$lib/store.js'    
+    import { mesg,college } from '$lib/store.js'    
     import { onMount } from 'svelte';
     import DataTable from '$lib/datatable.svelte'
     export let data
@@ -19,6 +19,9 @@
     })
 </script>
 <div class="min-h-screen w-full">
+    {#if $mesg}
+        <p>{$mesg}</p>
+    {/if}
     <div class="flex justify-between p-1 lg:flex-row flex-col">
         <div class="flex flex-col md:w-1/4 w-full m-1">
             <label for="college" class="text-slate-800 px-1 py-1 font-bold">Select AcademicYear</label>

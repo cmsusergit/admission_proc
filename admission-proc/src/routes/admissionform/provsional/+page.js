@@ -14,7 +14,7 @@ export async function load({ params,url }) {
     if(error)
         return {error}
     let { data:dt, error:err1 } = await supabase
-        .from('Course').select('*').eq('college_id',college_id)
+        .from('Course').select(`*,Branch(*)`).eq('college_id',college_id)
 
     if(err1)
         return {error:err1}
