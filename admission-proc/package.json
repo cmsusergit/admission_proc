@@ -19,6 +19,11 @@
 	"type": "module",
 	"dependencies": {
 		"@supabase/auth-helpers-sveltekit": "^0.8.7",
-		"@supabase/supabase-js": "^2.7.0"
+		"@supabase/supabase-js": "^2.7.0",
+		"@zerodevx/svelte-toast": "1.0.0-rc.1",
+		"gridjs": "^6.0.6",
+		"gridjs-svelte": "^2.1.1",
+		"svelte-forms-lib": "^2.0.1",
+		"yup": "^1.0.0"
 	}
 }

@@ -11,8 +11,14 @@ export async function load({}) {
     if(error)
         return {error}
 
+    let { data:dataTable, error:dt_err } = await supabase
+        .from('ProvFormInfo').select(`*,Course(college_id)`)
+    if(dt_err)
+        if(dt_err instanceof Error)
+            return {error:dt_err.message}
     return {    
         aYearList,
+        dataTable,
         collegeList
     };      
 }

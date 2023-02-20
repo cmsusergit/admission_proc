@@ -12,29 +12,29 @@ export async function load({ params,url }) {
         .from('College').select('*').eq('id',college_id).single()
 
     if(error)
-        return {error}
+        if(error instanceof Error)        
+        return {error:error.message}
     let { data:dt, error:err1 } = await supabase
         .from('Course').select(`*,Branch(*)`).eq('college_id',college_id)
 
-    if(err1)
-        return {error:err1}
+
+
+
+
+
+
+
+
+
+
+        if(err1)
+        if(err1 instanceof Error)
+        return {error:err1.message}
     const courselist=dt    
+
     return {    
-        academicYear,
-        college,
-        courselist
-    };      
+    academicYear,
+    college,
+    courselist
+};      
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

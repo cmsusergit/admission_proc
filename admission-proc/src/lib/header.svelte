@@ -12,7 +12,7 @@
 
 
         {:else}
-            <h1 class="lg:text-4xl text-xl">Sardar Vallbhbhai Patel Institute,Vasad.</h1>
+            <h1 class="lg:text-4xl text-xl">Sardar Vallbhbhai Patel Group of Institutes,Vasad.</h1>
         {/if}
     </div>
 </div>

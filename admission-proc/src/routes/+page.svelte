@@ -5,22 +5,29 @@
     import { onMount } from 'svelte';
     import DataTable from '$lib/datatable.svelte'
     export let data
+    let dataTable
     let selectedCollege,selectedAyear
     let selectedFormType
-    $:{
-        if(selectedFormType)
-            goto(`/admissionform/${selectedFormType}?ayear_id=${selectedAyear}&college_id=${selectedCollege}`)
+    $:{            
+        if(selectedCollege){
 
+            dataTable=data.dataTable.filter(ob=>(ob.academic_year==selectedAyear && ob.Course.college_id==selectedCollege))
+        }
     }
     const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"}]
     onMount(()=>{
-        selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
+
+        dataTable=[...data.dataTable]//....
+        selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id//....
         college.set({})
     })
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
-        <p>{$mesg}</p>
+        <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
+            <div class="w-full md:mt-0 text-center p-2 text-emerald-500 text-xl">{$mesg}</div>
+            <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
+        </div>
     {/if}
     <div class="flex justify-between p-1 lg:flex-row flex-col">
         <div class="flex flex-col md:w-1/4 w-full m-1">
@@ -52,9 +59,17 @@
                 {/if}
             </select>
         </div>
-    </div>
+        <div class="flex flex-col md:w-1/4 w-full m-1">
+            <div class="h-8 py-1"></div>
 
-    <div class="mt-2 overflow-auto">
-        <DataTable/>
+            
+            
+            <button disabled={!selectedFormType | !selectedCollege} on:click={()=>{goto(`/admissionform/${selectedFormType}?ayear_id=${selectedAyear}&college_id=${selectedCollege}`)}} class="px-2 py-2 md:w-48 w-full ml-2 bg-blue-700 text-white hover:bg-blue-500 shadow shadow-blue-400 rounded disabled:bg-gray-400">+New Record</button>            
+        </div>
     </div>
+    {#if selectedAyear && selectedCollege}
+    <div class="mt-2 overflow-auto">
+        <DataTable data={dataTable}/>
+    </div>
+    {/if}
 </div>

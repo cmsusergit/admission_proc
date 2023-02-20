@@ -28,7 +28,7 @@
     <div class="font-bold  text-lg flex items-center text-slate-800 pt-2 pb-4 text-center border-slate-800 border-b-2">
         <img class="ml-2 w-24" src="../logo.png" alt="logo">
         <div class="w-full text-center">
-            <h1 class="lg:text-4xl text-xl">Sardar Vallbhbhai Patel Institute,Vasad.</h1>
+            <h1 class="lg:text-4xl text-xl">Sardar Vallbhbhai Patel Group of Institutes,Vasad.</h1>
         </div>
     </div>
     <div class="mt-4 h-screen rounded">

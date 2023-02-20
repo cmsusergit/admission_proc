@@ -8,8 +8,14 @@
     </div>
     <style>
     .container-cube{
-      background-color:lightgray;opacity:0.8;
-      position:absolute;top:0;left:0;width:100%;height:100%;z-index:100;
+      background-color:lightgray;
+      opacity:0.8;
+      
+      position:absolute;
+      top:0;left:0;
+      width:100%;
+      height:100%;
+      z-index:100;
     }
     .cube{
     position:relative;top:50%;
@@ -38,7 +44,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: maroon;
+      background-color: rgb(40, 77, 205);
       -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
               animation: sk-foldCubeAngle 2.4s infinite linear both;
       -webkit-transform-origin: 100% 100%;
