@@ -6,18 +6,25 @@
     import _ from 'lodash'
     import {supabase} from '$lib/db'
     export let data
-    let selectedCollege,selectedAyear
-    let selectedFormType
+    let selectedAyear,count
     const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"}]
-
-
-    $:{            
+    
+    
+    
+    const fetchCount=async(id)=>{
+        if(!id)return
+        const { data:count1, error1 } = await supabase.rpc('fetchcount',{'academicyear_id':id})
+        if(error1)    
+            alert(error1.message)    
+        count=count1
     }
+    $:fetchCount(selectedAyear)
     onMount(()=>{
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
         college.set({})
     })
 </script>
+
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -26,7 +33,7 @@
         </div>
     {/if}
     <div class="flex justify-between p-1 lg:flex-row flex-col">
-        <div class="flex flex-col md:w-1/4 w-full m-1">
+        <div class="flex flex-col w-full m-1">
             <label for="college" class="text-slate-800 px-1 py-1 font-bold">Select AcademicYear</label>
             <select bind:value={selectedAyear} class="border rounded px-1 py-2 border-blue-400" type="text" id="college" required>
                 <option value=""></option>
@@ -35,7 +42,7 @@
                 {/each}
             </select>
         </div>
-        <div class="flex flex-col md:w-1/2 w-full m-1">
+        <!-- <div class="flex flex-col md:w-1/2 w-full m-1">
             <label for="college" class="text-slate-800 px-1 py-1 font-bold">Select College</label>            
             <select bind:value={selectedCollege} class="border rounded px-1 py-2 border-blue-400" type="text" id="college" required>
                 <option value=""></option>
@@ -43,8 +50,8 @@
                     <option value={college.id}>{college.name}({college.alias})</option>
                 {/each}
             </select>
-        </div>
-        <div class="flex flex-col md:w-1/4 w-full m-1">
+        </div> -->
+        <!-- <div class="flex flex-col md:w-1/4 w-full m-1">
             <label for="formtype" class="text-slate-800 px-1 py-1 font-bold">Select Form</label>
             <select bind:value={selectedFormType} class="border rounded px-1 py-2 border-blue-400" type="text" id="formtype" required>
                 <option value=""></option>
@@ -57,20 +64,29 @@
         </div>
         <div class="flex flex-col md:w-fit w-full m-1">
             <div class="h-8 py-1"></div>
+            
             <button disabled={!selectedFormType | !selectedCollege} on:click={()=>{goto(`/admissionform/${selectedFormType}?ayear_id=${selectedAyear}&college_id=${selectedCollege}`)}} class="px-2 py-2 md:w-48 w-full ml-2 button-primary">
                 +New Record
             </button>            
-        </div>
+        </div> -->
     </div>
 
-    {#if selectedAyear}
+    {#if selectedAyear && count}
         <div class="mt-2 flex justify-center flex-col">
             {#each data?.collegeList as college}            
                 <div class="border bg-slate-50 px-2 py-2 text-slate-800 w-full mt-2 text-center text-lg shadow shadow-slate-500 rounded">
                     <p class="w-full bg-slate-100 px-2 py-2 mb-2 font-bold text-xl">{college.name} ({college.alias})</p>
                     <div class="flex justify-center md:flex-row md:space-x-4 flex-col">
                         {#each formList as formType}                
-                            <a href={`/datatable/${formType.path}`} class="bg-blue-500 px-2 py-2 text-white mt-2 hover:bg-blue-400 w-full">{formType.name}</a>
+                            <div class="bg-blue-500 px-2 py-2 text-white mt-2 w-full">
+                                <div class="bg-slate-50 px-2 py-2 text-slate-800">{formType.name}</div>                                
+                                <button type="button" on:click={()=>goto(`/datatable/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="my-2 p-2 border-t border-b w-full hover:bg-blue-700">
+                                    {count[formType.name]?JSON.parse(count[formType.name])[college.id]:0}
+                                </button><br/>  
+                                <button on:click={()=>goto(`/admissionform/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="border-t border-b mx-auto p-2 mb-2 hover:bg-blue-700 shadow-white w-full">
+                                    +New Record
+                                </button>
+                            </div>  
                         {/each}
                     </div>
                 </div>
@@ -78,3 +94,6 @@
         </div>
     {/if}
 </div>
+
+
+
