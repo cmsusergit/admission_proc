@@ -5,8 +5,8 @@
     import { onMount } from 'svelte';
     let dataTable
     let sortableField,sortableOrder='asc'
-    let selectableColumn={},totalPage=4
-    let currPage=1,pageSize=1
+    let selectableColumn={},totalPage=1
+    let currPage=1,pageSize=4
     let st,en
     $:dataTable=[...data],currPage=1//....
             //....
@@ -14,7 +14,7 @@
     $:getSelectableColumnList(data)
     $:st=(currPage-1)*pageSize
     $:en=(currPage-1)*pageSize+pageSize
-    $:totalPage=Math.round(dataTable.length/pageSize)
+    $:totalPage=Math.ceil(dataTable.length/pageSize)
     $:{
         if(sortableField){
             dataTable=_.orderBy(dataTable,ob=>ob[sortableField],sortableOrder)
@@ -105,7 +105,7 @@
                 </thead>                
                 {#each _.slice(dataTable,st,en) as record,indx}
                     <tr class="border-b border-slate-800">
-                        <td class="border border-slate-400 text-center py-2">{(currPage*pageSize)+indx}</td>
+                        <td class="border border-slate-400 text-center py-2">{((currPage-1)*pageSize)+indx+1}</td>
                         {#each columnlist as column}
                             {#if !column.slot}
                                 <td class={`border border-slate-400 text-center px-2 py-2 ${column?.class}`}>{record[column.field]}</td>

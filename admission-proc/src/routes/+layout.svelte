@@ -26,7 +26,11 @@
 
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
     {#if !$page.data.session}
-        <Auth/>
+        {#if $page.route.id.includes('admissionform/mqnri')}    
+            <slot></slot>
+        {:else}
+            <Auth/>
+        {/if}
     {:else}
         {#if $navigating}
             <Spinner/>

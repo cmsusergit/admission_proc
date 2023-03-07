@@ -15,6 +15,31 @@
                 else{
                     mesg=''
                 }        
+                
+        } catch (error) {
+            if (error instanceof Error) {
+                mesg=error.message
+            }
+        } finally {
+            loading = false
+        }
+    }
+
+    const handleLoginUsingEmail=async()=>{
+        try{
+                loading = true                
+                const { error } = await supabase.auth.signInWithOtp({ email,password })
+                if (error) {
+                    if(error instanceof Error)
+                        mesg=error.message
+
+                }                
+                else{
+
+
+
+                    mesg='Please, Check Your Email To Sign In to Application'
+                }        
         } catch (error) {
             if (error instanceof Error) {
                 mesg=error.message
@@ -37,34 +62,64 @@
                 {#if mesg}                
                     <div class="md:mt-0 sm:max-w-md py-4 m-4 w-full p-4 text-center text-orange-800 text-xl bg-white shadow shadow-slate-500 rounded-lg">{mesg}</div>
                 {/if}
-                <div class="w-full bg-gradient-to-br from-slate-500 to-slate-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
-                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+                <div>
+                    <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl mb-8 text-slate-800">
                         Sign in to your account
                     </h1>
-                    <form class="space-y-4 md:space-y-7" on:submit={handleLogin}>
-                        <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-white">Your email</label>
-                            <input bind:value={email} type="email" name="email" id="email" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Email" required>
+                </div>
+
+
+
+
+                <div class="flex md:flex-row flex-col justify-center w-full md:space-x-5">
+                    <div class="w-full bg-gradient-to-br from-slate-500 to-slate-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+                        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                            <p class="text-white text-lg">Using Email and Password</p>
+                            <form class="space-y-4 md:space-y-7" on:submit={handleLogin}>
+                                <div>
+                                    <label for="email" class="block mb-2 text-sm font-medium text-white">Your email</label>
+                                    <input bind:value={email} type="email" id="email" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Email" required>
+                                </div>
+                                <div>
+                                    <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
+                                    <input bind:value={password} type="password" id="password" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <a href="/" class="text-sm font-medium text-white hover:underline">Forgot password?</a>
+                                </div>
+                                <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
+                                    {#if loading}
+                                        Please Wait....
+                                    {:else}
+                                        Login
+                                    {/if}
+                                </button>                      
+                            </form>
+
                         </div>
-                        <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
-                            <input bind:value={password} type="password" name="password" id="password" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
+                    </div>
+                    <div class="flex justify-center items-center p-2 font-bold text-center text-lg">OR</div>
+                    <div class="w-full bg-gradient-to-br from-slate-700 to-slate-500 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
+                        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                            <p class="text-white text-lg">Using Email Only</p>
+                            <form class="space-y-4 md:space-y-7" on:submit={handleLoginUsingEmail}>
+                                <div>
+                                    <label for="email" class="block mb-2 text-sm font-medium text-white">Your email</label>
+                                    <input bind:value={email} type="email"  id="email1" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Email" required>
+                                </div>
+                                <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
+                                    {#if loading}
+                                        Please Wait....
+                                    {:else}
+                                        Login
+                                    {/if}
+
+                                </button>                      
+                            </form>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <a href="/" class="text-sm font-medium text-white hover:underline">Forgot password?</a>
-                        </div>
-                        <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
-                            {#if loading}
-                                Please Wait....
-                            {:else}
-                                Login
-                            {/if}
-                        </button>                      
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
         </section>
     </div>
 </div>
