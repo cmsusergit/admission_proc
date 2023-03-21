@@ -21,6 +21,7 @@
 		"@supabase/auth-helpers-sveltekit": "^0.8.7",
 		"@supabase/supabase-js": "^2.7.0",
 		"lodash": "^4.17.21",
+		"pdfmake": "^0.2.7",
 		"svelte-forms-lib": "^2.0.1",
 		"yup": "^1.0.0"
 	}

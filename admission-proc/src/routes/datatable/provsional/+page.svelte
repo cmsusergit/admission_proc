@@ -5,9 +5,9 @@
     import {  onMount } from 'svelte'
     import DataTable from '$lib/datatable.svelte'
     import Dialog from '$lib/dialog.svelte'
-    import Modal from '$lib/modal.svelte'
     import _ from 'lodash'
     import {supabase} from '$lib/db'
+    import Provfeecollection from '$lib/component/provfeecollection.svelte';
     export let data
     let dataTable,recordToRemove=-1
 
@@ -47,7 +47,6 @@
         recordToRemove=-1
         console.log(error);
     }
-    const collectFee=()=>{}
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
@@ -56,6 +55,7 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
+
     <div class="mt-2 overflow-auto">
         <DataTable data={dataTable} let:currRecord={record}
             columnlist={columnList}>
@@ -87,29 +87,11 @@
 </div>
 <div>    
     {#if collectFeeRecord!=-1}
-        <Modal on:close={()=>{collectFeeRecord=-1}}>
-            <div slot="header">Fee Collection</div>
-            <div slot="content">
-                <div class="flex flex-col">
-
-                    <div class="font-bold p-1 text-center my-1 border-b">
-                        {collectFeeRecord.title?collectFeeRecord.title:''} {collectFeeRecord.first_name?collectFeeRecord.first_name:''} {collectFeeRecord.middle_name?collectFeeRecord.middle_name:''} {collectFeeRecord.last_name?collectFeeRecord.last_name:''}
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="font-bold text-sm" for="feetext">Fee Amount</label>
-                        <input type="number" step="0.1" class="input" min="0" name="feetext">
-                    </div>
-                </div>                
-            </div>
-            <div slot="foot">
-                <div class="">
-                    <button on:click={collectFee} class="px-2 py-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-blue-400 rounded disabled:bg-gray-400 uppercase w-48">submit</button>
-                    <button on:click={()=>{collectFeeRecord=-1}} class="px-2 py-2 bg-orange-700 text-white hover:bg-orange-500 shadow shadow-orange-400 uppercase rounded disabled:bg-gray-400 w-48">Close</button>
-                </div>
-            </div>
-        </Modal>
+        <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
     {/if}
 </div>
+
+
 
 
 
