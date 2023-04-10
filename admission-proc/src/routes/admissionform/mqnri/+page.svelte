@@ -6,11 +6,13 @@
     import { onMount } from 'svelte';
     import {createForm} from 'svelte-forms-lib'
     import * as yup from 'yup'
+    import config from '$lib/config.json'
     export let data
     let branchList=[],sameAddrSelected=false
-    const subjectList=['Mathematics','English','Computer','Chemistry','Physics']
-    const subjectList1=['Mathematics','Chemistry','Physics']
 
+
+    let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college.id).list
+    const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
             branch:yup.string().required(),
@@ -110,6 +112,7 @@
             $form.present_city=$form.per_city
             $form.present_state=$form.per_state
             $form.present_country=$form.per_country
+
             $form.present_zipcode=$form.per_zipcode
         }        
         else{
@@ -131,9 +134,6 @@
 <div class="flex justify-between items-center border-b px-4 pb-4">   
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
-
-
-
 
 
 
@@ -410,13 +410,12 @@
                 </div>   
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="occupation1">Occupation</label>
+
                     <select name="occupation1" class:border-orange-700={$errors.title} class="input" id="occupation1">
                         <option></option>
                     </select>
                 </div>
             </div>
-
-
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Academic Details</div>
             <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
@@ -444,10 +443,8 @@
                         <label for="lastschoolcity" class="font-bold">Last School City</label>
                         <input class="border rounded px-1 py-2 border-blue-400" type="text" id="lastschoolcity">
                     </div>                    
-                    </div>
                 </div>
             </div>
-
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Examination Details</div>  
             <div class="text-indigo-800 overflow-x-auto">
                 <table class="w-full bg-white">
@@ -459,9 +456,21 @@
                         <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
                     </thead>
                     <tbody class="w-full p-1 border text-center">
-                        {#each subjectList as subject}
+                        {#each subjectList as subject,indx}
                             <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">{subject}</td>
+                                <td class="w-1/2 border border-blue-400 p-1">                                
+                                    {#if subject.length>1}
+                                            <div class="flex flex-col md:flex-row justify-center">
+                                                {#each subject as subjectEntry,indx1}
+                                                    <span>
+                                                        <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                    </span>
+                                                {/each}
+                                            </div>
+                                    {:else}
+                                        {subject[0]}
+                                    {/if}
+                                </td>
                                 <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
                                 <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
                                 <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
@@ -479,6 +488,7 @@
                 </table>
             </div>
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
+            
             <div class="text-indigo-800 overflow-x-auto">
                 <table class="w-full bg-white">
                     <thead class="bg-blue-500 px-1 py-2 text-white">                        
@@ -502,12 +512,9 @@
                     </tbody>
                 </table>
             </div>
-            
-
-
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
             <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-                Lorem ipsum dolor sit amet.
+                
             </div>
     </div>
     

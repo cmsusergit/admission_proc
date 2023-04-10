@@ -6,11 +6,14 @@
     import { onMount } from 'svelte';
     import {createForm} from 'svelte-forms-lib'
     import * as yup from 'yup'
+    import _ from 'lodash'
     export let data
     let branchList=[],sameAddrSelected=false
-    const subjectList=['Mathematics','English','Computer','Chemistry','Physics']
-    const subjectList1=['Mathematics','Chemistry','Physics']
 
+
+    let subjectList=['SSC','HSC']
+    const subjectList1=['Mathematics','Chemistry','Physics']
+    const admissioncategorylist=[{name:'Centralized',alias:'G'},{name:'Vacant',alias:'V'},{name:'TFWS',alias:'T'},{name:'Freeship',alias:'F'}]
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
             branch:yup.string().required(),
@@ -61,6 +64,14 @@
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
         }
+
+        if($form.isD2D==true){
+            subjectList=[...subjectList,'Diploma'] //....
+            //....
+        }else{            
+            _.remove(subjectList,ob=>ob=='Diploma')
+            subjectList=[...subjectList]
+        }
     }
     onMount(()=>{
         if(data.formDt){      
@@ -70,7 +81,7 @@
             $form.academic_year=data.academicYear.id
         }
     })
-    const insertRecord=async(provFormInfo)=>{
+    const insertRecord=async(provFormInfo)=>{ 
         try{
             loading = true
             const { data, error } = await supabase
@@ -109,6 +120,7 @@
             $form.present_addr2=$form.per_addr2
             $form.present_city=$form.per_city
             $form.present_state=$form.per_state
+            
             $form.present_country=$form.per_country
             $form.present_zipcode=$form.per_zipcode
         }        
@@ -129,26 +141,27 @@
         </div>
 {/if}    
 <div class="flex justify-between items-center border-b px-4 pb-4">   
-    <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
+    <div class="text-slate-800 font-bold text-2xl text-center w-full">ACPC/General Admission Form - {data?.academicYear?.name}</div>
 </div>
-
-
-
-
-
-
 <form class="px-2 py-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
         <div class="flex justify-between p-1 lg:flex-row flex-col">          
-            <div class="flex flex-col w-full m-1 px-2">
-                <label for='mq' class="font-bold px-1">Select Admission Category</label>
+            <div class="flex flex-col w-full mt-1 px-2">
+                <label for='mq' class="font-bold px-1">D2D Admission</label>
                 <div class="flex flex-row border border-blue-400 p-2 rounded">
-                    <input type="checkbox" class="border w-4 p-2" id="mq"/><label class="mx-2 font-bold" for="mq">Management Quota (MQ)</label>
-                    <input type="checkbox" class="border w-4 ml-5 p-2" id="nri"/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label>
+                    <input type="checkbox" bind:checked={$form.isD2D} class="border w-4 p-2" id="mq"/><label class="mx-2 font-bold" for="mq">Is D2D?</label>
                 </div>
             </div>
-            <div class="flex flex-col w-full m-1">
+            <div class="flex flex-col w-full mt-1 pr-2">
+                <label for='admission_category' class="font-bold px-1">Select Admission Category <span class="text-sm text-red-500">*</span></label>
+                <select bind:value={$form.admission_category} class:border-orange-700={$errors.course} class="input" type="text" name="admission_category" id="admission_category" required>
+                    {#each admissioncategorylist as admissioncategory}
+                        <option value={admissioncategory.id}>{admissioncategory.name}({admissioncategory.alias})</option>
+                    {/each}
+                </select> 
+            </div>
+            <div class="flex flex-col w-full mt-1">
                 <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
                 <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
                     {#if data?.courselist}
@@ -158,7 +171,7 @@
                     {/if}
                 </select> 
             </div>
-            <!-- <div class="flex flex-col w-full m-1">
+            <div class="flex flex-col w-full m-1 px-1">
                 <label class="font-bold" for="branch">Select Branch <span class="text-sm text-red-500">*</span></label>
                 <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="branch" id="branch" required>
                     <option value=""></option>
@@ -168,7 +181,7 @@
                         {/each}
                     {/if}
                 </select>
-            </div> -->
+            </div>
         </div>    
         <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
             <div class="flex flex-col w-full m-1">
@@ -452,38 +465,25 @@
             <div class="text-indigo-800 overflow-x-auto">
                 <table class="w-full bg-white">
                     <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                        <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
+                        <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Course/Examination Name</th>
+                        <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade</th>
                     </thead>
                     <tbody class="w-full p-1 border text-center">
                         {#each subjectList as subject}
                             <tr>
                                 <td class="w-1/2 border border-blue-400 p-1">{subject}</td>
                                 <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
                             </tr>
                         {/each}
-                        <tr>
-                            <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
+            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Subject Details</div>  
             <div class="text-indigo-800 overflow-x-auto">
                 <table class="w-full bg-white">
                     <thead class="bg-blue-500 px-1 py-2 text-white">                        
                         <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">GUJCET</th>
+                        <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade</th>
                         <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
                     </thead>
                     <tbody class="w-full p-1 border border-blue-400 text-center">
@@ -493,12 +493,7 @@
                                 <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number"></td>
                                 <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number"></td> -->
                             </tr>
-                        {/each}
-                        <tr>
-                            <td class="font-bold p-1 border border-blue-400" >Total</td>
-                            <td class="p-1 border border-blue-400"><input type="number"></td>
-                            <!-- <td class="p-1 border border-blue-400"><input type="number"></td> -->
-                        </tr>
+                        {/each}                       
                     </tbody>
                 </table>
             </div>

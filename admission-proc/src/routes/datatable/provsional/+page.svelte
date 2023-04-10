@@ -8,9 +8,11 @@
     import _ from 'lodash'
     import {supabase} from '$lib/db'
     import Provfeecollection from '$lib/component/provfeecollection.svelte';
+    import config from '$lib/config.json'
+
+
     export let data
     let dataTable,recordToRemove=-1
-
     let collectFeeRecord=-1
     let columnList=[
         {name:'Name',field:'name',searchable:true,sortable:true},
@@ -37,7 +39,7 @@
     const removeRecord=async()=>{
         const { data, error } = await supabase
             .from('ProvFormInfo')
-            .delete()
+            .update({ is_removed: 'True' })
             .eq('id',recordToRemove)
         if(error)
             alert(error.message)
@@ -48,6 +50,7 @@
         console.log(error);
     }
 </script>
+
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -55,7 +58,6 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
-
     <div class="mt-2 overflow-auto">
         <DataTable data={dataTable} let:currRecord={record}
             columnlist={columnList}>
