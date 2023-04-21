@@ -69,6 +69,7 @@
                 border: [false, false, false, false],
                 table:{
                     body:[
+                        [{fontSize:12,alignment:'right',text:'(Student Copy)'}],
                         [titleContent],                        
                         [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
                         [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:"Recipt Number:_________"},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
@@ -77,7 +78,10 @@
                     ]
         }}
         const tbl2=JSON.parse(JSON.stringify(tbl1))
+        tbl2.table.body[0][0].text="(Institute Copy)"
         const tbl1_1=JSON.parse(JSON.stringify(tbl1))
+
+        tbl1_1.table.body[0][0].text="(Account Office Copy)"
         //  
         // const tbl2_1=JSON.parse(JSON.stringify(tbl2))
         let reportDefination=[{

@@ -5,7 +5,12 @@
 </script>
 
 <div class="font-bold m-2 px-2 text-lg flex items-center text-slate-800 pt-2 pb-4 border-b-2 border-slate-800 text-center">
-    <a href="/"><img class="w-24 rounded" src="../logo.png" alt="logo"></a>
+    {#if $college?.logo}
+        <a href="/"><img class="w-24 rounded" src='{$college.logo}' alt="logo"></a>
+    {:else}
+        <a href="/"><img class="w-24 rounded" src="../logo.png" alt="logo"></a>
+    {/if}
+
     <div class="w-full text-center">
         {#if $college && $college.name}        
             <h1 class="lg:text-4xl text-xl">{$college.name}</h1>
@@ -16,9 +21,7 @@
         {/if}
     </div>
 </div>
-
 <Menu/>
-
 
 
 

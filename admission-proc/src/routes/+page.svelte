@@ -24,7 +24,7 @@
         college.set({})
     })
 </script>
-
+<div>{JSON.stringify(data)}</div>
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">

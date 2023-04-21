@@ -11,7 +11,17 @@
             "list":[["Mathematics","Biology"],["English"],["Computer"],["Chemistry"],["Physics"]]            
         }
 
-    ]
+    ],
+    "bloodGroupList":[
+        "A +Ve","A -Ve","B +Ve","B -Ve","O +Ve","O -Ve","AB +Ve","AB -Ve"
+    ],
+    "test":[],    
+        
+    "religionList":["Hindu","Muslim","Christian","Jain","Other"],
+    "categoryList":["OPEN","SEBC","SC","ST","PH","OTHER"],
+    "nationalityList":["Indian","Foreign"],
+    "occupationList":["Business","Service","Self Employed","Housewife","Retired","-"],
+    "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","OTHER"]
 }
 
 
