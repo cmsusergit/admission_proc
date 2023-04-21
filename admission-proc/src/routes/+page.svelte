@@ -24,7 +24,8 @@
         college.set({})
     })
 </script>
-<div>{JSON.stringify(data)}</div>
+<!---->
+<!-- <div>{JSON.stringify(data)}</div> -->
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -42,35 +43,7 @@
                 {/each}
             </select>
         </div>
-        <!-- <div class="flex flex-col md:w-1/2 w-full m-1">
-            <label for="college" class="text-slate-800 px-1 py-1 font-bold">Select College</label>            
-            <select bind:value={selectedCollege} class="border rounded px-1 py-2 border-blue-400" type="text" id="college" required>
-                <option value=""></option>
-                {#each data.collegeList as college}
-                    <option value={college.id}>{college.name}({college.alias})</option>
-                {/each}
-            </select>
-        </div> -->
-        <!-- <div class="flex flex-col md:w-1/4 w-full m-1">
-            <label for="formtype" class="text-slate-800 px-1 py-1 font-bold">Select Form</label>
-            <select bind:value={selectedFormType} class="border rounded px-1 py-2 border-blue-400" type="text" id="formtype" required>
-                <option value=""></option>
-                {#if selectedAyear && selectedCollege}
-                    {#each formList as formType}
-                        <option value={formType.path}>{formType.name}</option>
-                    {/each}
-                {/if}
-            </select>
-        </div>
-        <div class="flex flex-col md:w-fit w-full m-1">
-            <div class="h-8 py-1"></div>
-            
-            <button disabled={!selectedFormType | !selectedCollege} on:click={()=>{goto(`/admissionform/${selectedFormType}?ayear_id=${selectedAyear}&college_id=${selectedCollege}`)}} class="px-2 py-2 md:w-48 w-full ml-2 button-primary">
-                +New Record
-            </button>            
-        </div> -->
     </div>
-
     {#if selectedAyear && count}
         <div class="mt-2 flex justify-center flex-col">
             {#each data?.collegeList as college}            

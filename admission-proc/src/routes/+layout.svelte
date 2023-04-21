@@ -9,21 +9,20 @@
     import { onMount } from 'svelte'
     import {navigating} from '$app/stores'
     import Spinner from '$lib/spinner.svelte'
-
+    import Dashboard from './dashboard/+page.svelte'
 
     onMount(() => {
         const {
         data: { subscription },
         } = supabase.auth.onAuthStateChange(() => {
         invalidate('supabase:auth')
-
         })
         return () => {
         subscription.unsubscribe()
-        }
+        }        
     })
 </script>
-
+<div>{JSON.stringify($page.data?.session?.user?.user_metadata?.role)}</div>
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
     {#if !$page.data.session}
         {#if $page.route.id.includes('admissionform/mqnri')}    
@@ -32,6 +31,13 @@
         {:else}
             <Auth/>
         {/if}
+
+
+
+
+        
+    {:else if !$page.data.session.user.user_metadata.role}
+        <Dashboard></Dashboard>
     {:else}
         {#if $navigating}
             <Spinner/>
@@ -45,4 +51,5 @@
         &copy; Sardar Vallabhbhai Patel Group of Institutes,Vasad.
     </div>
 </div>
+
 
