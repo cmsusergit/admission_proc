@@ -4,7 +4,7 @@
     import Modal from '$lib/modal.svelte'
     import {college,wordify} from '$lib/store.js'
     import { createEventDispatcher, onMount } from 'svelte'
-    import * as pdfFonts from "pdfmake/build/vfs_fonts.js"
+    import pdfFonts from "pdfmake/build/vfs_fonts"
     import pdfMake from "pdfmake/build/pdfmake"
     export let collectFeeRecord
     let amount,provAdmissionFeeRecord
