@@ -97,7 +97,7 @@
                     // [{border:[false,false,false,true],text:"    "}],
                     // [tbl2_1],
                 ]}}]
-            pdfMake.vfs = pdfFonts.pdfMake.vfs            
+            (pdfMake as any).vfs = pdfFonts.pdfMake.vfs            
             pdfMake.createPdf({pageOrientation:'portrait',
             content:reportDefination,
             defaultStyle:{fontSize:11}
