@@ -96,8 +96,23 @@
                     [tbl1_1],
                     // [{border:[false,false,false,true],text:"    "}],
                     // [tbl2_1],
-                ]}}]
-            pdfMake.vfs = pdfFonts.pdfMake.vfs            
+                ]}}]                
+            // 
+            // pdfMake.vfs = pdfFonts.pdfMake.vfs            
+            pdfMake.fonts = {
+                    Courier: {
+                        normal: 'Courier',
+                        bold: 'Courier-Bold',
+                        italics: 'Courier-Oblique',
+                        bolditalics: 'Courier-BoldOblique'
+                    },
+                    Roboto: {
+                        normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+                        bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+                        italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+                        bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+                    },
+            }
             pdfMake.createPdf({pageOrientation:'portrait',
             content:reportDefination,
             defaultStyle:{fontSize:11}
