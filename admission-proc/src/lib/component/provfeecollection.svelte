@@ -4,9 +4,8 @@
     import Modal from '$lib/modal.svelte'
     import {college,wordify} from '$lib/store.js'
     import { createEventDispatcher, onMount } from 'svelte'
+    import * as pdfFonts from "pdfmake/build/vfs_fonts.js"
     import pdfMake from "pdfmake/build/pdfmake"
-    // 
-    // import pdfFonts from "pdfmake/build/vfs_fonts"
     export let collectFeeRecord
     let amount,provAdmissionFeeRecord
     const dispatch= createEventDispatcher()
@@ -98,8 +97,7 @@
                     // [{border:[false,false,false,true],text:"    "}],
                     // [tbl2_1],
                 ]}}]
-            // 
-            // pdfMake.vfs = pdfFonts.pdfMake.vfs            
+            pdfMake.vfs = pdfFonts.pdfMake.vfs            
             pdfMake.createPdf({pageOrientation:'portrait',
             content:reportDefination,
             defaultStyle:{fontSize:11}
