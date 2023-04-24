@@ -7,10 +7,14 @@
     import {supabase} from '$lib/db'
     export let data
     let selectedAyear,count
+    let role=null
     const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"}]
     
     
-    
+    $:{
+        if(data.session?.user?.user_metadata)
+        role=data.session?.user?.user_metadata.role
+    }
     const fetchCount=async(id)=>{
         if(!id)return
         const { data:count1, error1 } = await supabase.rpc('fetchcount',{'academicyear_id':id})
@@ -24,8 +28,15 @@
         college.set({})
     })
 </script>
-<!---->
-<!-- <div>{JSON.stringify(data)}</div> -->
+
+
+
+
+
+
+
+
+
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -56,9 +67,11 @@
                                 <button type="button" on:click={()=>goto(`/datatable/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="my-2 p-2 border-t border-b w-full hover:bg-blue-700">
                                     {count[formType.name]?JSON.parse(count[formType.name])[college.id]:0}
                                 </button><br/>  
-                                <button on:click={()=>goto(`/admissionform/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="border-t border-b mx-auto p-2 mb-2 hover:bg-blue-700 shadow-white w-full">
-                                    +New Record
-                                </button>
+                                {#if role=='admin'}
+                                    <button on:click={()=>goto(`/admissionform/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="border-t border-b mx-auto p-2 mb-2 hover:bg-blue-700 shadow-white w-full">
+                                        +New Record
+                                    </button>
+                                {/if}
                             </div>  
                         {/each}
                     </div>
