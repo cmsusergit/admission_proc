@@ -8,7 +8,6 @@
     import * as yup from 'yup'
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
-    import { log } from 'pdfmake/build/pdfmake.js';
     export let data
     let sameAddrSelected=false
 
@@ -16,7 +15,7 @@
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let uploadLabelList=data?.uploadLabelList
-    let photo=null
+    let photo=null,uploadFileList=[]
     const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
@@ -100,23 +99,36 @@
     const insertRecord=async(record)=>{
         try{
             loading = true
-            const { data, error } = await supabase
+            const { data:dt, error:err1 } = await supabase
             .from('MQNRIFormInfo')
-            .upsert([           
-                record
-            ])
-            if(error)
+            .upsert(record)
+            .select('id')
+            console.log(dt,err1)
+            if(err1)
             {
                 error_mesg=error.message     
                 window.scrollTo(0,50)
-                if(error instanceof Error){
-                    error_mesg=error.message
+                if(err1 instanceof Error){
+                    error_mesg=err1.message
+
                     $mesg=''
                 }
             }
             else{
+                console.log(dt)
+                uploadFileList.forEach((file1)=>{
+                    file1.f_form_id=dt[0].id
+                })                
+                const { data:data1, error:error1 } = await supabase
+                    .from('AdmissionDocumentMQNRI')
+                    .insert(uploadFileList, { upsert: true })
+                if(error1){                    
+                    console.log(error1)
+                    error_mesg=error1
+                    return
+                }
                 error_mesg=''
-                $mesg='Form Record Inserted/Updated Successully.'
+                $mesg='Form Record Inserted/Updated Successully.'                
                 let { data, error } = await supabase.auth.signUp({
                     email:$form.email,
                     password: 'abcd@1248'
@@ -140,6 +152,10 @@
             loading = false
         }
     }
+    const uploadfile=(file,labelId)=>{
+        uploadFileList=[...uploadFileList ,{f_label_id:labelId,document_path:file.detail}]//....
+        console.log(file.detail)
+    }
     const onSameAddrChanged=()=>{
         if(sameAddrSelected){
             $form.present_addr1=$form.per_addr1
@@ -158,6 +174,11 @@
             $form.present_zipcode=''
         }
     }
+    const getUploadeFile=(labelId)=>{
+        const temp=data.uploadFileList.find(ob=>ob.f_label_id==labelId)
+
+        return temp?temp.document_path:''
+    }
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -169,7 +190,6 @@
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
 <p>{JSON.stringify($form)}</p>
-<p>{photo}</p>
 <form class="px-2 py-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
@@ -209,6 +229,8 @@
         </div>               
     </div>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
+
+
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
         <div class="flex justify-between p-1 lg:flex-row flex-col">
             <div class="flex m-1 flex-col w-48">
@@ -558,10 +580,12 @@
                 </table>
             </div>
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
+
+            
             <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                 <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
                     {#each uploadLabelList as uploadLabel}    
-                        <Upload url='' label={uploadLabel.name} required={uploadLabel.is_required}/>
+                        <Upload on:upload={(event)=>uploadfile(event,uploadLabel.id)} url={getUploadeFile(uploadLabel.id)} label={uploadLabel.name} required={uploadLabel.is_required}/>
                     {/each}
                 </div>
             </div>           
@@ -591,3 +615,85 @@
         </button>
     </div>
 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

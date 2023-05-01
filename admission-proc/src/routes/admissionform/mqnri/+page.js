@@ -27,12 +27,17 @@ export async function load({ params,url }) {
     if(err1_1)
         if(err1_1 instanceof Error)        
         return {error:err1_1.message}
-    let formDt
+    let formDt,uploadFileList
     if(is_update){
         let { data, error:formErr } = await supabase
             .from('MQNRIFormInfo').select(`*`).eq('id',is_update).single() 
         if(formErr)
             return {error:formErr.message}        
+        let { data:dt, error:err1 } = await supabase
+            .from('AdmissionDocumentMQNRI').select(`*`).eq('f_form_id',is_update) 
+        if(formErr)
+            return {error:formErr.message}        
+        uploadFileList=dt
         formDt=data
     }
     return {    
@@ -40,5 +45,7 @@ export async function load({ params,url }) {
     college,
     courselist,
     uploadLabelList,
-    formDt
+    formDt,
+
+    uploadFileList
 }}

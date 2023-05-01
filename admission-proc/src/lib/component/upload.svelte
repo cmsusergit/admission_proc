@@ -41,7 +41,7 @@
 				throw error
 			}
 			url = filePath
-			dispatch('upload')
+			dispatch('upload',url)
 		} catch (error) {
 			if (error instanceof Error) {
 				alert(error.message)
@@ -50,6 +50,7 @@
 			uploading = false
 		}
 	}
+
 	$: if (url) downloadImage(url)
 	const getAcceptedType=()=>{
 		return is_image?'image/png,image/jpeg':'*'
@@ -64,16 +65,15 @@
 			class=""
 			style="height: {size}em; width: {size}em;"
 		/>
-	<!-- {:else}
-		<div class="" style="height: {size}em; width: {size}em;" /> -->
 	{/if}
-	
-	
 	
 	<div>
 		<label class="text-sm font-bold" for="single">{uploading ? 'Uploading ...' : `${label} `}<span hidden={!required} class="text-orange-800 font-bold">*</span></label>
 		<input accept="{getAcceptedType()}" class="relative m-0 block w-full min-w-0 flex-auto rounded border border-blue-200 bg-clip-padding px-2 text-base font-normal text-neutral-700 transition duration-200 ease-in-out file:-mx-2 file:h-10 file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-blue-500 file:px-2 file:text-white file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-blue-700 file:cursor-pointer focus:border-primary focus:text-blue-700 focus:shadow-[0_0_0_1px] focus:shadow-primary h-10 focus:outline-none" 
 			id="single" bind:files on:change={uploadUserPhoto} disabled={uploading} type="file" required={required}>
+		{#if !is_image && userPhotoUrl}
+			<a class="m-2 text-orange-800 px-2 py-2 underline font-bold" href="{userPhotoUrl}">Already uploaded Download</a>
+		{/if}
 		<!-- <label class="button-primary cursor-pointer" for="single">
 			{uploading ? 'Uploading ...' : 'Upload'}
 		</label>
