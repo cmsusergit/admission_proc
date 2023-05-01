@@ -4,7 +4,7 @@
         {
             "college_id":1,
 
-            "list":[["Mathematics"],["Physics"],["Chemistry"],["English","Gujarati","Hindi","Marathi"],["Computer"]]            
+            "list":[["Mathematics"],["Physics"],["Chemistry"],["English","Gujarati"],["Computer"]]            
         },
         {
             "college_id":2,

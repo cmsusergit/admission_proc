@@ -8,14 +8,15 @@
     import * as yup from 'yup'
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
+    import { log } from 'pdfmake/build/pdfmake.js';
     export let data
-    let branchList=[],sameAddrSelected=false
+    let sameAddrSelected=false
 
     let isAICTEAccepted=false,isConditionAccepted=false
-    let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college.id)?.list
+    let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let uploadLabelList=data?.uploadLabelList
-    let photoUrl=null
+    let photo=null
     const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
@@ -31,7 +32,7 @@
             email:yup.string().email().required(),
             dob:yup.date().required(),
             gender:yup.string().required(),
-            photoUrl:yup.string().notRequired(),
+            photo:yup.string().notRequired(),
             blood_group:yup.string().notRequired(),
             religion:yup.string().notRequired(),
             nationality:yup.string().notRequired(),
@@ -80,29 +81,29 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
-            branchList=temp1?temp1.Branch:[]
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
         }
     }
     onMount(()=>{
-        if(data.formDt){      
+        if(data.formDt){               
             $form=data.formDt
         }
         else{
+
             $form.academic_year=data.academicYear.id
             $form.college_id=data.college.id    
             $form.admission_category="M"
         }
     })
-    const insertRecord=async(provFormInfo)=>{
+    const insertRecord=async(record)=>{
         try{
             loading = true
             const { data, error } = await supabase
-            .from('ProvFormInfo')
+            .from('MQNRIFormInfo')
             .upsert([           
-                provFormInfo
+                record
             ])
             if(error)
             {
@@ -116,6 +117,16 @@
             else{
                 error_mesg=''
                 $mesg='Form Record Inserted/Updated Successully.'
+                let { data, error } = await supabase.auth.signUp({
+                    email:$form.email,
+                    password: 'abcd@1248'
+                })
+                if(error){                    
+                    console.log(error)
+                }
+                else{
+                    const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
+                }
                 goto('/')
             }            
         } catch (error) {
@@ -158,6 +169,7 @@
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
 <p>{JSON.stringify($form)}</p>
+<p>{photo}</p>
 <form class="px-2 py-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
@@ -179,18 +191,7 @@
                         {/each}
                     {/if}
                 </select> 
-            </div>
-            <!-- <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="branch">Select Branch <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="branch" id="branch" required>
-                    <option value=""></option>
-                    {#if branchList}
-                        {#each branchList as branch}
-                            <option value={branch.id}>{branch.name}({branch.alias})</option>
-                        {/each}
-                    {/if}
-                </select>
-            </div> -->
+            </div>          
         </div>    
         <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
             <div class="flex flex-col w-full m-1">
@@ -255,7 +256,7 @@
                 </select>
             </div>
             <div class="w-full m-1">
-                <Upload bind:url={photoUrl} is_image=true label="Upload Photo"/>
+                <Upload bind:url={$form.photo} is_image=true label="Upload Photo"/>
                 <!-- <label for="file" class="font-bold">Upload Photo</label>
                 <input type="file" name="" id="file"> -->
             </div>

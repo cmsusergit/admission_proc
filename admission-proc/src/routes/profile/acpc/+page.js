@@ -22,15 +22,25 @@ export async function load({ params,url }) {
         if(err1 instanceof Error)
         return {error:err1.message}
     const courselist=dt    
-    let { data:uploadLabelList, error:err1_1 } = await supabase
-        .from('document_label').select('*').eq('college_id',college_id)
-    if(err1_1)
-        if(err1_1 instanceof Error)        
-        return {error:err1_1.message}
+    
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
     let formDt
     if(is_update){
         let { data, error:formErr } = await supabase
-            .from('MQNRIFormInfo').select(`*`).eq('id',is_update).single() 
+            .from('ProvFormInfo').select(`*`).eq('id',is_update).single() 
         if(formErr)
             return {error:formErr.message}        
         formDt=data
@@ -39,6 +49,5 @@ export async function load({ params,url }) {
     academicYear,
     college,
     courselist,
-    uploadLabelList,
     formDt
 }}

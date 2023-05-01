@@ -5,11 +5,11 @@
     import {college,wordify} from '$lib/store.js'
     import { createEventDispatcher, onMount } from 'svelte'
     import pdfMake from "pdfmake/build/pdfmake"
-    import * as pdfFonts from "pdfmake/build/vfs_fonts"
     export let collectFeeRecord
     let amount,provAdmissionFeeRecord
     const dispatch= createEventDispatcher()
 
+    
 
     onMount(async()=>{
         let { data: provAdmissionFee, error } = await supabase

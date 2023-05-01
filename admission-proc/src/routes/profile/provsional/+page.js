@@ -12,8 +12,8 @@ export async function load({ params,url }) {
 
 
     let { data:dataTable, error:dt_err } = await supabase
-    .from('MQNRIFormInfo')
-    .select(`*,Course!inner(*)`)
+    .from('ProvFormInfo')
+    .select(`*,Course!inner(*),Branch(name,alias)`)
     .filter('academic_year','eq',ayear_id)
     .filter('is_removed','eq',false)
     .filter('Course.college_id','eq',college_id)
@@ -25,3 +25,5 @@ export async function load({ params,url }) {
     }}
 
 
+
+    
