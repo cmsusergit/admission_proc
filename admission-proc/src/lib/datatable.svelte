@@ -6,7 +6,7 @@
     let dataTable
     let sortableField,sortableOrder='asc'
     let selectableColumn={},totalPage=1
-    let currPage=1,pageSize=4
+    let currPage=1,pageSize=20
     let st,en
     $:dataTable=[...data],currPage=1//....
             //....

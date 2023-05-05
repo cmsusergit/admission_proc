@@ -179,15 +179,15 @@
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="fname">First Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input" type="text" id="fname" required>               
+                <input on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input uppercase" type="text" id="fname" required>               
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="mname">Midldle Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input" type="text" id="mname" required>
+                <input on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input uppercase" type="text" id="mname" required>
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="lname">Last Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
+                <input on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input uppercase" type="text" id="lname" required>
             </div>
         </div>
         <div class="flex justify-between p-1 lg:flex-row flex-col">
@@ -220,28 +220,27 @@
             <div>
                 <h2 class="px-2 font-bold underline text-xl">Permanent Address</h2>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
-
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} class="input" type="text" id="addr_line1" required>
+                        <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} class="input uppercase" type="text" id="addr_line1" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" class="input" type="text" id="addr_line2">
+                        <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" class="input uppercase" type="text" id="addr_line2">
                     </div>
                 </div>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} class="input" type="text" id="city" required>
+                        <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} class="input uppercase" type="text" id="city" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} class="input" type="text" id="state" required>
+                        <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} class="input uppercase" type="text" id="state" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} class="input" type="text" id="country" required>
+                        <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} class="input uppercase" type="text" id="country" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
@@ -257,25 +256,25 @@
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} class="input" type="text" id="pre_Addr_line1" required>
+                        <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} class="input uppercase" type="text" id="pre_Addr_line1" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" class="input" type="text" id="pre_addr_line2">
+                        <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" class="input uppercase" type="text" id="pre_addr_line2">
                     </div>
                 </div>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} class="input" type="text" id="pre_city" required>
+                        <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} class="input uppercase" type="text" id="pre_city" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} class="input" type="text" id="pre_state" required>
+                        <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} class="input uppercase" type="text" id="pre_state" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} class="input" type="text" id="pre_country" required>
+                        <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} class="input uppercase" type="text" id="pre_country" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
@@ -292,13 +291,12 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="guardian_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} class="input" type="text" id="guardian_name" required>
+                    <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} class="input uppercase" type="text" id="guardian_name" required>
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="guardian_number">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
-                    
                     <input on:blur={handleChange} bind:value={$form.father_contact} name="father_contact" class:border-orange-700={$errors.father_contact} class="input" type="text" id="guardian_number" required>
                 </div>
                 <div class="flex flex-col w-full m-1">
@@ -312,7 +310,8 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="guardian1_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} class="input" type="text" id="guardian1_name" required>
+
+                    <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} class="input uppercase" type="text" id="guardian1_name" required>
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">

@@ -11,7 +11,7 @@
 
     
 
-    onMount(async()=>{
+onMount(async()=>{
         let { data: provAdmissionFee, error } = await supabase
         .from('ProvAdmissionFee')
         .select('*').eq('form_id',collectFeeRecord.id)

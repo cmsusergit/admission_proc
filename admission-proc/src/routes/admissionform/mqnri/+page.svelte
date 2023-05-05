@@ -8,14 +8,15 @@
     import * as yup from 'yup'
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
+    import _ from 'lodash'
+
+
     export let data
     let sameAddrSelected=false
-
     let isAICTEAccepted=false,isConditionAccepted=false
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
-    let uploadLabelList=data?.uploadLabelList
-    let photo=null,uploadFileList=[]
+    let uploadFileList=[]
     const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
@@ -83,17 +84,55 @@
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
-        }
+        }  
     }
     onMount(()=>{
         if(data.formDt){               
             $form=data.formDt
+            uploadFileList=[]     
+            _.forEach(data.uploadLabelList,record=>{                
+                const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)
+                let temp1={
+                    label:record.name,
+                    f_label_id:record.id,
+                    document_path:uploadedFile?uploadedFile.document_path:'',                                          
+                    is_required:record.is_required,
+                    f_form_id:data.formDt.id
+                }
+                if(uploadedFile){                    
+                    temp1['id']=uploadedFile.id
+                }
+                uploadFileList.push(temp1)
+            })            
         }
-        else{
 
+        else{
             $form.academic_year=data.academicYear.id
             $form.college_id=data.college.id    
             $form.admission_category="M"
+
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })   
+            $form.subjectResultList=[]
+            _.forEach(subjectList,ob=>{
+                $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:0.0,practicalObtained:0.0,practicalOutof:0.0})
+            })   
+            $form.entrnceExamDetail=[]
+            _.forEach(subjectList1,ob=>{
+                $form.entrnceExamDetail.push({subName:ob,gujcetReult:0.0})
+            })   
+            uploadFileList=[]
+            _.forEach(data?.uploadLabelList,label=>{
+                let temp1={
+                    label:label.name,
+                    f_label_id:label.id,
+                    document_path:'',
+                    is_required:label.is_required
+                }
+                uploadFileList.push(temp1)
+            })
         }
     })
     const insertRecord=async(record)=>{
@@ -110,18 +149,26 @@
                 window.scrollTo(0,50)
                 if(err1 instanceof Error){
                     error_mesg=err1.message
-
                     $mesg=''
                 }
             }
-            else{
-                console.log(dt)
+            else{                
+                let tempUploadList=[]
                 uploadFileList.forEach((file1)=>{
-                    file1.f_form_id=dt[0].id
-                })                
+                    console.log(file1);
+                    const temp={             
+                        f_form_id:dt[0].id,
+                        f_label_id:file1.f_label_id,
+                        document_path:file1.document_path                        
+                    }
+                    if(file1.id)
+                        temp['id']=file1.id
+                    tempUploadList.push(temp)
+                })    
+                console.log(tempUploadList);
                 const { data:data1, error:error1 } = await supabase
                     .from('AdmissionDocumentMQNRI')
-                    .insert(uploadFileList, { upsert: true })
+                    .upsert(tempUploadList)
                 if(error1){                    
                     console.log(error1)
                     error_mesg=error1
@@ -129,16 +176,16 @@
                 }
                 error_mesg=''
                 $mesg='Form Record Inserted/Updated Successully.'                
-                let { data, error } = await supabase.auth.signUp({
-                    email:$form.email,
-                    password: 'abcd@1248'
-                })
-                if(error){                    
-                    console.log(error)
-                }
-                else{
-                    const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
-                }
+                // let { data, error } = await supabase.auth.signUp({
+                //     email:$form.email,
+                //     password: 'abcd@1248'
+                // })
+                // if(error){                    
+                //     console.log(error)
+                // }
+                // else{
+                //     const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
+                // }
                 goto('/')
             }            
         } catch (error) {
@@ -152,10 +199,10 @@
             loading = false
         }
     }
-    const uploadfile=(file,labelId)=>{
-        uploadFileList=[...uploadFileList ,{f_label_id:labelId,document_path:file.detail}]//....
-        console.log(file.detail)
-    }
+    // const uploadfile=(file,labelId)=>{
+    //     uploadFileList=[...uploadFileList ,{f_label_id:labelId,document_path:file.detail}]//....
+    //     console.log(file.detail)
+    // }
     const onSameAddrChanged=()=>{
         if(sameAddrSelected){
             $form.present_addr1=$form.per_addr1
@@ -173,13 +220,30 @@
             $form.present_country='' 
             $form.present_zipcode=''
         }
-    }
-    const getUploadeFile=(labelId)=>{
-        const temp=data.uploadFileList.find(ob=>ob.f_label_id==labelId)
+    } 
+    const removeFile= async(file1)=>{
+        const { data, error } = await supabase
+            .from('AdmissionDocumentMQNRI')
+            .update({document_path:''})
+            .eq('id', file1.id)
+        if(error){
+            console.log(error)
+            error_mesg=error
+            return
+        }      
+        let temp1=[]
+        _.forEach(uploadFileList,ob=>{
+            if(ob.id==file1.id)
+                ob.document_path=null
+            temp1.push(ob)
+        })        
+        uploadFileList=[...temp1]//....
+        //....
+        console.log(file1);
 
-        return temp?temp.document_path:''
-    }
+    }   
 </script>
+
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
             <div class="w-full md:mt-0 text-center p-2 text-orange-800 text-xl">{error_mesg}</div>
@@ -189,7 +253,6 @@
 <div class="flex justify-between items-center border-b px-4 pb-4">   
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
-<p>{JSON.stringify($form)}</p>
 <form class="px-2 py-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
@@ -229,8 +292,6 @@
         </div>               
     </div>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
-
-
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
         <div class="flex justify-between p-1 lg:flex-row flex-col">
             <div class="flex m-1 flex-col w-48">
@@ -243,15 +304,15 @@
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="fname">First Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input" type="text" id="fname" required>               
+                <input on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input uppercase" type="text" id="fname" required>               
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="mname">Midldle Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input" type="text" id="mname" required>
+                <input on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input uppercase" type="text" id="mname" required>
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="lname">Last Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
+                <input on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input uppercase" type="text" id="lname" required>
             </div>
 
         </div>
@@ -278,6 +339,9 @@
                 </select>
             </div>
             <div class="w-full m-1">
+
+
+
                 <Upload bind:url={$form.photo} is_image=true label="Upload Photo"/>
                 <!-- <label for="file" class="font-bold">Upload Photo</label>
                 <input type="file" name="" id="file"> -->
@@ -313,7 +377,7 @@
         <div class="flex justify-between p-1 lg:flex-row flex-col">
             <div class="flex flex-col w-full m-1">      
                 <label class="font-bold" for="category">Category</label>                
-                <select bind:value={$form.category} name="category" class="input" id="category">
+                <select bind:value={$form.category} name="category" class="input uppercase" id="category">
                     {#each config.categoryList as category}
                         <option>{category}</option>
                     {/each}
@@ -321,7 +385,7 @@
             </div>    
             <div class="flex flex-col w-full m-1">      
                 <label class="font-bold" for="caste">Caste</label>                
-                <input bind:value={$form.caste} class="input" type="text" id="caste">                
+                <input bind:value={$form.caste} class="input uppercase" type="text" id="caste">                
             </div>  
             <div class="flex flex-col w-full m-1">      
                 <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
@@ -338,25 +402,25 @@
 
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} class="input" type="text" id="addr_line1" required>
+                        <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} class="input uppercase" type="text" id="addr_line1" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" class="input" type="text" id="addr_line2">
+                        <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" class="input uppercase" type="text" id="addr_line2">
                     </div>
                 </div>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} class="input" type="text" id="city" required>
+                        <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} class="input uppercase" type="text" id="city" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} class="input" type="text" id="state" required>
+                        <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} class="input uppercase" type="text" id="state" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} class="input" type="text" id="country" required>
+                        <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} class="input uppercase" type="text" id="country" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
@@ -372,25 +436,25 @@
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} class="input" type="text" id="pre_Addr_line1" required>
+                        <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} class="input uppercase" type="text" id="pre_Addr_line1" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" class="input" type="text" id="pre_addr_line2">
+                        <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" class="input uppercase" type="text" id="pre_addr_line2">
                     </div>
                 </div>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} class="input" type="text" id="pre_city" required>
+                        <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} class="input uppercase" type="text" id="pre_city" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} class="input" type="text" id="pre_state" required>
+                        <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} class="input uppercase" type="text" id="pre_state" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} class="input" type="text" id="pre_country" required>
+                        <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} class="input uppercase" type="text" id="pre_country" required>
                     </div>
                     <div class="flex flex-col w-full m-1">
                         <label class="font-bold" for="pre_zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
@@ -407,7 +471,7 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="father_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} class="input" type="text" id="father_name" required>
+                    <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} class="input uppercase" type="text" id="father_name" required>
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
@@ -433,14 +497,13 @@
                     </select>
                 </div>                
             </div>
-
         </div>
         <div>
             <h2 class="px-2 font-bold text-xl border-t border-blue-500 mt-2 pt-2 underline">Mother Detail</h2>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="mother_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} class="input" type="text" id="mother_name" required>
+                    <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} class="input uppercase" type="text" id="mother_name" required>
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
@@ -500,200 +563,171 @@
                         <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Course/Examination Name</th>
                         <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade</th>
                     </thead>
-                    <tbody class="w-full p-1 border text-center">
-                        {#each boardList as board}
-                            <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">{board}</td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                            </tr>
-                        {/each}
+
+                    <tbody class="w-full p-1 border text-center">                        
+                        {#if $form.boardList}
+                            {#each $form.boardList as board}
+                                <tr>
+                                    <td class="w-1/2 border border-blue-400 p-1">{board.board}</td>
+                                    <td class="p-1 border border-blue-400"><input bind:value={board.result} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                </tr>
+                            {/each}
+                        {/if}
                     </tbody>
                 </table>
             </div>
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
             <div class="text-indigo-800 overflow-x-auto">
-                <table class="w-full bg-white">
-                    <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                        <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
-                    </thead>
-                    <tbody class="w-full p-1 border text-center">
-                        {#each subjectList as subject,indx}
+                {#if $form.subjectResultList}
+                    <table class="w-full bg-white">
+                        <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                            <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
+                        </thead>
+                        <tbody class="w-full p-1 border text-center">
+
+                            {#each $form.subjectResultList as subject,indx}
+                                <tr>
+                                    <td class="w-1/2 border border-blue-400 p-1">                                
+
+                                        {#if subject.subName.length>1}
+                                                <div class="flex flex-col md:flex-row justify-center">
+                                                    {#each subject.subName as subjectEntry,indx1}
+                                                        <span>
+                                                            <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                        </span>
+                                                    {/each}
+                                                </div>
+                                        {:else}
+                                            {subject.subName[0]}
+                                        {/if}
+                                    </td>
+                                    <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                </tr>
+                            {/each}
                             <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">                                
-                                    {#if subject.length>1}
-                                            <div class="flex flex-col md:flex-row justify-center">
-                                                {#each subject as subjectEntry,indx1}
-                                                    <span>
-                                                        <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
-                                                    </span>
-                                                {/each}
-                                            </div>
-                                    {:else}
-                                        {subject[0]}
-                                    {/if}
-                                </td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
                             </tr>
-                        {/each}
-                        <tr>
-                            <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                            <td class="py-1 border border-blue-400 px-1"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                        <!-- <tbody class="w-full p-1 border text-center">
+                            {#each subjectList as subject,indx}
+                                <tr>
+                                    <td class="w-1/2 border border-blue-400 p-1">                                
+                                        {#if subject.length>1}
+                                                <div class="flex flex-col md:flex-row justify-center">
+                                                    {#each subject as subjectEntry,indx1}
+                                                        <span>
+                                                            <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                        </span>
+                                                    {/each}
+                                                </div>
+                                        {:else}
+                                            {subject[0]}
+                                        {/if}
+                                    </td>
+                                    <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                </tr>
+                            {/each}
+                            <tr>
+                                <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                                <td class="py-1 border border-blue-400 px-1"></td>
+                            </tr>
+                        </tbody> -->
+                    </table>
+                {/if}
             </div>
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
             <div class="text-indigo-800 overflow-x-auto">
-                <table class="w-full bg-white">
-                    <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">GUJCET</th>
-                        <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
-                    </thead>
-                    <tbody class="w-full p-1 border border-blue-400 text-center">
-                        {#each subjectList1 as subject}                    
+                {#if $form.entrnceExamDetail}
+                    <table class="w-full bg-white">
+                        <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">GUJCET</th>
+                            <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
+                        </thead>
+                        <tbody class="w-full p-1 border border-blue-400 text-center">
+                            {#each $form.entrnceExamDetail as subject}                    
+                                <tr>
+                                    <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
+                                    <td class="p-1 border border-blue-400">
+                                        <input bind:value={subject.gujcetReult} class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                    </td>
+                                    <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                    </td> -->
+                                </tr>
+                            {/each}
                             <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">{subject}</td>
-                                <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number"></td>
-                                <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                <td class="font-bold p-1 border border-blue-400" >Total</td>
+                                <td class="p-1 border border-blue-400"><input type="number"></td>
+                                <!-- <td class="p-1 border border-blue-400"><input type="number">
                                 </td> -->
                             </tr>
-                        {/each}
-                        <tr>
-                            <td class="font-bold p-1 border border-blue-400" >Total</td>
-                            <td class="p-1 border border-blue-400"><input type="number"></td>
-                            <!-- <td class="p-1 border border-blue-400"><input type="number">
-                            </td> -->
-                        </tr>
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                {/if}
             </div>
             <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
-
-            
             <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                 <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
-                    {#each uploadLabelList as uploadLabel}    
-                        <Upload on:upload={(event)=>uploadfile(event,uploadLabel.id)} url={getUploadeFile(uploadLabel.id)} label={uploadLabel.name} required={uploadLabel.is_required}/>
+                    {#each uploadFileList as uploadFile}    
+<!-- 
+                        <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/> -->
+                        <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/>
                     {/each}
                 </div>
             </div>           
     </div>
-    <div class="flex justify-start border md:flex-row px-4 mt-4 flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-        <div class="flex flex-row">
-            <input type="checkbox" bind:checked={isConditionAccepted} class="border w-4 p-2" id="document1"/>
-            <label class="mx-2 font-bold" for="document1">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">Terms and Conditions</a></label>
+    {#if !data.formDt}
+        <div class="flex justify-start border md:flex-row px-4 mt-4 flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+            <div class="flex flex-row">
+                <input type="checkbox" bind:checked={isConditionAccepted} class="border w-4 p-2" id="document1"/>
+                <label class="mx-2 font-bold" for="document1">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">Terms and Conditions</a></label>
+            </div>
+            <div class="flex flex-row">
+                <input type="checkbox" bind:checked={isAICTEAccepted} class="border w-4 p-2" id="document2"/>
+                <label class="mx-2 font-bold" for="document2">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">AICTE Affidavit</a></label>
+            </div>
         </div>
-        <div class="flex flex-row">
-            <input type="checkbox" bind:checked={isAICTEAccepted} class="border w-4 p-2" id="document2"/>
-            <label class="mx-2 font-bold" for="document2">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">AICTE Affidavit</a></label>
-        </div>
-    </div>
+    {/if}
     {#each Object.entries($errors) as [property,error]}    
         {#if error}
             <p class="bg-orange-400 text-white w-full text-sm mr-2 my-1 p-2 border">{error}</p>
         {/if}
     {/each}
     <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
-        <button disabled={loading || !isAICTEAccepted || !isConditionAccepted} type="submit" class="w-48 button-primary">
-            {#if loading}
-                Please Wait....
-            {:else}
-                Submit
-            {/if}
-        </button>
+        {#if data.formDt}
+            <button disabled={loading} type="submit" class="w-48 button-primary">
+                {#if loading}
+                    Please Wait....
+                {:else}
+                    Submit
+                {/if}
+            </button>
+        {:else}
+            <button disabled={loading || !isAICTEAccepted || !isConditionAccepted} type="submit" class="w-48 button-primary">
+                {#if loading}
+                    Please Wait....
+                {:else}
+                    Submit
+                {/if}
+            </button>
+        {/if}
     </div>
 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
