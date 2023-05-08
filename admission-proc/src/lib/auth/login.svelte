@@ -24,7 +24,10 @@
             loading = false
         }
     }
-
+    const resetPwd=async()=>{
+        console.log(email);
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email)
+    }
     const handleLoginUsingEmail=async()=>{
         try{
                 loading = true                
@@ -67,10 +70,6 @@
                         Sign in to your account
                     </h1>
                 </div>
-
-
-
-
                 <div class="flex md:flex-row flex-col justify-center w-full md:space-x-5">
                     <div class="w-full bg-gradient-to-br from-slate-500 to-slate-700 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
                         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -85,7 +84,7 @@
                                     <input bind:value={password} type="password" id="password" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <a href="/" class="text-sm font-medium text-white hover:underline">Forgot password?</a>
+                                    <button type='button' on:click={resetPwd} class="text-sm font-medium text-white hover:underline">Forgot password?</button>
                                 </div>
                                 <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
                                     {#if loading}

@@ -165,6 +165,8 @@
         }
         return total
     }    
+
+
     const insertRecord=async(record)=>{
         try{
             loading = true
