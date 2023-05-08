@@ -12,7 +12,8 @@
 	const dispatch = createEventDispatcher()
 
 	const downloadImage = async (path) => {
-		console.log(path);
+		if(!url)
+			userPhotoUrl=''
 		try {
             const { data, error } = await supabase.storage.from('userphoto').download(path)
 			if (error) {
@@ -21,7 +22,6 @@
 			const url = URL.createObjectURL(data)
 			userPhotoUrl = url
 		} catch (error) {
-			userPhotoUrl=''
 			if (error instanceof Error) {
 				console.log('Error downloading image: ', error.message)
 			}
@@ -68,7 +68,6 @@
 
 
 <div class="">
-	----{userPhotoUrl}
 	{#if is_image && userPhotoUrl}
 		<img
 			src={userPhotoUrl}
