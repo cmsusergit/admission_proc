@@ -1,13 +1,16 @@
 <script>
+    import {supabase} from "$lib/db"
+    
     let password=''
-
     const resetPwd=async()=>{
         const { data, error } = await supabase.auth.updateUser({
             password: password
         })
         if(error){
             alert(error)
+            return
         }
+        alert("Password Reset")
     }
 </script>
 
