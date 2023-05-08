@@ -28,29 +28,26 @@
         console.log(email);
         const { data, error } = await supabase.auth.resetPasswordForEmail(email)
     }
-    const handleLoginUsingEmail=async()=>{
-        try{
-                loading = true                
-                const { error } = await supabase.auth.signInWithOtp({ email,password })
-                if (error) {
-                    if(error instanceof Error)
-                        mesg=error.message
+    // const handleLoginUsingEmail=async()=>{
+    //     try{
+    //             loading = true                
+    //             const { error } = await supabase.auth.signInWithOtp({ email,password })
+    //             if (error) {
+    //                 if(error instanceof Error)
+    //                     mesg=error.message
 
-                }                
-                else{
-
-
-
-                    mesg='Please, Check Your Email To Sign In to Application'
-                }        
-        } catch (error) {
-            if (error instanceof Error) {
-                mesg=error.message
-            }
-        } finally {
-            loading = false
-        }
-    }
+    //             }                
+    //             else{
+    //                 mesg='Please, Check Your Email To Sign In to Application'
+    //             }        
+    //     } catch (error) {
+    //         if (error instanceof Error) {
+    //             mesg=error.message
+    //         }
+    //     } finally {
+    //         loading = false
+    //     }
+    // }
 </script>
 <div class="m-2 px-2">
     <div class="font-bold  text-lg flex items-center text-slate-800 pt-2 pb-4 text-center border-slate-800 border-b-2">
@@ -97,7 +94,7 @@
 
                         </div>
                     </div>
-                    <div class="flex justify-center items-center p-2 font-bold text-center text-lg">OR</div>
+                    <!-- <div class="flex justify-center items-center p-2 font-bold text-center text-lg">OR</div>
                     <div class="w-full bg-gradient-to-br from-slate-700 to-slate-500 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
                         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                             <p class="text-white text-lg">Using Email Only</p>
@@ -116,7 +113,7 @@
                                 </button>                      
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>

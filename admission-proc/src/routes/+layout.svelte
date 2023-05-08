@@ -11,6 +11,7 @@
     import Spinner from '$lib/spinner.svelte'
     import Dashboard from './dashboard/+page.svelte'
 
+    export let data
     onMount(() => {
         const {
         data: { subscription },
@@ -32,18 +33,13 @@
         {:else}
             <Auth/>
         {/if}
-
-
-
-
-        
     {:else if !$page.data.session.user.user_metadata.role}
         {#if $page.route.id.includes('admissionform/mqnri')}    
             <Header/>
             <slot></slot>
         {:else}
-            <Header/>
-            <Dashboard></Dashboard>
+            <Header/>            
+            <Dashboard profileDt={data}></Dashboard>
         {/if}
     {:else}
         {#if $navigating}
