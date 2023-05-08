@@ -2,16 +2,15 @@
     import { mesg,college } from '$lib/store.js'
     
     import {supabase} from "$lib/db"
-    import { goto } from '$app/navigation'
     import { onMount } from 'svelte';
     import {createForm} from 'svelte-forms-lib'
     import * as yup from 'yup'
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
     import _ from 'lodash'
-
-
     export let data
+
+
     let sameAddrSelected=false
     let isAICTEAccepted=false,isConditionAccepted=false
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
@@ -336,7 +335,9 @@
                     <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
                         {#if data?.courselist}
                             {#each data?.courselist as course}
-                                <option value={course.id}>{course.name}({course.alias})</option>
+                                {#if course.is_mqnri==true}
+                                    <option value={course.id}>{course.name}({course.alias})</option>
+                                {/if}
                             {/each}
                         {/if}
                     </select> 
