@@ -38,7 +38,7 @@
             <Header/>
             <slot></slot>
         {:else}
-            <Header/>            
+            <Header/>
             <Dashboard profileDt={data}></Dashboard>
         {/if}
     {:else}

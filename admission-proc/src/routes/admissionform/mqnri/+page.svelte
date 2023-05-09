@@ -22,7 +22,7 @@
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
             acpcnumber:yup.string().notRequired(),
-            acpc_meritnumber:yup.string().required(),
+            acpc_meritnumber:yup.string().notRequired(),
             course:yup.string().required(),
             entr_examnumber:yup.string().required(),
             title:yup.string().required(),
@@ -38,7 +38,7 @@
             religion:yup.string().notRequired(),
             nationality:yup.string().notRequired(),
             category:yup.string().notRequired(),
-            caste:yup.string().required(),
+            caste:yup.string().notRequired(),
             aadharnumber:yup.number().required(),
             per_addr1:yup.string().required(),
             per_addr2:yup.string().notRequired(),
@@ -211,7 +211,6 @@
                     const tempD1=new Date($form.dob)                    
                     let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
 
-
                     const { data, error } = await supabase.auth.signUp({
                         email: $form.email,
                         password:pwd1,
@@ -233,10 +232,7 @@
         } catch (error) {
             error_mesg=error.message
             window.scrollTo(0,50)
-            if (error instanceof Error) {
-                error_mesg=error.message
-                $mesg=''
-            }
+            $mesg=''
             return
         } finally {
             loading = false
@@ -631,7 +627,9 @@
                                 {#each $form.boardList as board}
                                     <tr>
                                         <td class="w-1/2 border border-blue-400 p-1">{board.board}</td>
-                                        <td class="p-1 border border-blue-400"><input bind:value={board.result} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400">
+                                            <input bind:value={board.result} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1">
+                                        </td>
                                     </tr>
                                 {/each}
                             {/if}
@@ -657,7 +655,8 @@
                                                     <div class="flex flex-col md:flex-row justify-center">
                                                         {#each subject.subName as subjectEntry,indx1}
                                                             <span>
-                                                                <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                                <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/>
+                                                                <label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
                                                             </span>
                                                         {/each}
                                                     </div>
@@ -665,10 +664,10 @@
                                                 {subject.subName[0]}
                                             {/if}
                                         </td>
-                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
                                     </tr>
                                 {/each}
                                 <tr>
@@ -726,7 +725,7 @@
                                     <tr>
                                         <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
                                         <td class="p-1 border border-blue-400">
-                                            <input bind:value={subject.gujcetReult} class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                            <input bind:value={subject.gujcetReult} step='0.01' class="w-full border hover:border-blue-400 rounded p-1" type="number">
                                         </td>
                                         <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
                                         </td> -->

@@ -29,6 +29,14 @@ export async function load({ params,url }) {
         return {error:err1_1.message}
     let formDt,uploadFileList
     if(is_update){
+        
+        
+        
+        
+        
+        
+        
+        
         let { data, error:formErr } = await supabase
             .from('MQNRIFormInfo').select(`*`).eq('id',is_update).single() 
         if(formErr)
