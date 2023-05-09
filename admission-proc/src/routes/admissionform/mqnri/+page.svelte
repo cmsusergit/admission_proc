@@ -93,7 +93,6 @@
             total['practicalOutof']=getTotal('practicalOutof')
         }
         if($form.entrnceExamDetail){
-
             total['entranceRsultTotal']=getEntrnceResultTotal()
         }
     }
@@ -146,7 +145,6 @@
             })
         }
     })
-
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
 		node.addEventListener('input', transform, { capture: true })		
@@ -168,81 +166,81 @@
     }    
 
     const insertRecord=async(record)=>{
-        // try{
-        //     loading = true
-        //     const { data:dt, error:err1 } = await supabase
-        //     .from('MQNRIFormInfo')
-        //     .upsert(record)
-        //     .select('id')
-        //     console.log(dt,err1)
-        //     if(err1)
-        //     {
-        //         error_mesg=error.message     
-        //         window.scrollTo(0,50)
-        //         if(err1 instanceof Error){
-        //             error_mesg=err1.message
-        //             $mesg=''
-        //         }
-        //     }
-        //     else{                
-        //         let tempUploadList=[]
-        //         uploadFileList.forEach((file1)=>{
-        //             console.log(file1);
-        //             const temp={             
-        //                 f_form_id:dt[0].id,
-        //                 f_label_id:file1.f_label_id,
-        //                 document_path:file1.document_path                        
-        //             }
-        //             if(file1.id)
-        //                 temp['id']=file1.id
-        //             tempUploadList.push(temp)
-        //         })    
-        //         console.log(tempUploadList);
-        //         const { data:data1, error:error1 } = await supabase
-        //             .from('AdmissionDocumentMQNRI')
-        //             .upsert(tempUploadList)
-        //         if(error1){                    
-        //             console.log(error1)
-        //             error_mesg=error1
-        //             return
-        //         }
-        //         error_mesg=''
-        //         $mesg='Form Record Inserted/Updated Successully.'    
-                
-                
+        try{
+            loading = true
+            const { data:dt, error:err1 } = await supabase
+            .from('MQNRIFormInfo')
+            .upsert(record)
+            .select('id')
+            console.log(dt,err1)
+            if(err1)
+            {
+                error_mesg=error.message     
+                window.scrollTo(0,50)
+                if(err1 instanceof Error){
+                    error_mesg=err1.message
+                    $mesg=''
+                }
+                return
+            }
+            else{                
+                let tempUploadList=[]
+                uploadFileList.forEach((file1)=>{
+                    console.log(file1);
+                    const temp={             
+                        f_form_id:dt[0].id,
+                        f_label_id:file1.f_label_id,
+                        document_path:file1.document_path                        
+                    }
+                    if(file1.id)
+                        temp['id']=file1.id
+                    tempUploadList.push(temp)
+                })    
+                console.log(tempUploadList);
+                const { data:data1, error:error1 } = await supabase
+                    .from('AdmissionDocumentMQNRI')
+                    .upsert(tempUploadList)
+                if(error1){                    
+                    console.log(error1)
+                    error_mesg=error1
+                    return
+                }
+                error_mesg=''
+                $mesg='Form Record Inserted/Updated Successully.'    
+                if(!data.formDt){  
+                    const tempD1=new Date($form.dob)                    
+                    let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
 
-        //         if(!data.formDt){  
-        //             const tempD1=new Date($form.dob)                    
-        //             let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
-        //             alert(pwd1)
-        //             const { data, error } = await supabase.auth.signUp({
-        //                 email: $form.email,
-        //                 password:pwd1,
-        //                 email_confirm: true
-        //             })
 
-        //             if(error){
-        //                 console.log(error)
-        //             }
-        //         }
-        //         // if(error){                    
-        //         //     console.log(error)
-        //         // }
-        //         // else{
-        //         //     const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
-        //         // }
-        //     }            
-        // } catch (error) {
-        //     // error_mesg=error.message
-        //     // window.scrollTo(0,50)
-        //     // if (error instanceof Error) {
-        //     //     error_mesg=error.message
-        //     //     $mesg=''
-        //     // }
-        // } finally {
-        //     loading = false
-        // }
+                    const { data, error } = await supabase.auth.signUp({
+                        email: $form.email,
+                        password:pwd1,
+                        email_confirm: true
+                    })
 
+                    if(error){
+                        console.log(error)
+                        return
+                    }
+                }
+                // if(error){                    
+                //     console.log(error)
+                // }
+                // else{
+                //     const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
+                // }
+            }            
+        } catch (error) {
+            error_mesg=error.message
+            window.scrollTo(0,50)
+            if (error instanceof Error) {
+                error_mesg=error.message
+                $mesg=''
+            }
+            return
+        } finally {
+            loading = false
+        }
         isSubmitted=true
     }
     // const uploadfile=(file,labelId)=>{
