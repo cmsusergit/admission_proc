@@ -39,7 +39,7 @@
             <slot></slot>
         {:else}
             <Header/>
-            <Dashboard profileDt={data}></Dashboard>
+            <Dashboard profileEmail={data?.session?.user?.email}></Dashboard>
         {/if}
     {:else}
         {#if $navigating}

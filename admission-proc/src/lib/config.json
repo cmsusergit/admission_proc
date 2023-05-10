@@ -8,7 +8,7 @@
         },
         {
             "college_id":2,
-            "list":[["Mathematics","Biology"],["English"],["Computer"],["Chemistry"],["Physics"]]            
+            "list":[{"subList":["Mathematics","Biology"],"selected":0},{"subList":["English"],"selected":0},{"subList":["Computer"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["Physics"],"selected":0}]            
         }
 
     ],

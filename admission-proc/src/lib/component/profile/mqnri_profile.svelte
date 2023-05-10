@@ -29,22 +29,12 @@
     <div>
         <div class="w-full overflow-auto flex justify-between items-center">        
             <img src={userPhotoUrl} class="m-2 w-28" alt="">
-
-
-
-
-
-
-
-
             <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
                 {#if profile.form_number['M']}MQ Form Number - {profile.form_number['M']}{/if} |
                 {#if profile.form_number['N']}NRI Form Number - {profile.form_number['N']}{/if}
             </h2>
             <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
         </div>
-
-
         <div class="text-gray-800 w-full shadow sm:rounded-lg">
             <div class="bg-white border rounded my-2 text-gray-800">
                 <table class="border-slate-500 border w-full p-2">                        
@@ -259,14 +249,14 @@
                         </tr>
                     {/each}
                 </table>
-            </div>
-            
+            </div>            
             <div class="bg-white border rounded my-2 text-gray-800">                    
                 <table class="border-slate-500 border w-full">                        
                     <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
                         <td class="text-lg px-2 py-2 font-bold" colspan="5">Uploaded Documents</td>                            
                         <td></td>
                     </tr>
+                    
                     {#each uploadedFileList as record}
                         <tr class="border-slate-500 border-b w-full px-2 py-2">
                             <td class="text-lg px-2 py-2 text-center">                                
