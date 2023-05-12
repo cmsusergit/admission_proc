@@ -8,3 +8,7 @@
 <div class="min-h-screen w-full">
     <Profile profile={profile} uploadedFileList={uploadedFileList}></Profile>        
 </div>
+
+
+
+

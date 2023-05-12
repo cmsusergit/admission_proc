@@ -1,13 +1,16 @@
 <script>
     import {  onMount } from 'svelte'
 
-    import {supabase} from "$lib/db"    
+    import {supabase} from "$lib/db"   
+    export let college
     export let profile,uploadedFileList
-    
+    import {mqnri_profile_print} from '$lib/mqnri_print.js'
     let userPhotoUrl=null
     onMount(()=>{          
         downloadImage(profile?.photo)
     })
+    
+    
     const downloadImage = async (path) => {
 		try {
             const { data, error } = await supabase.storage.from('userphoto').download(path)
@@ -23,9 +26,29 @@
 				console.log('Error downloading image: ', error.message)
 			}
 		}
-	} 
+	}
+    const mqnriPrint=()=>{
+        mqnri_profile_print(college,'2023-24',profile)
+    }
+
+
+
+
+
+
+    
 </script>
-<div class="min-h-screen w-full">
+<div class="min-h-screen w-full">    
+    <div class="flex justify-end">        
+        {#if profile.admission_category=="B"}
+            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/rJp80sx2Bhca'>Payment</a>
+        {:else}
+            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
+        {/if}
+        <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
+    </div> 
+
+    
     <div>
         <div class="w-full overflow-auto flex justify-between items-center">        
             <img src={userPhotoUrl} class="m-2 w-28" alt="">

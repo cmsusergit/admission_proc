@@ -10,7 +10,7 @@
     import _ from 'lodash'
     export let data
 
-
+    
     let sameAddrSelected=false
     let isAICTEAccepted=false,isConditionAccepted=false
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
@@ -292,9 +292,6 @@
 <div class="flex justify-between items-center border-b px-4 pb-4">   
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
-
-
-
 {#if isSubmitted}
     <div class="min-h-[500] w-full">
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
@@ -312,6 +309,8 @@
         {/if}
     </div>
 {:else}
+
+
     <form class="px-2 py-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
