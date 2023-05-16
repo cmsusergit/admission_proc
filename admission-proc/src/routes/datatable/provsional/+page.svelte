@@ -8,10 +8,11 @@
     import _ from 'lodash'
     import {supabase} from '$lib/db'
     import Provfeecollection from '$lib/component/provfeecollection.svelte';
-
+    import * as XLSX from 'xlsx/xlsx.mjs';
 
 
     export let data
+    let loading=false
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
     let columnList=[
@@ -68,18 +69,36 @@
         $mesg="Record Removed Successfully"
         recordToRemove=-1
         console.log(error);
+    }    
+    const exportToFile=()=>{
+            loading=true
+            let list1=new Array()            
+            dataTable.map(ob=>{
+                let temp=_.omit(ob,["academic_year","is_removed","is_approved","is_d2d","name","approved_by","Course","Branch","Brach"])
+                list1.push(temp)
+            })
+            const wsheet=XLSX.utils.json_to_sheet(list1)
+            const wb=XLSX.utils.book_new()            
+            XLSX.utils.book_append_sheet(wb,wsheet,"prov_info")
+            XLSX.writeFile(wb,"provforminfo.xlsx")
+            loading=false
     }
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">
-            <div class="w-full md:mt-0 text-center p-2 text-emerald-500 text-xl">{$mesg}</div>
+            <div class="w-full md:mt-0 text-center p-2 text-emerald-500 text-xl">{$mesg}</div>            
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
 
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
+            <div class="flex justify-end">            
+                <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
+                    {#if !loading}Export Excel{:else}Loading....{/if}
+                </button>
+            </div>
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>
@@ -146,10 +165,5 @@
         <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
     {/if}
 </div>
-
-
-
-
-
 
 

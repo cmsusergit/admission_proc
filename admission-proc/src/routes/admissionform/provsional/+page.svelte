@@ -8,7 +8,7 @@
     import * as yup from 'yup'
     export let data
     let branchList=[],sameAddrSelected=false
-
+    
 
 
     const validationSchema=yup.object().shape({
@@ -129,6 +129,15 @@
             $form.present_zipcode=''
         }
     }
+
+
+
+
+
+
+
+
+    
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
