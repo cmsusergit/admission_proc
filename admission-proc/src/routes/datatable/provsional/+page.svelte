@@ -2,7 +2,7 @@
     import { goto,invalidateAll } from '$app/navigation'
 
     import { mesg,college } from '$lib/store.js'    
-    import {  onMount } from 'svelte'
+    import {  onMount } from 'svelte'    
     import DataTable from '$lib/datatable.svelte'
     import Dialog from '$lib/dialog.svelte'
     import _ from 'lodash'

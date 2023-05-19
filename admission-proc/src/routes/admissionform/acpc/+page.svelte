@@ -144,7 +144,7 @@
 <div class="flex justify-between items-center border-b px-4 pb-4">   
     <div class="text-slate-800 font-bold text-2xl text-center w-full">ACPC/General Admission Form - {data?.academicYear?.name}</div>
 </div>
-<form class="px-2 py-2" on:submit={handleSubmit}>
+<form class="text-sm p-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
     <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
         <div class="flex justify-between p-1 lg:flex-row flex-col">          

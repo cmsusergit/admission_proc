@@ -65,7 +65,10 @@
                             <div class="bg-blue-500 px-2 py-2 text-white mt-2 w-full">
                                 <div class="bg-slate-50 px-2 py-2 text-slate-800">{formType.name}</div>                                
                                 <button type="button" on:click={()=>goto(`/datatable/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="my-2 p-2 border-t border-b w-full hover:bg-blue-700">
+                                    
+                                    
                                     {count[formType.name]?JSON.parse(count[formType.name])[college.id]:0}
+                                    {#if formType.path=='provsional'}=>{count['PROV2MQNRI']?JSON.parse(count['PROV2MQNRI'])[college.id]:0}{/if}
                                 </button><br/>  
                                 {#if role=='admin'}
                                     <button on:click={()=>goto(`/admissionform/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="border-t border-b mx-auto p-2 mb-2 hover:bg-blue-700 shadow-white w-full">

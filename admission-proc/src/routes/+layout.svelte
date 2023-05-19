@@ -50,9 +50,8 @@
             <slot></slot>
         </div>
     {/if}
+
     <div class="border-t-2 text-xl py-4 text-slate-800 border-slate-800 w-full font-bold text-center">
         &copy; Sardar Vallabhbhai Patel Group of Institutes,Vasad.
     </div>
 </div>
-
-
