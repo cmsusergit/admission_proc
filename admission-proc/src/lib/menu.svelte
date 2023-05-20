@@ -22,7 +22,7 @@
                         </button>
                         {#if isDropdownOpen}
                             <ul class="dropdown-content menu p-2 shadow bg-white absolute rounded-box w-52">
-                                <li class="bg-white text-slate-800 px-2 py-1 hover:bg-gray-100"><a href={`/report?ayear_id=1&college_id=1`}>Prov -> MQNRI</a></li>
+                                <li class="bg-white text-slate-800 px-2 py-1 hover:bg-gray-100"><a href={`/report/prov2mqnri`}>Prov -> MQNRI</a></li>
                             </ul>
                         {/if}
                     </div>

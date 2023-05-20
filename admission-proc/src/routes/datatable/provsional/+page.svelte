@@ -16,6 +16,7 @@
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
     let columnList=[
+        {name:'ID',field:'id',searchable:true,sortable:true},
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},

@@ -4,11 +4,11 @@
     import DataTable from '$lib/datatable.svelte'
     import {goto} from '$app/navigation'
     export let data    
-    let dataTable
+    let dataTable,dataTable_provonly
     let selectedAyear,selectedCollege=1
     import _ from 'lodash'
     import { onMount } from 'svelte';
-    let loading=false
+    let loading=false,isProvWithoutMQNRI=true
 
 
     let columnList=[
@@ -21,7 +21,16 @@
         {name:'MQNRI Email',sortable:true,field:'mqnri_email',searchable:true},
         {slot:true}
     ]
+    let columnList_provonly=
+    [
+        {name:'Name',field:'name',searchable:true,sortable:true},
+        {name:'ID',field:'id',searchable:true,sortable:true},
+        {name:'Contact',field:'contact',searchable:true,sortable:true},
+        {name:'Email',field:'email',searchable:true,sortable:true},    
+        {slot:true}
+    ]
     $:processData(dataTable)
+    $:processDataProvOnly(dataTable_provonly)
     $:if(selectedAyear && selectedCollege){
             fetchProvMQNRIDt()
     }    
@@ -29,24 +38,37 @@
         loading=true
         let { data:dt, error:dt_err } = await supabase
             .from('prov_mqnri')
-
-
-
-
-
-
-
-
             .select(`*`)
             .filter('academic_year','eq',selectedAyear)
             .filter('college_id','eq',selectedCollege)
-        dataTable=dt
         if(dt_err){
             console.log(dt_err)
             alert(dt_err.messaage)
+            return
+        }
+        else{
+            dataTable=dt
+        }        
+
+        let { data, error } = await supabase
+        .from('prov_without_mqnri')
+        .select(`*,Course(*)`)
+        .filter('academic_year','eq',selectedAyear)
+        if (error){
+            console.error(error)
+            alert(error.messaage)
+            return
+        }
+        else {
+            dataTable_provonly=data.filter(ob=>ob.Course.college_id==selectedCollege)
         }
         loading=false
     }
+    const processDataProvOnly=(dataTable)=>{
+        dataTable=_.forEach(dataTable,ob=>{
+            ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
+        })         
+    }   
     const processData=(dataTable)=>{
         dataTable=_.forEach(dataTable,ob=>{
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
@@ -60,6 +82,10 @@
             goto(`/profile/provsional?id=${record.prov_id}`)        
         else
             goto(`/profile/mqnri?id=${record.mqnri_id}`)
+    }
+
+    const displayRecord1=(record)=>{
+        goto(`/profile/provsional?id=${record.id}`)        
     }
 </script>
 <div class="">
@@ -86,7 +112,14 @@
     {#if loading}
         <p class="text-4xl text-orange-700 text-center p-2">Loading....</p>
     {/if}
-    {#if dataTable}
+
+
+
+    <div class="w-full mb-2 border flex justify-end space-x-2 p-2">
+        <input bind:checked={isProvWithoutMQNRI} type="checkbox" class="p-1 w-4" id="provwithoutmqnri">
+        <label for="provwithoutmqnri">Show Provsional Forms Remaining</label>
+    </div>
+    {#if !isProvWithoutMQNRI && dataTable}
         <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable.length}</p>
         <DataTable data={dataTable} let:currRecord={record}
                     columnlist={columnList}>
@@ -101,6 +134,27 @@
                             </div>
                         </div>            
         </DataTable>
+
+    {:else if dataTable_provonly}
+        <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable_provonly.length}</p>
+        <DataTable data={dataTable_provonly} let:currRecord={record}
+                    columnlist={columnList_provonly}>
+                    <div slot='action'>
+                            <div class="flex justify-center space-x-2 items-center">
+                                <button on:click={()=>displayRecord1(record)} class="hover:bg-teal-400 bg-teal-500 p-1 w-8 text-white rounded">
+                                        P
+                                </button>
+                            </div>
+                        </div>            
+        </DataTable>
+
+
+
+
+    
+    
+    
+    
     
     {/if}
 </div>
