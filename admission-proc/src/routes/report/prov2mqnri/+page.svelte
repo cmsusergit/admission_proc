@@ -5,11 +5,11 @@
     import {goto} from '$app/navigation'
     export let data    
     let dataTable,dataTable_provonly
+    let dataTable_mqnrionly
     let selectedAyear,selectedCollege=1
     import _ from 'lodash'
     import { onMount } from 'svelte';
-    let loading=false,isProvWithoutMQNRI=true
-
+    let loading=false,isMQNRIOrProv=0
 
     let columnList=[
         {name:'Name',field:'name',searchable:true,sortable:true},
@@ -29,8 +29,17 @@
         {name:'Email',field:'email',searchable:true,sortable:true},    
         {slot:true}
     ]
+    let columnList_mqnrionly=
+    [
+        {name:'Name',field:'name',searchable:true,sortable:true},
+        {name:'ID',field:'id',searchable:true,sortable:true},
+        {name:'Contact',field:'contact',searchable:true,sortable:true},
+        {name:'Email',field:'email',searchable:true,sortable:true},    
+        {slot:true}
+    ]
     $:processData(dataTable)
     $:processDataProvOnly(dataTable_provonly)
+    $:processDataProvOnly(dataTable_mqnrionly)
     $:if(selectedAyear && selectedCollege){
             fetchProvMQNRIDt()
     }    
@@ -49,8 +58,7 @@
         else{
             dataTable=dt
         }        
-
-        let { data, error } = await supabase
+        let { data:dtprov, error } = await supabase
         .from('prov_without_mqnri')
         .select(`*,Course(*)`)
         .filter('academic_year','eq',selectedAyear)
@@ -60,7 +68,20 @@
             return
         }
         else {
-            dataTable_provonly=data.filter(ob=>ob.Course.college_id==selectedCollege)
+            dataTable_provonly=dtprov.filter(ob=>ob.Course.college_id==selectedCollege)
+        }
+
+        let { data:dtmqnri, error1 } = await supabase
+        .from('mqnri_without_prov')
+        .select(`*,Course(*)`)
+        .filter('academic_year','eq',selectedAyear)
+        if (error1){
+            console.error(error1)
+            alert(error1.messaage)
+            return
+        }
+        else {
+            dataTable_mqnrionly=dtmqnri.filter(ob=>ob.Course.college_id==selectedCollege)
         }
         loading=false
     }
@@ -110,16 +131,16 @@
         </div>
     </div>
     {#if loading}
-        <p class="text-4xl text-orange-700 text-center p-2">Loading....</p>
+
+    <p class="text-4xl text-orange-700 text-center p-2">Loading....</p>
     {/if}
 
-
-
     <div class="w-full mb-2 border flex justify-end space-x-2 p-2">
-        <input bind:checked={isProvWithoutMQNRI} type="checkbox" class="p-1 w-4" id="provwithoutmqnri">
-        <label for="provwithoutmqnri">Show Provsional Forms Remaining</label>
+        <div class="flex items-center"><input bind:group={isMQNRIOrProv} value="0" type="radio" class="border w-4 p-2" id="ismqnriprov0"/><label class="mx-2 font-bold" for="ismqnriprov0">Provisional & MQNRI Both</label></div>
+        <div class="flex items-center"><input bind:group={isMQNRIOrProv} value="1" type="radio" class="border w-4 p-2" id="ismqnriprov1"/><label class="mx-2 font-bold" for="ismqnriprov1">Provisional Forms Without MQNRI</label></div>
+        <div class="flex items-center"><input bind:group={isMQNRIOrProv} value="2" type="radio" class="border w-4 ml-5 p-2" id="ismqnriprov2"/><label class="mx-2 font-bold" for="ismqnriprov2">MQNRI Forms Without Provisional</label></div>
     </div>
-    {#if !isProvWithoutMQNRI && dataTable}
+    {#if isMQNRIOrProv==0  && dataTable}
         <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable.length}</p>
         <DataTable data={dataTable} let:currRecord={record}
                     columnlist={columnList}>
@@ -134,8 +155,7 @@
                             </div>
                         </div>            
         </DataTable>
-
-    {:else if dataTable_provonly}
+    {:else if isMQNRIOrProv==1 && dataTable_provonly}
         <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable_provonly.length}</p>
         <DataTable data={dataTable_provonly} let:currRecord={record}
                     columnlist={columnList_provonly}>
@@ -147,14 +167,19 @@
                             </div>
                         </div>            
         </DataTable>
+    {:else if isMQNRIOrProv==2 && dataTable_mqnrionly}
+        <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable_mqnrionly.length}</p>
+        <DataTable data={dataTable_mqnrionly} let:currRecord={record}
+                    columnlist={columnList_provonly}>
+                    <div slot='action'>
+                            <div class="flex justify-center space-x-2 items-center">
+                                <button on:click={()=>displayRecord1(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">
+                                    MQNRI
+                                </button>
+                            </div>
+                        </div>            
+        </DataTable>
 
 
-
-
-    
-    
-    
-    
-    
     {/if}
 </div>
