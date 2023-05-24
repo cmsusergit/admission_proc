@@ -4,6 +4,11 @@ import { supabase } from '$lib/db'
 export async function load({ params,url }) {
     const college_id = url.searchParams.get('college_id')
     const ayear_id = url.searchParams.get('ayear_id') 
+    let { data:academicYear, error:err1 } = await supabase
+        .from('AcademicYear').select('*').eq('id',ayear_id).single()
+    if(err1)
+        if(error instanceof Error)        
+        return {error:err1.message}
     let { data:college, error } = await supabase
         .from('College').select('*').eq('id',college_id).single()
     if(error)
@@ -20,7 +25,7 @@ export async function load({ params,url }) {
     if(dt_err)
         return {error:dt_err.message}
     return {    
-        college,
+        college,academicYear,
         dataTable
     }}
 

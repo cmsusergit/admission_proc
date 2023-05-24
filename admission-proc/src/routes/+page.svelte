@@ -1,7 +1,7 @@
 <script>
     import { goto } from '$app/navigation'
 
-    import { mesg,college } from '$lib/store.js'    
+    import { mesg,academicYear,college } from '$lib/store.js'    
     import {  onMount } from 'svelte'
     import _ from 'lodash'
     import {supabase} from '$lib/db'
@@ -17,6 +17,7 @@
     }
     const fetchCount=async(id)=>{
         if(!id)return
+        academicYear.set(selectedAyear)
         const { data:count1, error1 } = await supabase.rpc('fetchcount',{'academicyear_id':id})
         if(error1)    
             alert(error1.message)    
@@ -65,8 +66,6 @@
                             <div class="bg-blue-500 px-2 py-2 text-white mt-2 w-full">
                                 <div class="bg-slate-50 px-2 py-2 text-slate-800">{formType.name}</div>                                
                                 <button type="button" on:click={()=>goto(`/datatable/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="my-2 p-2 border-t border-b w-full hover:bg-blue-700">
-                                    
-                                    
                                     {count[formType.name]?JSON.parse(count[formType.name])[college.id]:0}
                                     {#if formType.path=='provsional'}=>{count['PROV2MQNRI']?JSON.parse(count['PROV2MQNRI'])[college.id]:0}{/if}
                                 </button><br/>  

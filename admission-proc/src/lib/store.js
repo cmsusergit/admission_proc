@@ -1,8 +1,37 @@
 import { writable } from 'svelte/store'
 export const college = writable({})
 
+export const academicYear = writable({})
 export const mesg=writable('')
 export const error_mesg=writable('')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const wordify=(num)=>{
         console.log(num)

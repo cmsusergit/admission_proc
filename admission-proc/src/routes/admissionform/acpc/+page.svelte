@@ -2,21 +2,29 @@
     import { mesg,college } from '$lib/store.js'
     
     import {supabase} from "$lib/db"
-    import { goto } from '$app/navigation'
     import { onMount } from 'svelte';
     import {createForm} from 'svelte-forms-lib'
     import * as yup from 'yup'
+    import config from '$lib/config.json'
+    import Upload from '$lib/component/upload.svelte'
     import _ from 'lodash'
     export let data
-    let branchList=[],sameAddrSelected=false
 
-
-    let subjectList=['SSC','HSC']
+    
+    let sameAddrSelected=false,is_d2d=false
+    let isAICTEAccepted=false,isConditionAccepted=false    
+    let boardList=['SSC','HSC']
+    let uploadFileList=[]
+    let isSubmitted=false
     const subjectList1=['Mathematics','Chemistry','Physics']
-    const admissioncategorylist=[{name:'Centralized',alias:'G'},{name:'Vacant',alias:'V'},{name:'TFWS',alias:'T'},{name:'Freeship',alias:'F'}]
+    let branchList=[]
     const validationSchema=yup.object().shape({
+            admission_category:yup.string().required(),
+            acpcnumber:yup.string().notRequired(),
+            acpc_meritnumber:yup.string().notRequired(),
             course:yup.string().required(),
             branch:yup.string().required(),
+            entr_examnumber:yup.string().required(),
             title:yup.string().required(),
             first_name:yup.string().required(),
             middle_name:yup.string().required(),
@@ -25,6 +33,13 @@
             email:yup.string().email().required(),
             dob:yup.date().required(),
             gender:yup.string().required(),
+            photo:yup.string().notRequired(),
+            blood_group:yup.string().notRequired(),
+            religion:yup.string().notRequired(),
+            nationality:yup.string().notRequired(),
+            category:yup.string().notRequired(),
+            caste:yup.string().notRequired(),
+            aadharnumber:yup.number().required(),
             per_addr1:yup.string().required(),
             per_addr2:yup.string().notRequired(),
             per_city:yup.string().required(),
@@ -40,9 +55,17 @@
             father_name:yup.string().required(),
             father_contact:yup.number().required(),
             father_email:yup.string().email().required(),
+            father_aadharnumber:yup.number().required(),
+            father_occupation:yup.string().required(),
             mother_name:yup.string().required(),
             mother_contact:yup.number().required(),
-            mother_email:yup.string().email().required()
+            mother_email:yup.string().email().notRequired(),
+            mother_aadharnumber:yup.number().notRequired(),
+            mother_occupation:yup.string().notRequired(),
+            board_name:yup.string().notRequired(),
+            exam_seatnumber:yup.string().notRequired(),
+            last_schoolname:yup.string().notRequired(),
+            last_schoolcity:yup.string().notRequired()
         })
     const {form,errors,handleChange,handleSubmit}=createForm({
         initialValues:{title:'Mr.',per_country:'INDIA'},        
@@ -59,69 +82,145 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
-            branchList=temp1?temp1.Branch:[]
+            branchList=temp1.Branch
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
-        }
-
-        if($form.isD2D==true){
-            subjectList=[...subjectList,'Diploma'] //....
-            //....
-        }else{            
-            _.remove(subjectList,ob=>ob=='Diploma')
-            subjectList=[...subjectList]
+        }           
+    }
+    const processBoardList=(is_d2d)=>{
+        $form.is_d2d=is_d2d
+        if(is_d2d){            
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })   
+            $form.boardList.push({board:"Diploma",result:0.0})
+        }else if(!is_d2d){
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })              
         }
     }
     onMount(()=>{
-        if(data.formDt){      
+        if(data.formDt){               
             $form=data.formDt
+            uploadFileList=[]     
+            _.forEach(data.uploadLabelList,record=>{                
+                const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)
+                let temp1={
+                    label:record.name,
+                    f_label_id:record.id,
+                    document_path:uploadedFile?uploadedFile.document_path:'',                                          
+                    is_required:record.is_required,
+                    f_form_id:data.formDt.id
+                }
+                if(uploadedFile){                    
+                    temp1['id']=uploadedFile.id
+                }
+                uploadFileList.push(temp1)
+            })            
         }
         else{
             $form.academic_year=data.academicYear.id
+            $form.college_id=data.college.id    
+            $form.admission_category="G"
+            $form.is_d2d=false
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })   
+            $form.subjectResultList=[]
+            _.forEach(subjectList1,ob=>{
+                $form.subjectResultList.push({subName:ob,result:0.0})
+            })   
+            uploadFileList=[]
+            _.forEach(data?.uploadLabelList,label=>{
+                let temp1={
+                    label:label.name,
+                    f_label_id:label.id,
+                    document_path:'',
+                    is_required:label.is_required
+                }
+                uploadFileList.push(temp1)
+            })
         }
     })
-    const insertRecord=async(provFormInfo)=>{ 
+    function uppercase(node) {
+		const transform = () => node.value = node.value.toUpperCase()		
+		node.addEventListener('input', transform, { capture: true })		
+		transform()
+	}
+    const insertRecord=async(record)=>{
         try{
             loading = true
-            const { data, error } = await supabase
-            .from('ProvFormInfo')
-            .upsert([           
-                provFormInfo
-            ])
-            if(error)
+            const { data:dt, error:err1 } = await supabase
+            .from('ACPCFormInfo')
+            .upsert(record)
+            .select('id')
+            console.log(dt,err1)
+            if(err1)
             {
                 error_mesg=error.message     
                 window.scrollTo(0,50)
-                if(error instanceof Error){
-                    error_mesg=error.message
+                if(err1 instanceof Error){
+                    error_mesg=err1.message
                     $mesg=''
                 }
+                return
             }
-            else{
+            else{                
+                let tempUploadList=[]
+                uploadFileList.forEach((file1)=>{
+                    console.log(file1);
+                    const temp={             
+                        f_form_id:dt[0].id,
+                        f_label_id:file1.f_label_id,
+                        document_path:file1.document_path                        
+                    }
+                    if(file1.id)
+                        temp['id']=file1.id
+                    tempUploadList.push(temp)
+                })    
+                console.log(tempUploadList);
+                const { data:data1, error:error1 } = await supabase
+                    .from('AdmissionDocumentACPC')
+                    .upsert(tempUploadList)
+                if(error1){                    
+                    console.log(error1)
+                    error_mesg=error1
+                    return
+                }
                 error_mesg=''
-                $mesg='Form Record Inserted/Updated Successully.'
-                goto('/')
-            }            
+                $mesg='Form Record Inserted/Updated Successully.'    
+
+
+
+
+
+
+             }            
         } catch (error) {
             error_mesg=error.message
             window.scrollTo(0,50)
-            if (error instanceof Error) {
-                error_mesg=error.message
-                $mesg=''
-            }
-
+            $mesg=''
+            return
         } finally {
             loading = false
         }
+        isSubmitted=true
     }
+    // const uploadfile=(file,labelId)=>{
+    //     uploadFileList=[...uploadFileList ,{f_label_id:labelId,document_path:file.detail}]//....
+    //     console.log(file.detail)
+    // }
     const onSameAddrChanged=()=>{
         if(sameAddrSelected){
             $form.present_addr1=$form.per_addr1
             $form.present_addr2=$form.per_addr2
             $form.present_city=$form.per_city
             $form.present_state=$form.per_state
-            
             $form.present_country=$form.per_country
             $form.present_zipcode=$form.per_zipcode
         }        
@@ -133,7 +232,28 @@
             $form.present_country='' 
             $form.present_zipcode=''
         }
-    }
+    } 
+    const removeFile= async(file1)=>{
+        const { data, error } = await supabase
+            .from('AdmissionDocumentACPC')
+            .update({document_path:''})
+            .eq('id', file1.id)
+        if(error){
+            console.log(error)
+            error_mesg=error
+            return
+        }      
+        let temp1=[]
+        _.forEach(uploadFileList,ob=>{
+            if(ob.id==file1.id)
+                ob.document_path=null
+            temp1.push(ob)
+        })        
+        uploadFileList=[...temp1]//....
+        //....
+        console.log(file1);
+
+    }   
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -142,383 +262,439 @@
         </div>
 {/if}    
 <div class="flex justify-between items-center border-b px-4 pb-4">   
-    <div class="text-slate-800 font-bold text-2xl text-center w-full">ACPC/General Admission Form - {data?.academicYear?.name}</div>
+    <div class="text-slate-800 font-bold text-2xl text-center w-full">ACPC Admission Form - {data?.academicYear?.name}</div>
 </div>
-<form class="text-sm p-2" on:submit={handleSubmit}>
-    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
-    <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-        <div class="flex justify-between p-1 lg:flex-row flex-col">          
-            <div class="flex flex-col w-full mt-1 px-2">
-                <label for='mq' class="font-bold px-1">D2D Admission</label>
-                <div class="flex flex-row border border-blue-400 p-2 rounded">
-                    <input type="checkbox" bind:checked={$form.isD2D} class="border w-4 p-2" id="mq"/><label class="mx-2 font-bold" for="mq">Is D2D?</label>
-                </div>
-            </div>
-            <div class="flex flex-col w-full mt-1 pr-2">
-                <label for='admission_category' class="font-bold px-1">Select Admission Category <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.admission_category} class:border-orange-700={$errors.course} class="input" type="text" name="admission_category" id="admission_category" required>
-                    {#each admissioncategorylist as admissioncategory}
-                        <option value={admissioncategory.id}>{admissioncategory.name}({admissioncategory.alias})</option>
-                    {/each}
-                </select> 
-            </div>
-            <div class="flex flex-col w-full mt-1">
-                <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
-                    {#if data?.courselist}
-                        {#each data?.courselist as course}
-                            <option value={course.id}>{course.name}({course.alias})</option>
-                        {/each}
-                    {/if}
-                </select> 
-            </div>
-            <div class="flex flex-col w-full m-1 px-1">
-                <label class="font-bold" for="branch">Select Branch <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="branch" id="branch" required>
-                    <option value=""></option>
-                    {#if branchList}
-                        {#each branchList as branch}
-                            <option value={branch.id}>{branch.name}({branch.alias})</option>
-                        {/each}
-                    {/if}
-                </select>
-            </div>
-        </div>    
-        <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
-            <div class="flex flex-col w-full m-1">
-                <label for="acpcnumber" class="font-bold">ACPC Application Number</label>    
-                <input class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcnumber">
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label for="acpcmerit" class="font-bold">ACPC Merit Number</label>    
-                <input class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcmerit">
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label for="gujcetnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)</label>    
-                <input class="border rounded px-1 py-2 border-blue-400" type="text" id="gujcetnumber">
-            </div>
-        </div>               
+{#if isSubmitted}
+    <div class="min-h-[500] w-full">
+        <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a Form</h1>
     </div>
-    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
-    <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
-        <div class="flex justify-between p-1 lg:flex-row flex-col">
-            <div class="flex m-1 flex-col w-48">
-                <label class="font-bold" for="title">Title <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.title} name="title" class:border-orange-700={$errors.title} class="input" type="text" id="title" required>
-                    <option>Mr.</option>
-                    <option>Ms.</option>
-                    <option>Mrs.</option>
-                </select>
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="fname">First Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input" type="text" id="fname" required>               
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="mname">Midldle Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input" type="text" id="mname" required>
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="lname">Last Name <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
-            </div>
-        </div>
-
-        <div class="flex justify-between p-1 lg:flex-row flex-col">
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="contact">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" >
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="email">Email <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" >
-            </div>
-        </div>
-        <div class="flex justify-between p-1 lg:flex-row flex-col">                
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="dob">Birth Date <span class="text-sm text-red-500">*</span></label>               
-                <input on:blur={handleChange} bind:value={$form.dob} name="dob" class:border-orange-700={$errors.dob} class="input" type="date" id="dob" required>
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label class="font-bold" for="gender">Gender <span class="text-sm text-red-500">*</span></label>
-                <select bind:value={$form.gender} name="gender" class:border-orange-700={$errors.gender} class="input" type="text" id="title" required>
-                    <option>Male</option>
-                    <option>Female</option>
-                </select>
-            </div>
-            <div class="flex flex-col w-full m-1">
-                <label for="file" class="font-bold">Upload Photo</label>
-                <input type="file" name="" id="file">
-            </div>
-            <div class="flex flex-col w-full m-1">
-            </div>
-        </div>
-
-        <div class="flex justify-between p-1 lg:flex-row flex-col">
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="bloodgrp">Blood Group</label>                
-                <select on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="bloodgrp">
-                    <option value=""></option>
-                    <option value=""></option>
-                </select>
-            </div>
-            
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="religion">Religion</label>                
-                <select on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="religion">
-                    <option value=""></option>
-                    <option value=""></option>
-                </select>
-            </div>            
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="nationality">Nationality</label>                
-                <select on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="nationality">
-                    <option value=""></option>
-                    <option value=""></option>
-                </select>
-            </div>           
-        </div>
-        <div class="flex justify-between p-1 lg:flex-row flex-col">
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="category">Category</label>                
-                <select on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="category">
-                    <option value=""></option>
-                    <option value=""></option>
-                </select>
-            </div>       
-
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="caste">Caste</label>                
-                <input on:blur={handleChange}  class:border-orange-700={$errors.dob} class="input" type="text" id="caste">                
-            </div>  
-            <div class="flex flex-col w-full m-1">      
-                <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
-                <input on:blur={handleChange}  class:border-orange-700={$errors.dob} class="input" type="text" id="aadharnumber" required>                
-            </div>  
-        </div>
-    </div>
-    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Address Details</div>
-    <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-        <div class="">
-            <div>
-                <h2 class="px-2 font-bold underline text-xl">Permanent Address</h2>
-                <div class="flex justify-between p-1 lg:flex-row flex-col">
-
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} class="input" type="text" id="addr_line1" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" class="input" type="text" id="addr_line2">
+{:else}
+    <form class="text-sm p-2" on:submit={handleSubmit}>
+        <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
+        <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+            <div class="flex justify-between p-1 lg:flex-row flex-col">          
+                <div class="flex flex-col w-full md:w-1/2 m-1 px-1">
+                    <label for='mq' class="font-bold px-1">D2D Admission</label>
+                    <div class="flex flex-row border border-blue-400 p-2 rounded">
+                        <input type="checkbox" bind:checked={is_d2d} on:change={(event)=>processBoardList(is_d2d)} class="border w-4 p-2" id="mq"/><label class="mx-2 font-bold" for="mq">Is D2D?</label>
                     </div>
                 </div>
-                <div class="flex justify-between p-1 lg:flex-row flex-col">
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} class="input" type="text" id="city" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} class="input" type="text" id="state" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} class="input" type="text" id="country" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.per_zipcode} name="per_zipcode" class:border-orange-700={$errors.per_zipcode} class="input" type="text" id="zipcode" required>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">                
-                <input bind:checked={sameAddrSelected} on:change={onSameAddrChanged} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Same as Above <span class="text-sm text-red-500">*</span></label>
-            </div>
-            <div>
-                <h2 class="px-2 mt-2 font-bold text-xl underline">Present Address</h2>
-                <div class="flex justify-between p-1 lg:flex-row flex-col">
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} class="input" type="text" id="pre_Addr_line1" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_addr_line2">Address Line2 </label>
-                        <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" class="input" type="text" id="pre_addr_line2">
-                    </div>
-                </div>
-                <div class="flex justify-between p-1 lg:flex-row flex-col">
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_city">City <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} class="input" type="text" id="pre_city" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_state">State <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} class="input" type="text" id="pre_state" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_country">Country <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} class="input" type="text" id="pre_country" required>
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label class="font-bold" for="pre_zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
-                        <input on:blur={handleChange} bind:value={$form.present_zipcode} name="present_zipcode" class:border-orange-700={$errors.present_zipcode} class="input" type="text" id="pre_zipcode" required>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Guardian Details</div>    
-    <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-        <div>
-            <h2 class="px-2 font-bold text-xl underline">Father/Guardian Detail</h2>
-            <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} class="input" type="text" id="guardian_name" required>
-                </div>
-            </div>
-            <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian_number">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
-                    
-                    <input on:blur={handleChange} bind:value={$form.father_contact} name="father_contact" class:border-orange-700={$errors.father_contact} class="input" type="text" id="guardian_number" required>
-                </div>
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian_email">Email <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.father_email} name="father_email" class:border-orange-700={$errors.father_email} class="input" type="text" id="guardian_email" required>
-                </div>
-                <div class="flex flex-col w-full m-1">      
-                    <label class="font-bold" for="aadharnumber1">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
-                    <input on:blur={handleChange}  class:border-orange-700={$errors.dob} class="input" type="text" id="aadharnumber1" required>                
-                </div>   
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="occupation">Occupation <span class="text-sm text-red-500">*</span></label>
-                    <select name="occupation" class:border-orange-700={$errors.title} class="input" id="occupation" required>
-                        <option></option>
-                    </select>
-                </div>                
-            </div>
-        </div>
-        <div>
-            <h2 class="px-2 font-bold text-xl border-t border-blue-500 mt-2 pt-2 underline">Mother Detail</h2>
-            <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian1_name">Full Name <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} class="input" type="text" id="guardian1_name" required>
-                </div>
-            </div>
-            <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian1_number">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>                    
-                    <input on:blur={handleChange} bind:value={$form.mother_contact} name="mother_contact" class:border-orange-700={$errors.mother_contact} class="input" type="text" id="guardian1_number" required>
-                </div>
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="guardian1_email">Email <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.mother_email} name="mother_email" class:border-orange-700={$errors.mother_email} class="input" type="text" id="guardian1_email" required>
-                </div>
-
-                <div class="flex flex-col w-full m-1">      
-                    <label class="font-bold" for="aadharnumber1">Aadhar Card Number</label>                
-                    <input on:blur={handleChange}  class:border-orange-700={$errors.dob} class="input" type="text" id="aadharnumber1">                
-                </div>   
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="occupation1">Occupation</label>
-                    <select name="occupation1" class:border-orange-700={$errors.title} class="input" id="occupation1">
-                        <option></option>
+                <div class="flex flex-col w-full m-1 px-2">                    
+                    <label for="course" class="font-bold">Select Category <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={$form.admission_category} class:border-orange-700={$errors.admission_category} class="input" type="text" name="admissioncategory" id="admissioncategory" disabled={data.formDt} required>
+                        {#if config.admissionCategoryList}
+                            {#each config.admissionCategoryList as record}
+                                <option value={record.alias}>{record.category}({record.alias})</option>
+                            {/each}
+                        {/if}
                     </select>
                 </div>
+                <div class="flex flex-col w-full m-1">
+                    <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
+                        {#if data?.courselist}
+                            {#each data?.courselist as course}
+                                <option value={course.id}>{course.name}({course.alias})</option>
+                            {/each}
+                        {/if}
+                    </select> 
+
+                </div>    
+                <div class="flex flex-col w-full m-1 px-2">                    
+                    <label for="course" class="font-bold">Select Branch <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="admissioncategory" id="admissioncategory" required>
+                        {#if branchList}
+                            {#each branchList as record}
+                                <option value={record.id}>{record.name}({record.alias})</option>
+                            {/each}
+                        {/if}
+                    </select>
+                </div>
+            </div>    
+            <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">
+                    <label for="acpcnumber" class="font-bold">ACPC Application Number</label>    
+                    <input bind:value={$form.acpcnumber}  class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcnumber">
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label for="acpc_meritnumber" class="font-bold">ACPC Merit Number</label>    
+                    <input on:blur={handleChange} bind:value={$form.acpc_meritnumber} class:border-orange-700={$errors.acpc_meritnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="acpc_meritnumber" id="acpc_meritnumber">
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label for="entr_examnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)<span class="text-sm text-red-500"></span> </label>    
+                    <input on:blur={handleChange} bind:value={$form.entr_examnumber} class:border-orange-700={$errors.entr_examnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="entr_examnumber" id="entr_examnumber" >
+                </div>
+            </div>               
+        </div>
+        <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
+        <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex m-1 flex-col w-48">
+                    <label class="font-bold" for="title">Title <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={$form.title} name="title" class:border-orange-700={$errors.title} class="input" type="text" id="title" required>
+                        <option>Mr.</option>
+                        <option>Ms.</option>
+                        <option>Mrs.</option>
+                    </select>
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="fname">First Name <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:blur={handleChange} bind:value={$form.first_name} name="first_name" class:border-orange-700={$errors.first_name} class="input" type="text" id="fname" required>               
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="mname">Midldle Name <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input" type="text" id="mname" required>
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="lname">Last Name <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
+                </div>
+
             </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="contact">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
+                    <input on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" >
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="email">Email <span class="text-sm text-red-500">*</span></label>
+                    <input on:blur={handleChange} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" >
+                </div>
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">                
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="dob">Birth Date <span class="text-sm text-red-500">*</span></label>               
+                    <input on:blur={handleChange} bind:value={$form.dob} name="dob" class:border-orange-700={$errors.dob} class="input" type="date" id="dob" required>
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="gender">Gender <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={$form.gender} name="gender" class:border-orange-700={$errors.gender} class="input" type="text" id="title" required>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="w-full m-1">
+                    <Upload bind:url={$form.photo} is_image=true label="Upload Photo"/>
+                    <!-- <label for="file" class="font-bold">Upload Photo</label>
+                    <input type="file" name="" id="file"> -->
+                </div>
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="bloodgrp">Blood Group</label>                
+                    <select bind:value={$form.blood_group} name="bloodGroup" class="input" id="bloodgrp">
+                        <option value="-">-</option>
+                        {#each config.bloodGroupList as bGroup}
+                            <option>{bGroup}</option>
+                        {/each}
+                    </select>
+                </div>            
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="religion">Religion</label>                  
+                    <select bind:value={$form.religion} name="religion" class="input" id="religion">
+                        {#each  config.religionList as record}                        
+                            <option>{record}</option>
+                        {/each}
+                    </select>
+                </div>            
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="nationality">Nationality</label>                
+                    <select bind:value={$form.nationality} name="nationality" class="input" id="nationality">
+                        {#each config.nationalityList as record}                        
+                            <option>{record}</option>
+                        {/each}
+                    </select>
+                </div>           
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="category">Category</label>                
+                    <select bind:value={$form.category} name="category" class="input" id="category">
+                        {#each config.categoryList as category}
+                            <option>{category}</option>
+                        {/each}
+                    </select>
+                </div>    
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="caste">Caste</label>                
+                    <input bind:value={$form.caste} class="input" use:uppercase type="text" id="caste">                
+                </div>  
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
+                    <input on:blur={handleChange} bind:value={$form.aadharnumber}  class="input" class:border-orange-700={$errors.aadharnumber} type="text" id="aadharnumber" required>                
+                </div>  
+            </div>
+        </div>
+        <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Address Details</div>
+        <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+            <div class="">
+                <div>
+                    <h2 class="px-2 font-bold underline text-xl">Permanent Address</h2>
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
 
-
-            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Academic Details</div>
-            <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_addr1} name="per_addr1" class:border-orange-700={$errors.per_addr1} use:uppercase class="input" type="text" id="addr_line1" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="addr_line2">Address Line2 </label>
+                            <input on:blur={handleChange} bind:value={$form.per_addr2} name="per_addr2" use:uppercase class="input" type="text" id="addr_line2">
+                        </div>
+                    </div>
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="city">City <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} use:uppercase class="input" type="text" id="city" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="state">State <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} use:uppercase class="input" type="text" id="state" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="country">Country <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_country} name="per_country" class:border-orange-700={$errors.per_country} use:uppercase class="input" type="text" id="country" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_zipcode} name="per_zipcode" class:border-orange-700={$errors.per_zipcode} class="input" type="text" id="zipcode" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">                
+                    <input bind:checked={sameAddrSelected} on:change={onSameAddrChanged} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Same as Above <span class="text-sm text-red-500">*</span></label>
+                </div>
+                <div>
+                    <h2 class="px-2 mt-2 font-bold text-xl underline">Present Address</h2>
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_addr_line1">Address Line1 <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_addr1} name="present_addr1" class:border-orange-700={$errors.present_addr1} use:uppercase class="input" type="text" id="pre_Addr_line1" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_addr_line2">Address Line2 </label>
+                            <input on:blur={handleChange} bind:value={$form.present_addr2} name="present_addr2" use:uppercase class="input" type="text" id="pre_addr_line2">
+                        </div>
+                    </div>
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_city">City <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} use:uppercase class="input" type="text" id="pre_city" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_state">State <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_state} name="present_state" class:border-orange-700={$errors.present_state} use:uppercase class="input" type="text" id="pre_state" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_country">Country <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_country} name="present_country" class:border-orange-700={$errors.present_country} use:uppercase class="input" type="text" id="pre_country" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="pre_zipcode">ZipCode <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_zipcode} name="present_zipcode" class:border-orange-700={$errors.present_zipcode} class="input" type="text" id="pre_zipcode" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Guardian Details</div>    
+        <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+            <div>
+                <h2 class="px-2 font-bold text-xl underline">Father/Guardian Detail</h2>
                 <div class="flex justify-between p-1 lg:flex-row flex-col">
                     <div class="flex flex-col w-full m-1">
-                        <label for="board" class="font-bold">Examination Board</label>                                                
-                        <select class="border rounded px-1 py-2 border-blue-400" id="board">
-                            <option value="Male">GSEB</option>
-                            <option value="Female">CBSE</option>                            
-                            <option value="Male">NIOS</option>
-                            <option value="Female">ICSE</option>                            
-                            <option value="Male">OTHER</option>
+                        <label class="font-bold" for="father_name">Full Name <span class="text-sm text-red-500">*</span></label>
+                        <input on:blur={handleChange} bind:value={$form.father_name} name="father_name" class:border-orange-700={$errors.father_name} use:uppercase class="input" type="text" id="father_name" required>
+                    </div>
+                </div>
+                <div class="flex justify-between p-1 lg:flex-row flex-col">
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="father_number">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
+                        <input on:blur={handleChange} bind:value={$form.father_contact} name="father_contact" class:border-orange-700={$errors.father_contact} class="input" type="text" id="father_number" required>
+                    </div>
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="father_email">Email <span class="text-sm text-red-500">*</span></label>
+                        <input name="father_email" on:blur={handleChange} bind:value={$form.father_email} class:border-orange-700={$errors.father_email} class="input" type="text" id="father_email" required>
+                    </div>
+                    <div class="flex flex-col w-full m-1">      
+                        <label class="font-bold" for="father_aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
+                        <input name="father_aadharnumber" on:blur={handleChange} bind:value={$form.father_aadharnumber} class:border-orange-700={$errors.father_aadharnumber} class="input" type="text" id="father_aadharnumber" required>                
+                    </div>   
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="father_occupation">Occupation <span class="text-sm text-red-500">*</span></label>
+                        <select name="father_occupation" on:blur={handleChange} bind:value={$form.father_occupation} class:border-orange-700={$errors.father_occupation} class="input" id="father_occupation" required>
+                            <option value=""></option>
+                            {#each config.occupationList as occupation}                            
+                                <option>{occupation}</option>
+                            {/each}
+                        </select>
+                    </div>                
+                </div>
+            </div>
+            <div>
+                <h2 class="px-2 font-bold text-xl border-t border-blue-500 mt-2 pt-2 underline">Mother Detail</h2>
+                <div class="flex justify-between p-1 lg:flex-row flex-col">
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="mother_name">Full Name <span class="text-sm text-red-500">*</span></label>
+                        <input on:blur={handleChange} bind:value={$form.mother_name} name="mother_name" class:border-orange-700={$errors.mother_name} use:uppercase class="input" type="text" id="mother_name" required>
+                    </div>
+                </div>
+                <div class="flex justify-between p-1 lg:flex-row flex-col">
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="mother_contact">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>                    
+                        <input on:blur={handleChange} bind:value={$form.mother_contact} name="mother_contact" class:border-orange-700={$errors.mother_contact} class="input" type="text" id="mother_contact" required>
+                    </div>
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="mother_email">Email</label>
+                        <input bind:value={$form.mother_email} name="mother_email" class="input" type="text" id="mother_email">
+                    </div>
+                    <div class="flex flex-col w-full m-1">      
+                        <label class="font-bold" for="mother_aadharnumber">Aadhar Card Number</label>                
+                        <input bind:value={$form.mother_aadharnumber} name="mother_aadharnumber" class="input" type="text" id="mother_aadharnumber">                
+                    </div>   
+                    <div class="flex flex-col w-full m-1">
+                        <label class="font-bold" for="mother_occupation">Occupation</label>
+                        <select name="mother_occupation" class="input" id="mother_occupation">
+                            <option value=""></option>
+                            {#each config.occupationList as occupation}
+                                <option>{occupation}</option>
+                            {/each}
                         </select>
                     </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label for="examseat" class="font-bold">Examination Seat Number</label>
-                        <input class="border rounded px-1 py-2 border-blue-400" type="text" id="examseat">
+                </div>
+                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Academic Details</div>
+                <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
+                        <div class="flex flex-col w-full m-1">
+                            <label for="board" class="font-bold">Examination Board</label>                                                
+                            <select bind:value={$form.board_name} class="border rounded px-1 py-2 border-blue-400" id="board">
+                                {#each config.examinationBoardList as record}                                
+                                    <option>{record}</option>
+                                {/each}
+                            </select>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label for="examseat" class="font-bold">Examination Seat Number</label>
+                            <input bind:value={$form.exam_seatnumber} class="border rounded px-1 py-2 border-blue-400" type="text" id="examseat">
+                        </div>
+                    </div>
+                    <div class="flex justify-between p-1 lg:flex-row flex-col">
+                        <div class="flex flex-col w-full m-1">
+                            <label for="lastschool" class="font-bold">Last School Name</label>
+                            <input bind:value={$form.last_schoolname} class="border rounded px-1 py-2 border-blue-400" type="text" id="lastschool">
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label for="lastschoolcity" class="font-bold">Last School City</label>
+                            <input bind:value={$form.last_schoolcity} class="border rounded px-1 py-2 border-blue-400" type="text" id="lastschoolcity">
+                        </div>                    
                     </div>
                 </div>
-                <div class="flex justify-between p-1 lg:flex-row flex-col">
-                    <div class="flex flex-col w-full m-1">
-                        <label for="lastschool" class="font-bold">Last School Name</label>
-                        <input class="border rounded px-1 py-2 border-blue-400" type="text" id="lastschool">
-                    </div>
-                    <div class="flex flex-col w-full m-1">
-                        <label for="lastschoolcity" class="font-bold">Last School City</label>
-                        <input class="border rounded px-1 py-2 border-blue-400" type="text" id="lastschoolcity">
-                    </div>                    
-                    </div>
+                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Examination Details</div>  
+                <div class="text-indigo-800 overflow-x-auto">
+                    <table class="w-full bg-white">
+                        <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                            <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Course/Examination Name</th>
+                            <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade (Percentage)</th>
+                        </thead>
+                        <tbody class="w-full p-1 border text-center">                        
+                            {#if $form.boardList}
+                                {#each $form.boardList as board}
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">{board.board}</td>
+                                        <td class="p-1 border border-blue-400">
+                                            <input bind:value={board.result} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1">
+                                        </td>
+                                    </tr>
+                                {/each}
+                            {/if}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Examination Details</div>  
-            <div class="text-indigo-800 overflow-x-auto">
-                <table class="w-full bg-white">
-                    <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                        <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Course/Examination Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade</th>
-                    </thead>
-                    <tbody class="w-full p-1 border text-center">
-                        {#each subjectList as subject}
-                            <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">{subject}</td>
-                                <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                            </tr>
+
+                {#if data?.courselist.find(ob=>{return ($form.course==ob.id && ob.alias=="B.E.")})}
+                    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
+                    <div class="text-indigo-800 overflow-x-auto">
+                        {#if $form.subjectResultList}
+                            <table class="w-full bg-white">
+                                <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                                    <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Result</th>
+                                </thead>
+                                <tbody class="w-full p-1 border text-center">
+                                    {#each $form.subjectResultList as subject,indx}
+                                        <tr>
+                                            <td class="w-1/2 border border-blue-400 p-1">                                                          
+                                                {subject.subName}
+                                            </td>
+                                            <td class="p-1 border border-blue-400">
+                                                <input bind:value={subject.result} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1">
+                                            </td>   
+                                        </tr>
+                                    {/each}
+                                </tbody>                          
+                            </table>
+                        {/if}
+                    </div>
+                {/if}
+                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
+                <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+                    <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
+                        {#each uploadFileList as uploadFile}    
+                            <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/> 
+                        <!-- <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/>  -->
                         {/each}
-                    </tbody>
-                </table>
+                    </div>
+                </div>           
+        </div>
+        {#if !data.formDt}
+            <div class="flex justify-start border md:flex-row px-4 mt-4 flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+                <div class="flex flex-row">
+                    <input type="checkbox" bind:checked={isConditionAccepted} class="border w-4 p-2" id="document1"/>
+                    <label class="mx-2 font-bold" for="document1">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">Terms and Conditions</a></label>
+                </div>
+                <div class="flex flex-row">
+                    <input type="checkbox" bind:checked={isAICTEAccepted} class="border w-4 p-2" id="document2"/>
+                    <label class="mx-2 font-bold" for="document2">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">AICTE Anti-Ragging Affidavit</a></label>
+                </div>
             </div>
-            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Subject Details</div>  
-            <div class="text-indigo-800 overflow-x-auto">
-                <table class="w-full bg-white">
-                    <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                        <th class="px-1 py-2 border border-blue-400 border-t-white">Result/Grade</th>
-                        <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
-                    </thead>
-                    <tbody class="w-full p-1 border border-blue-400 text-center">
-                        {#each subjectList1 as subject}                    
-                            <tr>
-                                <td class="w-1/2 border border-blue-400 p-1">{subject}</td>
-                                <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number"></td>
-                                <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number"></td> -->
-                            </tr>
-                        {/each}                       
-                    </tbody>
-                </table>
-            </div>
-            
-
-
-            <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
-            <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
-                Lorem ipsum dolor sit amet.
-            </div>
-    </div>
-    
-    {#each Object.entries($errors) as [property,error]}    
-        {#if error}
-            <p class="bg-orange-400 text-white w-full text-sm mx-2 my-1 p-2 border">{error}</p>
         {/if}
-    {/each}
-    <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
-        <button disabled={loading} type="submit" class="w-48 button-primary">
-            {#if loading}
-                Please Wait....
-            {:else}
-                Submit
+        {#each Object.entries($errors) as [property,error]}    
+            {#if error}
+                <p class="bg-orange-400 text-white w-full text-sm mr-2 my-1 p-2 border">{error}</p>
             {/if}
-        </button>
-    </div>
-</form>
+        {/each}
+        <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
+            {#if data.formDt}
+                <button disabled={loading} type="submit" class="w-48 button-primary">
+                    {#if loading}
+                        Please Wait....
+                    {:else}
+                        Submit
+                    {/if}
+                </button>
+            {:else}
+                <button disabled={loading || !isAICTEAccepted || !isConditionAccepted} type="submit" class="w-48 button-primary">
+                    {#if loading}
+                        Please Wait....
+                    {:else}
+                        Submit
+                    {/if}
+                </button>
+            {/if}
+        </div>
+    </form>
+{/if}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -22,32 +22,38 @@ export async function load({ params,url }) {
         if(err1 instanceof Error)
         return {error:err1.message}
     const courselist=dt    
-    
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    let formDt
+    let { data:uploadLabelList, error:err1_1 } = await supabase
+        .from('document_label').select('*').eq('college_id',college_id)
+    if(err1_1)
+        if(err1_1 instanceof Error)        
+        return {error:err1_1.message}
+    let formDt,uploadFileList
     if(is_update){
+        
+        
+        
+        
+        
+        
+        
+        
         let { data, error:formErr } = await supabase
-            .from('ProvFormInfo').select(`*`).eq('id',is_update).single() 
+            .from('ACPCFormInfo').select(`*`).eq('id',is_update).single() 
         if(formErr)
             return {error:formErr.message}        
+        let { data:dt, error:err1 } = await supabase
+            .from('AdmissionDocumentACPC').select(`*`).eq('f_form_id',is_update) 
+        if(formErr)
+            return {error:formErr.message}        
+        uploadFileList=dt
         formDt=data
     }
     return {    
     academicYear,
     college,
     courselist,
-    formDt
+    uploadLabelList,
+    formDt,
+
+    uploadFileList
 }}

@@ -26,7 +26,9 @@
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'ID',field:'id',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
-        {name:'Email',field:'email',searchable:true,sortable:true},    
+        {name:'Email',field:'email',searchable:true,sortable:true},  
+        {name:'Course',field:'course',selectable:true,sortable:true},
+        {name:'Branch',field:'branch',selectable:true,sortable:true},
         {slot:true}
     ]
     let columnList_mqnrionly=
@@ -39,7 +41,7 @@
     ]
     $:processData(dataTable)
     $:processDataProvOnly(dataTable_provonly)
-    $:processDataProvOnly(dataTable_mqnrionly)
+    $:processDataMQNRIOnly(dataTable_mqnrionly)
     $:if(selectedAyear && selectedCollege){
             fetchProvMQNRIDt()
     }    
@@ -60,7 +62,7 @@
         }        
         let { data:dtprov, error } = await supabase
         .from('prov_without_mqnri')
-        .select(`*,Course(*)`)
+        .select(`*,Course(*),Branch(*)`)
         .filter('academic_year','eq',selectedAyear)
         if (error){
             console.error(error)
@@ -86,6 +88,21 @@
         loading=false
     }
     const processDataProvOnly=(dataTable)=>{
+        dataTable=_.forEach(dataTable,ob=>{
+            ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
+            ob['course']=ob.Course?.alias
+            
+
+            
+
+
+
+
+            ob['branch']=ob.Branch?.alias
+        })         
+    }   
+
+    const processDataMQNRIOnly=(dataTable)=>{
         dataTable=_.forEach(dataTable,ob=>{
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
         })         
@@ -170,7 +187,7 @@
     {:else if isMQNRIOrProv==2 && dataTable_mqnrionly}
         <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable_mqnrionly.length}</p>
         <DataTable data={dataTable_mqnrionly} let:currRecord={record}
-                    columnlist={columnList_provonly}>
+                    columnlist={columnList_mqnrionly}>
                     <div slot='action'>
                             <div class="flex justify-center space-x-2 items-center">
                                 <button on:click={()=>displayRecord1(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">

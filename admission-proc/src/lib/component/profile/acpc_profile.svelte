@@ -4,68 +4,46 @@
     import {supabase} from "$lib/db"   
     import { academicYear,college } from '$lib/store.js'    
     export let profile,uploadedFileList
-    import {mqnri_profile_print} from '$lib/mqnri_print.js'
-    let userPhotoUrl=null
-    onMount(()=>{                  
-    })
-    
-
-    
-    const downloadImage = async (path) => {
+    import {acpc_profile_print} from '$lib/mqnri_print.js'
+    onMount(()=>{})
+    const downloadImage = async (path) => {		
 		try {
             const { data, error } = await supabase.storage.from('userphoto').download(path)
             if (error) {
-				throw error
+
+                throw error
 			}
 			const url = URL.createObjectURL(data)
-			userPhotoUrl = url
-            return userPhotoUrl
-		} 
-        catch (error) {
+            return url
+		} catch (error) {
 			if (error instanceof Error) {
 				console.log('Error downloading image: ', error.message)
 			}
 		}
 	}
-    const mqnriPrint=()=>{
-        mqnri_profile_print($college,$academicYear?.name,profile)
+    const acpcPrint=()=>{
+        acpc_profile_print($college,$academicYear?.name,profile)
     }
-
-
-
-
-
-
-    
 </script>
-<div class="min-h-screen w-full">    
+<div class="min-h-screen w-full">   
     <div class="flex justify-end">        
-        {#if profile.admission_category=="B"}
-            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/rJp80sx2Bhca'>Payment</a>
-        {:else}
-            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
-        {/if}
-        <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
+        <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">ACPC Report</button>
     </div> 
-
-    
     <div>
-        <div class="w-full overflow-auto flex justify-between items-center">        
-            {#await downloadImage(profile?.photo)}
-                <p>Loading....</p>
-            {:then path}
-            {#if path}
-                <img src={path} class="m-2 w-28" alt="">
-            {:else}
-                <p class="text-slate-500 font-bold">{profile?.photo}</p>
-            {/if}
-            {:catch error1}
-                <p>{error1.message}</p>
-            {/await}
-                
-            <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
-                {#if profile.form_number['M']}MQ Form Number - {profile.form_number['M']}{/if} |
-                {#if profile.form_number['N']}NRI Form Number - {profile.form_number['N']}{/if}
+        <div class="w-full overflow-auto flex justify-between items-center">             
+        {#await downloadImage(profile?.photo)}
+            <p>Loading....</p>
+        {:then path}
+        {#if path}
+            <img src={path} class="m-2 w-28" alt="">
+        {:else}
+            <p class="text-slate-500 font-bold">{profile?.photo}</p>
+        {/if}
+        {:catch error1}
+            <p>{error1.message}</p>
+        {/await}
+        <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
+                ACPC Form Number - {(profile?.form_number && profile?.admission_category)?(profile?.form_number[profile?.admission_category]):'-'}
             </h2>
             <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
         </div>
@@ -228,69 +206,37 @@
                     {/each}
                 </table>
             </div>
-            <div class="bg-white border rounded my-2 text-gray-800">                    
-                <table class="border-slate-500 border w-full">                        
-                    <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
-                        <td class="text-lg px-2 py-2 font-bold" colspan="5">Board Result Details</td>                            
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                    <tr class="border-slate-500 border-b w-full px-2 py-2">
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Theory (Obtained)</td>
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Theory (Out of)</td>
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Obtained)</td>
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Out of)</td>
-                    </tr>
-                    {#each profile?.subjectResultList as record}
-                        <tr class="border-slate-500 border-b w-full px-2 py-2">
-                            <td class="text-lg px-2 py-2 text-center">
-                                {record?.subName[record.selectedIndx]}                                
-                            </td>
-                            <td class="text-center text-lg px-2 py-2">                                        
-                                {record?.theoryObtained} 
-                            </td>                        
-                            <td class="text-center text-lg px-2 py-2">                                        
-                                {record?.theoryOutof}       
-                            </td>
-                            <td class="text-center text-lg px-2 py-2">                                        
-                                {record?.practicalObtained}
-                            </td>                         
-                            <td class="text-center text-lg px-2 py-2">
-                                {record?.practicalOutof}
-                            </td>       
+            {#if profile?.subjectResultList && profile?.subjectResultList.length>0}
+                <div class="bg-white border rounded my-2 text-gray-800">                    
+                    <table class="border-slate-500 border w-full">                        
+                        <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
+                
+                        <td class="text-lg px-2 py-2 font-bold" colspan="2">Board Result Details</td>                            
+                            <td></td>
                         </tr>
-                    {/each}
-                </table>
-            </div>
-            <div class="bg-white border rounded my-2 text-gray-800">                    
-                <table class="border-slate-500 border w-full">                        
-                    <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
-                        <td class="text-lg px-2 py-2 font-bold" colspan="5">Entrnce Examination Result Details</td>                            
-                        <td></td>
-                    </tr>
-                    <tr class="border-slate-500 border-b w-full px-2 py-2">
-                        <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
-                        <td class="border-slate-500 border-b text-center font-bold p-2">GUJCET</td>
-                    </tr>
-                    {#each profile?.entrnceExamDetail as record}
                         <tr class="border-slate-500 border-b w-full px-2 py-2">
-                            <td class="text-lg px-2 py-2 text-center">
-                                {record?.subName}                                
-                            </td>
-                            <td class="text-center text-lg px-2 py-2">                                        
-                                {record?.gujcetReult} 
-                            </td>       
+                            <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
+                            <td class="border-slate-500 border-b text-center font-bold p-2">Theory (Obtained)</td>
                         </tr>
-                    {/each}
-                </table>
-            </div>            
+                        {#each profile?.subjectResultList as record}
+                            <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                <td class="text-lg px-2 py-2 text-center">
+                                    {record?.subName}                                
+                                </td>
+                                <td class="text-center text-lg px-2 py-2">                                        
+                                    {record?.result} 
+                                </td>                
+                            </tr>
+                        {/each}
+                    </table>
+                </div>
+            {/if}
             <div class="bg-white border rounded my-2 text-gray-800">                    
                 <table class="border-slate-500 border w-full">                        
                     <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
                         <td class="text-lg px-2 py-2 font-bold" colspan="5">Uploaded Documents</td>                            
                         <td></td>
                     </tr>
-                    
                     {#each uploadedFileList as record}
                         <tr class="border-slate-500 border-b w-full px-2 py-2">
                             <td class="text-lg px-2 py-2 text-center">                                

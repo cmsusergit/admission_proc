@@ -311,6 +311,7 @@
 {:else}
 
 
+
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
@@ -318,9 +319,9 @@
                 <div class="flex flex-col w-full m-1 px-2">
                     <label for='mq' class="font-bold px-1">Select Admission Category</label>
                     <div class="flex flex-row border border-blue-400 p-2 rounded">
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="M" type="radio" class="border w-4 p-2" id="mq" name="admission_category"/><label class="mx-2 font-bold" for="mq">Management Quota (MQ)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="N" type="radio" class="border w-4 ml-5 p-2" id="nri" name="admission_category"/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="B" type="radio" class="border w-4 ml-5 p-2" id="both" name="admission_category"/><label class="mx-2 font-bold" for="both">BOTH</label></div>
+                        <div class="flex items-center"><input bind:group={$form.admission_category} value="M" type="radio" class="border w-4 p-2" id="mq" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="mq">Management Quota (MQ)</label></div>
+                        <div class="flex items-center"><input bind:group={$form.admission_category} value="N" type="radio" class="border w-4 ml-5 p-2" id="nri" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label></div>
+                        <div class="flex items-center"><input bind:group={$form.admission_category} value="B" type="radio" class="border w-4 ml-5 p-2" id="both" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="both">BOTH</label></div>
                     </div>
                 </div>
                 <div class="flex flex-col w-full m-1">

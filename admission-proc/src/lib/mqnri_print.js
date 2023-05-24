@@ -19,7 +19,6 @@ const separator=(text)=>{
             ]
         }}
 }
-
 const mqnri_profile_print=async(college,currAYear,profile)=>{
     console.log(profile)
     const dataUri=college.logo
@@ -106,11 +105,6 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
             ]
         }
     }
-    
-    
-    
-    
-    
     let boardResultList=[                
         [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
         [{text:'Subject',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Theory (Obtained)',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Theory (Out of)',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Practical (Obtained)',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Practical (Out of)',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}}],
@@ -206,6 +200,159 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
         defaultStyle:{fontSize:11}
         }).open()
 }
+const acpc_profile_print=async(college,currAYear,profile)=>{
+    console.log(profile)
+    const dataUri=college.logo
+    console.log(dataUri);
+    const titleText=`${college.name}
+                        Managed By: The New English School Trust ACPC Application Form (${currAYear})`
+        const headerTbl1={         
+        headerRows:0,
+        widths:[50,'*'],
+
+
+        body:[
+            [   
+                {alignment:'left',image:dataUri,fit:[50,50]},
+                {alignment:'center',fontSize:12,bold:true,text:titleText},
+            ]
+        ]
+    }  
+    let admissionRecord={        
+        table: {
+            headerRows:0,
+            widths:['*','*','*','*','*','*'],
+            body: [
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+                [   
+                    {text:'ACPC Number: ',style:{alignment:'center'}},{text:profile.acpcnumber,style:{alignment:'center'}},
+                    {text:'ACPC Merit Number: ',style:{alignment:'center'}},{text:profile.acpc_meritnumber,style:{alignment:'center'}},
+                    {text:'Entrance Exam Number: ',style:{alignment:'center'}},{text:profile.entr_examnumber,style:{alignment:'center'}},
+                ],
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+            ]
+        }
+    }  
+    const stuName=`${profile.title} ${profile.first_name} ${profile.middle_name} ${profile.last_name}`    
+    let personalRecord={        
+        table: {
+            headerRows:0,
+            widths:['*','*','*','*'],
+            body: [
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+                [   
+                    {text:'Name ',style:{bold:true}},{text:stuName,colSpan:3}
+                ],
+                [
+                    {text:'Current Address ',style:{bold:true}},{text:profile.present_addr1+'\n'+profile.present_addr2,colSpan:3}
+                ],
+                [
+                    {text:'State ',style:{bold:true}},{text:profile.present_state},                    
+                    {text:'Country',style:{bold:true}},{text:profile.present_country}
+                ],
+                [
+                    {text:'City ',style:{bold:true}},{text:profile.present_city},
+                    {text:'Pincode ',style:{bold:true}},{text:profile.present_zipcode}
+                ],                
+                [
+                    {text:'Contact ',style:{bold:true}},{text:profile.contact,colSpan:3},
+                ],
+                [{text:'Email ',style:{bold:true}},{text:profile.email,colSpan:3}],
+                [
+
+                    {text:'Birth Date ',style:{bold:true}},{text:new Date(profile.dob).toLocaleDateString('en-IN')},
+                    {text:'Gender ',style:{bold:true}},{text:profile.gender}
+                ],
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+            ]
+        }
+    }
+    let academicRecord={        
+        table: {
+            headerRows:0,
+            widths:['*','*'],
+            body: [                
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+                [
+                    {text:'Exam Board ',style:{bold:true}},
+                    {text:profile.board_name}
+                ],
+                [
+                    {text:'Last School Name ',style:{bold:true}},{text:profile.last_schoolname}],
+                [{text:'Last School City ',style:{bold:true}},{text:profile.last_schoolcity}
+                ],
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+            ]
+        }
+    }
+    
+    let boardResultList=[                
+        [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+        [{text:'Subject',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Result',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}}],
+    ]
+
+
+    profile.subjectResultList.forEach(ob=>{
+        let record=[{text:ob.subName,style:{alignment:'center',bold:true}}]
+        record.push({text:ob.result,style:{alignment:'center',bold:true}})
+        boardResultList.push(record)
+    })
+    let boardDetail={        
+        table: {
+            headerRows:0,    
+            widths:['*','*'],
+            body: boardResultList
+        }
+    }
+    const footText=`I hereby declare that the details furnished above are true and correct to the best of my knowledge and belief.`
+    let form_number=profile?.id
+    let reportDefination=[        
+        {
+            table:headerTbl1,
+        },
+        {
+            margin:[0,5,0,0],
+            columns: [
+                {margin:[10,0,10,0],text:`${form_number}`,style:{bold:true,alignment:'left',fontSize:11}}, 
+    
+                {margin:[10,0,10,0],text:`Applied For: ${profile.admission_category}`,style:{bold:true,alignment:'right',fontSize:11}},
+            ]
+        },
+        admissionRecord,
+        separator('PERSONAL DETAILS'),     
+        personalRecord,
+        separator('ACADEMIC DETAILS'),     
+        academicRecord, 
+        separator('BOARD EXAM RESULT'),
+        boardDetail,
+        {margin:[0,5,0,14],text:footText,style:{fontSize:11,alignment:'justify',bold:false}},
+		{margin:[0,0,0,0],text:"____________________",style:{alignment:'right',bold:true}},
+		{margin:[0,0,0,0],text:"Signature",style:{alignment:'right',bold:true}}
+    ]
+    pdfMake.fonts = {
+        Courier: {
+            normal: 'Courier',
+            bold: 'Courier-Bold',
+            italics: 'Courier-Oblique',
+            bolditalics: 'Courier-BoldOblique'
+        },
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
+        }
+        pdfMake.createPdf({pageOrientation:'portrait',
+        content:reportDefination,
+        defaultStyle:{fontSize:11}
+        }).open()
+}
+
+
+
+
+
 
 const mqnri_recipt_print=async (id,selectedCategory,selectedBranch)=>{    
     const studentInfo=await getStudentInfo(id)
@@ -236,6 +383,16 @@ const mqnri_recipt_print=async (id,selectedCategory,selectedBranch)=>{
         }        
     ]
     pdfMake.createPdf({content:reportDefination,pageOrientation: 'landscape',pageSize: 'A5'}).open()
-
 }
-export {mqnri_profile_print,mqnri_recipt_print}
+
+
+
+
+
+
+
+
+
+
+const acpc_recipt_print=async (id,selectedCategory,selectedBranch)=>{}    
+export {acpc_profile_print,acpc_recipt_print,mqnri_profile_print,mqnri_recipt_print}

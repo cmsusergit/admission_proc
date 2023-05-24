@@ -21,7 +21,23 @@
     "categoryList":["OPEN","SEBC","SC","ST","PH","OTHER"],
     "nationalityList":["Indian","Foreign"],
     "occupationList":["Business","Service","Self Employed","Housewife","Retired","-"],
-    "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","OTHER"]
+    "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","OTHER"],
+    "admissionCategoryList":[
+        {"category":"Centralized","alias":"G"},
+        {"category":"TFWS","alias":"T"},
+        {"category":"Freeship","alias":"F"},
+        {"category":"VACANT","alias":"V"}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ]
 }
 
 
