@@ -12,7 +12,7 @@
 
 
     export let data
-    let loading=false
+    let loading=false,branchList=[]
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
     let columnList=[
@@ -34,7 +34,11 @@
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
-        })         
+        })        
+        branchList=[]
+        _.forEach(_.uniqBy(dataTable,ob=>ob.branch),ob=>{
+            branchList.push(ob.Branch)
+        })
     }   
     onMount(()=>{          
         $college=data?.college
@@ -42,7 +46,6 @@
     const updateRecord=(record)=>{        
         goto(`/admissionform/provsional?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${data?.college.id}`)        
     }
-
     const displayRecord=(record)=>{
         goto(`/profile/provsional?id=${record.id}`)        
     }
@@ -78,9 +81,16 @@
                 let temp=_.omit(ob,["academic_year","is_removed","is_approved","is_d2d","name","approved_by","Course","Branch","Brach"])
                 list1.push(temp)
             })
-            const wsheet=XLSX.utils.json_to_sheet(list1)
-            const wb=XLSX.utils.book_new()            
-            XLSX.utils.book_append_sheet(wb,wsheet,"prov_info")
+            const wb=XLSX.utils.book_new()        
+            branchList.forEach(ob=>{            
+
+                const temp1=list1.filter(tt=>tt.branch==ob.name)
+                console.log(temp1);
+                const wsheet=XLSX.utils.json_to_sheet(temp1)
+                let fname=ob.name.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                .replace(/\s{2,}/g," ");
+                XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
+            })
             XLSX.writeFile(wb,"provforminfo.xlsx")
             loading=false
     }
