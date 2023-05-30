@@ -32,7 +32,7 @@
     const handleChange=(event,field)=>{
         if(event.target.value){
             dataTable=_.filter(data,ob=>{
-                return ob[field]==event.target.value.trim()
+                return ob[field].trim()==event.target.value.trim()
             })
         }
         else{
@@ -42,8 +42,8 @@
     }
     const handleInput=(event,field)=>{
         if(event.target.value){
-            dataTable=_.filter(data,ob=>{
-                return ob[field].toLowerCase().includes(event.target.value.toLowerCase())
+            dataTable=_.filter(data,ob=>{ 
+                return (''+ob[field])?.toLowerCase().includes(event.target.value.toLowerCase())
             })
         }
         else{
@@ -108,11 +108,11 @@
                         <td class="border border-slate-400 text-center py-2">{((currPage-1)*pageSize)+indx+1}</td>
                         {#each columnlist as column}
                             {#if !column.slot}
-                                <td class={`border border-slate-400 text-center px-2 py-2 ${column?.class}`}>{record[column.field]}</td>
+                                <td class={`border border-slate-400 text-center px-2 py-2 ${column?.class}`}>{record[column.field]?record[column.field]:'-'}</td>
                             
                             
                             {:else}
-                                <td class={`border border-slate-400 text-center py-2 px-2 ${column?.class}`}>                     
+                                <td class={`border border-slate-400 text-center py-2 px-2 ${column?.class}`}>                                                         
                                     <slot currRecord={record} name="action"></slot>
                                 </td>
 

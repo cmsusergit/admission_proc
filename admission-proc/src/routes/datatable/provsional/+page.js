@@ -11,7 +11,7 @@ export async function load({ params,url }) {
         return {error:error.message}
 
 
-    let { data:dataTable, error:dt_err } = await supabase
+    let { data:dataTable, error:dt_err } = await supabase 
     .from('ProvFormInfo')
     .select(`*,Course!inner(*),Branch(name,alias)`)
     .filter('academic_year','eq',ayear_id)

@@ -1,10 +1,10 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte"
 
     const dispatch =createEventDispatcher()
 </script>
 
-<div id="basicModal">
+<div id="basicModal"> 
     <div class="relative z-10">
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
         <div class="fixed z-10 inset-0 overflow-y-auto">

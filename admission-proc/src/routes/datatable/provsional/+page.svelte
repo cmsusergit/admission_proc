@@ -17,11 +17,13 @@
     let collectFeeRecord=-1,role=null
     let columnList=[
         {name:'ID',field:'id',searchable:true,sortable:true},
+        {name:'Form Number',field:'form_number',searchable:true,sortable:true},
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
+        {name:'Is D2D?',field:'isd2d',selectable:true,sortable:true},
         {slot:true}
     ]
     $:processData(data)    
@@ -34,6 +36,7 @@
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
+            ob['isd2d']=ob.is_d2d?'Y':'N'
         })        
         branchList=[]
         _.forEach(_.uniqBy(dataTable,ob=>ob.branch),ob=>{
@@ -83,11 +86,10 @@
             })
             const wb=XLSX.utils.book_new()        
             branchList.forEach(ob=>{            
-
                 const temp1=list1.filter(tt=>tt.branch==ob.name)
                 console.log(temp1);
                 const wsheet=XLSX.utils.json_to_sheet(temp1)
-                let fname=ob.name.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
                 .replace(/\s{2,}/g," ");
                 XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
             })
@@ -110,6 +112,8 @@
                     {#if !loading}Export Excel{:else}Loading....{/if}
                 </button>
             </div>
+            
+            
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>

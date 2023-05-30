@@ -117,10 +117,10 @@ onMount(async()=>{
             pdfMake.createPdf({pageOrientation:'portrait',
             content:reportDefination,
             defaultStyle:{fontSize:11}
-            }).open()
-    
+            }).open()    
     }
 </script>
+
 <Modal on:close={()=>{dispatch('close')}}>
     <div slot="header">Fee Collection</div>
     <div slot="content">

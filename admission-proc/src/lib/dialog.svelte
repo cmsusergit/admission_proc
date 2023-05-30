@@ -1,10 +1,10 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte"
 
-    const dispatch =createEventDispatcher()
+    const dispatch =createEventDispatcher() 
 </script>
 
-<div id="basicModal">
+<div id="basicModal">  
     <button class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
             aria-controls="basic-modal"
     >Open Basic Modal</button>
@@ -18,7 +18,7 @@
                     <div class="w-full bg-gray-100 text-lg font-bold p-2 text-slate-800">
                         <slot name="header"></slot>
                     </div>
-                    <div class="h-24 w-full p-2 text-slate-800 text-lg text-center">
+                    <div class="h-full w-full p-2 text-slate-800 text-lg text-center">
                         <slot name="content"></slot>
                     </div>
     

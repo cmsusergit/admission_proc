@@ -24,19 +24,22 @@
     "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","OTHER"],
     "admissionCategoryList":[
         {"category":"Centralized","alias":"G"},
-        {"category":"TFWS","alias":"T"},
+        {"category":"TFWS","alias":"T"},        
         {"category":"Freeship","alias":"F"},
-        {"category":"VACANT","alias":"V"}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        {"category":"VACANT","alias":"V"},
+
+
+
+
+
+
+
+
+
+
+
+        {"category":"Freeship/Centralized","alias":"GF"},
+        {"category":"Freeship/VACANT","alias":"VF"}
     ]
 }
 
