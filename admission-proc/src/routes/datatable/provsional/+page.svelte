@@ -104,16 +104,14 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
-
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
             <div class="flex justify-end">            
                 <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
                     {#if !loading}Export Excel{:else}Loading....{/if}
                 </button>
+            
             </div>
-            
-            
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>

@@ -24,7 +24,7 @@ export async function load({ params,url }) {
     .filter('Course.college_id','eq',college_id)
     if(dt_err)
         return {error:dt_err.message}
-    return {    
+    return {     
         college,academicYear,
         dataTable
     }}
