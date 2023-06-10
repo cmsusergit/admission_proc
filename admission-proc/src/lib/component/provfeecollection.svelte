@@ -41,13 +41,13 @@
             alert("Record Inserted")     
             let { data: form_number, error:err1 } = await supabase
             .from('ProvFormInfo')
-            .select('form_number')
+            .select('*').eq('id',collectFeeRecord.id).single()
             if(err1){
                 console.log('****',err1)
                 return
             }
 
-            generateReceipt(data,form_number)
+            generateReceipt(data,form_number?.form_number)
             dispatch("close")
         }
     }
