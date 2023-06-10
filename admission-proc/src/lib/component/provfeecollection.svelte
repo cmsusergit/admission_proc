@@ -35,18 +35,25 @@
         ).select().single()
         if(error){
             alert(error.message)
+            return
         }
-
         if(data){
             alert("Record Inserted")     
-            generateReceipt(data)
+            let { data: form_number, error:err1 } = await supabase
+            .from('ProvFormInfo')
+            .select('form_number')
+            if(err1){
+                console.log('****',err1)
+                return
+            }
+
+            generateReceipt(data,form_number)
             dispatch("close")
         }
     }
-    const generateReceipt=(record)=>{
+    const generateReceipt=(record,form_number)=>{
         console.log(collectFeeRecord);
         const subtitle1="Rajupura village,Vasad,anand,Gujarat-388306,India.ph. 9510782983. Web:www.svitvasad.ac.in, Email:admission@svitvasad.ac.in"
-
         const dataUri=$college.logo
         const currDt=new Date(record.collected_on)
         const currDtStr=String(currDt.getDate()).padStart(2,'0')+'-'+String(currDt.getMonth()+1).padStart(2,'0')+'-'+currDt.getFullYear()
@@ -72,7 +79,7 @@
                         [{fontSize:12,alignment:'right',text:'(Student Copy)'}],
                         [titleContent],                        
                         [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
-                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${collectFeeRecord.form_number}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
+                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
                         [{margin:[20,10,20,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
                         [{margin:[20,25,20,2],fontSize:10,bold:true,alignment:'right',text:"Receiver Signature\nSVIT,Vasad"}]
                     ]
@@ -145,8 +152,7 @@
                                     <td class="py-1 border">{new Date(record?.collected_on).toDateString()}</td>
                                     <td class="py-1 border">{record?.amount}</td>
                                     <td class="py-1 border">
-
-                                        <button on:click={()=>generateReceipt(record)} class="bg-blue-500 hover:bg-blue-400 px-2 py-1 text-white border rounded-md">
+                                        <button on:click={()=>generateReceipt(record,collectFeeRecord.form_number)} class="bg-blue-500 hover:bg-blue-400 px-2 py-1 text-white border rounded-md">
                                             <svg fill="none" width="28" height="28" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M5 2H3v20h2v-2h2v2h2v-2h2v2h2v-2h2v2h2v-2h2v2h2V2h-2v2h-2V2h-2v2h-2V2h-2v2H9V2H7v2H5V2zm2 2h2v2h2V4h2v2h2V4h2v2h2v12h-2v2h-2v-2h-2v2h-2v-2H9v2H7v-2H5V6h2V4zm0 4h10v2H7V8zm10 4H7v2h10v-2z" fill="currentColor"/> </svg>
                                         </button>
                                     </td>
@@ -162,13 +168,6 @@
             </div>
         </div>                
     </div>
-
-
-
-
-
-
-    
     <div slot="foot">
         <div class="">
             <button on:click={collectFee} class="px-2 py-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-blue-400 rounded disabled:bg-gray-400 uppercase w-48" type="button">submit</button>

@@ -11,6 +11,7 @@
     import Spinner from '$lib/spinner.svelte'
     import Dashboard from './dashboard/+page.svelte'
 
+    import DeoDashboard from '$lib/component/deo_dashboard.svelte'
     export let data
     onMount(() => {
         const {
@@ -21,10 +22,9 @@
         return () => {
         subscription.unsubscribe()
         }        
+    
     })
 </script>
-<!-- <div>{JSON.stringify($page.data?.session?.user?.user_metadata?.role)}</div>
--->
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
     {#if !$page.data.session}
         {#if $page.route.id.includes('admissionform/mqnri')}    
@@ -47,11 +47,38 @@
         {/if}
         <Header/>
         <div>
-            <slot></slot>
+            {#if $page.data.session.user.user_metadata.role=='deo'}
+                {#if $page.route.id.includes('admissionform/acpc') || $page.route.id.includes('admissionform/mqnri')}    
+                    <slot></slot>
+                {:else}
+                    <DeoDashboard></DeoDashboard>
+                {/if}
+            {:else}
+                <slot></slot>
+            {/if}
         </div>
     {/if}
-
     <div class="border-t-2 text-xl py-4 text-slate-800 border-slate-800 w-full font-bold text-center">
         &copy; Sardar Vallabhbhai Patel Group of Institutes,Vasad.
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

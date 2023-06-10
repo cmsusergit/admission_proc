@@ -7,19 +7,23 @@
     import Dialog from '$lib/dialog.svelte'
     import _ from 'lodash'
     import {supabase} from '$lib/db'
-    import Provfeecollection from '$lib/component/provfeecollection.svelte';
+    import Provfeecollection from '$lib/component/provfeecollection.svelte'
+    import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
     import * as XLSX from 'xlsx/xlsx.mjs';
     
-
     export let data
     let loading=false
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
+    let meritRecord=-1
     let columnList=[
+        {name:'Form ID',field:'id',searchable:true,sortable:true},
+        {name:'Merit Number',field:'merit_number',sortable:true},
+        {name:'Merit Percentile',field:'total_merit'},
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
-        {name:'AmissionCategory',field:'admission_category',selectable:true,sortable:true},
+        {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
         {slot:true}
     ]
@@ -30,14 +34,25 @@
     }
     const processData=(data)=>{
         dataTable=_.forEach(data.dataTable,ob=>{
-            ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
-            ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
-        })         
+                ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
+                ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
+            })         
+        dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
+        _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
+            ob['merit_number']=indx+1
+        })
+        _.forEach(_.filter(dataTable,ob=>ob.admission_category=='N' || ob.admission_category=='B'),(ob,indx)=>{      
+            ob['merit_number']=indx+1
+        })
     }   
     onMount(()=>{          
         $college=data?.college
         $academicYear=data?.academicYear
     })
+    const updateMeritResult=(record)=>{
+        console.log('----',record)
+        meritRecord=record
+    }
     const updateRecord=(record)=>{        
         goto(`/admissionform/mqnri?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${data?.college.id}`)        
     }
@@ -49,7 +64,6 @@
             .from('MQNRIFormInfo')
             .update({ is_approved: flag })
             .eq('id', record.id)
-
         if(error)
             alert(error.message)
         else
@@ -74,7 +88,6 @@
             let list1=new Array()            
             dataTable.map(ob=>{
                 let temp=_.pick(ob,["id","admission_category","title","first_name","middle_name","last_name","created_at","contact","email",
-                
                 "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","acpcnumber","acpc_merinumber"])
                 list1.push(temp)
             })
@@ -92,10 +105,8 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
-
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
-
             <div class="flex justify-end">            
                 <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
                     {#if !loading}Export Excel{:else}Loading....{/if}
@@ -105,33 +116,29 @@
                 columnlist={columnList}>
                 <div slot='action'>
                         {#if role=='admin'}
-                        <div class="flex justify-center space-x-2 items-center">
-                            <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
-                                <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
-                            </button>
-                            <button on:click={()=>updateRecord(record)} class="hover:bg-amber-400 bg-amber-500 p-1 text-white rounded">
-                                <svg width="24" stroke-width="1.5" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M20 12V5.74853C20 5.5894 19.9368 5.43679 19.8243 5.32426L16.6757 2.17574C16.5632 2.06321 16.4106 2 16.2515 2H4.6C4.26863 2 4 2.26863 4 2.6V21.4C4 21.7314 4.26863 22 4.6 22H11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M8 10H16M8 6H12M8 14H11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M16 5.4V2.35355C16 2.15829 16.1583 2 16.3536 2C16.4473 2 16.5372 2.03725 16.6036 2.10355L19.8964 5.39645C19.9628 5.46275 20 5.55268 20 5.64645C20 5.84171 19.8417 6 19.6464 6H16.6C16.2686 6 16 5.73137 16 5.4Z" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M17.9541 16.9394L18.9541 15.9394C19.392 15.5015 20.102 15.5015 20.5399 15.9394V15.9394C20.9778 16.3773 20.9778 17.0873 20.5399 17.5252L19.5399 18.5252M17.9541 16.9394L14.963 19.9305C14.8131 20.0804 14.7147 20.2741 14.6821 20.4835L14.4394 22.0399L15.9957 21.7973C16.2052 21.7646 16.3988 21.6662 16.5487 21.5163L19.5399 18.5252M17.9541 16.9394L19.5399 18.5252" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> </svg>
-                            </button>
-                            <button on:click={()=>recordToRemove=record.id} class="hover:bg-orange-700 bg-orange-800 p-1 text-white rounded">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M17 22H7C5.89543 22 5 21.1046 5 20V7H3V5H7V4C7 2.89543 7.89543 2 9 2H15C16.1046 2 17 2.89543 17 4V5H21V7H19V20C19 21.1046 18.1046 22 17 22ZM7 7V20H17V7H7ZM9 4V5H15V4H9ZM15 18H13V9H15V18ZM11 18H9V9H11V18Z" fill="currentColor"/> </svg>
-                            </button>
-                            {#if record.is_approved==1}
-                                <button on:click={()=>{collectFeeRecord=record}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
-                                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
+                            <div class="flex justify-center space-x-2 items-center">
+                                <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
+                                    <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
                                 </button>
-
-
-
-
-
-
-                                {:else if record.is_approved==0}
-                                    <span class="text-sm text-orange-800 p-2 bg-orange-400 rounded-md text-center">Rejected</span>
-                                {:else}
-
-                                    <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
-                            {/if}
-                        </div>
+                                <button on:click={()=>updateMeritResult(record)} class="hover:bg-blue-400 bg-blue-500 p-1 text-white rounded">
+                                    <svg width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 30 30.000001" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="id1"><path d="M 5.492188 2.902344 L 24.363281 2.902344 L 24.363281 26.128906 L 5.492188 26.128906 Z M 5.492188 2.902344 " clip-rule="nonzero"/></clipPath></defs><g clip-path="url(#id1)"><path fill="white" d="M 24.300781 25.355469 L 19.851562 16.890625 C 22.324219 15.730469 23.835938 13.28125 23.835938 10.359375 C 23.835938 5.832031 20.496094 2.902344 15.324219 2.902344 L 6.019531 2.902344 C 5.730469 2.902344 5.492188 3.140625 5.492188 3.429688 L 5.492188 25.601562 C 5.492188 25.890625 5.730469 26.128906 6.019531 26.128906 L 9.6875 26.128906 C 9.976562 26.128906 10.210938 25.890625 10.210938 25.601562 L 10.210938 17.683594 L 14.929688 17.683594 L 19.222656 25.847656 C 19.3125 26.019531 19.492188 26.128906 19.683594 26.128906 L 23.835938 26.128906 C 24.019531 26.128906 24.191406 26.03125 24.285156 25.875 C 24.378906 25.714844 24.386719 25.519531 24.300781 25.355469 Z M 14.941406 13.988281 L 10.210938 13.988281 L 10.210938 6.597656 L 14.84375 6.597656 C 17.5 6.597656 19.121094 8.007812 19.121094 10.300781 C 19.121094 12.640625 17.597656 13.988281 14.941406 13.988281 Z M 14.941406 13.988281 " fill-opacity="1" fill-rule="nonzero"/></g></svg>
+                                </button>
+                                <button on:click={()=>updateRecord(record)} class="hover:bg-amber-400 bg-amber-500 p-1 text-white rounded">
+                                    <svg width="24" stroke-width="1.5" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M20 12V5.74853C20 5.5894 19.9368 5.43679 19.8243 5.32426L16.6757 2.17574C16.5632 2.06321 16.4106 2 16.2515 2H4.6C4.26863 2 4 2.26863 4 2.6V21.4C4 21.7314 4.26863 22 4.6 22H11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M8 10H16M8 6H12M8 14H11" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M16 5.4V2.35355C16 2.15829 16.1583 2 16.3536 2C16.4473 2 16.5372 2.03725 16.6036 2.10355L19.8964 5.39645C19.9628 5.46275 20 5.55268 20 5.64645C20 5.84171 19.8417 6 19.6464 6H16.6C16.2686 6 16 5.73137 16 5.4Z" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> <path d="M17.9541 16.9394L18.9541 15.9394C19.392 15.5015 20.102 15.5015 20.5399 15.9394V15.9394C20.9778 16.3773 20.9778 17.0873 20.5399 17.5252L19.5399 18.5252M17.9541 16.9394L14.963 19.9305C14.8131 20.0804 14.7147 20.2741 14.6821 20.4835L14.4394 22.0399L15.9957 21.7973C16.2052 21.7646 16.3988 21.6662 16.5487 21.5163L19.5399 18.5252M17.9541 16.9394L19.5399 18.5252" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/> </svg>
+                                </button>
+                                <button on:click={()=>recordToRemove=record.id} class="hover:bg-orange-700 bg-orange-800 p-1 text-white rounded">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M17 22H7C5.89543 22 5 21.1046 5 20V7H3V5H7V4C7 2.89543 7.89543 2 9 2H15C16.1046 2 17 2.89543 17 4V5H21V7H19V20C19 21.1046 18.1046 22 17 22ZM7 7V20H17V7H7ZM9 4V5H15V4H9ZM15 18H13V9H15V18ZM11 18H9V9H11V18Z" fill="currentColor"/> </svg>
+                                </button>
+                                {#if record.is_approved==1}
+                                    <button on:click={()=>{collectFeeRecord=record}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
+                                        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
+                                    </button>
+                                    {:else if record.is_approved==0}
+                                        <span class="text-sm text-orange-800 p-2 bg-orange-400 rounded-md text-center">Rejected</span>
+                                    {:else}
+                                        <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
+                                {/if}
+                            </div>
                         {:else}
                             {#if record.is_approved==2}
                                 <button on:click={()=>setApproved(record,1)} class="hover:bg-green-700 bg-green-800 p-2 text-white rounded">
@@ -173,10 +180,9 @@
         <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
     {/if}
 </div>
+<div>    
+    {#if meritRecord!=-1}
 
-
-
-
-
-
-
+        <MeritDlg meritRecord={meritRecord} on:close={()=>{meritRecord=-1}}/>
+    {/if}
+</div>

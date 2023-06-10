@@ -1,6 +1,7 @@
 <script>
     import {supabase} from '$lib/db'
 
+    import {goto}  from '$app/navigation'
     let email,password
     let mesg='',loading=false
     const handleLogin=async()=>{
@@ -8,14 +9,15 @@
                 loading = true
                 const { error } = await supabase.auth.signInWithPassword({ email,password })
                 if (error) {
+                    
+                    
                     if(error instanceof Error)
                         mesg=error.message
-
                 }                
                 else{
                     mesg=''
-                }        
-                
+                    goto('/')
+                }   
         } catch (error) {
             if (error instanceof Error) {
                 mesg=error.message

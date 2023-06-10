@@ -11,7 +11,6 @@
     import _ from 'lodash'
     export let data
 
-    
     let sameAddrSelected=false,is_d2d=false
     let isAICTEAccepted=false,isConditionAccepted=false    
     let boardList=['SSC','HSC']
@@ -125,8 +124,8 @@
             })            
         }
         else{
-            $form.academic_year=data.academicYear.id
-            $form.college_id=data.college.id    
+            $form.academic_year=data.academicYear?.id
+            $form.college_id=data.college?.id    
             $form.admission_category="G"
             $form.is_d2d=false
             $form.boardList=[]
@@ -271,12 +270,8 @@
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a Form</h1>
     </div>
 {:else}
-
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
-        
-        
-        
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
                 <div class="flex flex-col w-full md:w-1/2 m-1 px-1">
@@ -304,7 +299,6 @@
                             {/each}
                         {/if}
                     </select> 
-
                 </div>    
                 <div class="flex flex-col w-full m-1 px-2">                    
                     <label for="course" class="font-bold">Select Branch <span class="text-sm text-red-500">*</span></label>
@@ -617,7 +611,7 @@
                 </div>
 
 
-                {#if data?.courselist.find(ob=>{return ($form.course==ob.id && ob.alias=="B.E.")})}
+                {#if data?.courselist?.find(ob=>{return ($form.course==ob.id && ob.alias=="B.E.")})}
                     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
                     <div class="text-indigo-800 overflow-x-auto">
                         {#if $form.subjectResultList}
@@ -647,8 +641,9 @@
                     <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
                         {#each uploadFileList as uploadFile}    
                            
-                        <!-- <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/>  -->
-                        <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/> 
+                        <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/> 
+                        <!-- <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/>  
+                        -->
                         {/each}
                     </div>
                 </div>           

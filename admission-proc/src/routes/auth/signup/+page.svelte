@@ -2,13 +2,12 @@
     import {supabase} from '$lib/db'
 
     let email,password
-    let role="admin"
+    let confirmPassword
+    let role=""
     let mesg='',loading=false
-
     const handleSignUp=async()=>{
         try{
                 loading = true
-                
                 
                 
                 
@@ -63,24 +62,33 @@
                                     <input bind:value={email} type="email" id="email" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Email" required>
                                 </div>
                                 <div>
+                                    {#if password!==confirmPassword}
+                                        <span class="text-orange-500 text-sm">Password Does Not Matches</span>
+                                    {/if}
                                     <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
                                     <input bind:value={password} type="password" id="password" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Password" required>
+                                </div>
+                                <div>
+                                    <label for="password1" class="block mb-2 text-sm font-medium text-white">Password</label>
+                                    <input bind:value={confirmPassword} type="password" id="password1" class="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-lgfocus:border-gray-200 block w-full p-2.5 placeholder-gary-200 focus:ring-blue-500 focus:border-blue-500" placeholder="Confirm Password" required>
                                 </div>
                                 <div class="px-2 w-full">
                                     <label for="password" class="block mb-2 text-sm font-medium text-white">Role</label>
                                     <select bind:value={role} class="w-full border font-normal text-sm p-2.5 text-center rounded">
-                                        {#each ["","admin","trustee","-"] as temp}
+                                        {#each ["","deo","admin","trustee","-"] as temp}
                                             <option>{temp}</option>
                                         {/each}
                                     </select>
                                 </div>
-                                <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading}>
-                                    {#if loading}
-                                        Please Wait....
-                                    {:else}
-                                        SignUp
-                                    {/if}
-                                </button>                      
+                                <div class="px-2 py-2">
+                                    <button type="submit" class="w-full border text-slate-800 bg-white hover:text-slate-500 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 uppercase text-center disabled:bg-slate-400 disabled:text-white" disabled={loading || password!==confirmPassword}>
+                                        {#if loading}
+                                            Please Wait....
+                                        {:else}
+                                            SignUp
+                                        {/if}
+                                    </button>                      
+                                </div>
                             </form>
 
                         </div>

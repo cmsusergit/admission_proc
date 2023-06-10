@@ -30,7 +30,8 @@
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
             ob['formnumber']=ob.admission_category+ob.form_number[ob.admission_category]   
-        })         
+        })  
+        dataTable=_.orderBy(dataTable,['created_at'],['desc'])
     }   
     onMount(()=>{          
         $academicYear=data?.academicYear
