@@ -11,6 +11,7 @@
     $:dataTable=[...data],currPage=1//....
             //....
 
+    let searchParamList=[]
     $:getSelectableColumnList(data)
     $:st=(currPage-1)*pageSize
     $:en=(currPage-1)*pageSize+pageSize
@@ -29,16 +30,41 @@
     onMount(()=>{        
         getSelectableColumnList(data)
     })
+
+
+
+
+
+
+
     const handleChange=(event,field)=>{
-        if(event.target.value){
-            dataTable=_.filter(data,ob=>{
-                return ob[field].trim()==event.target.value.trim()
-            })
+        const value=event.target.value.trim()
+        if(value && field){
+            const temp1=searchParamList.find(ob=>ob.field==field)
+            if(temp1)
+                temp1.value=value
+            else
+                searchParamList.push({field:field,value:value})
         }
         else{
-            dataTable=[...data]//....
-            //....
+            _.remove(searchParamList,ob=>ob.field==field)
         }
+        console.log('****',searchParamList)
+        dataTable=[...data]//....
+        //....
+        if(searchParamList.length>0){
+            dataTable=_.filter(data,ob=>{
+                let rr=true
+                _.forEach(searchParamList,pp=>{
+                    rr=rr & (ob[pp.field].trim()==pp.value)
+                })
+                return rr
+            })
+        }
+        // else{
+        //     dataTable=[...data]//....
+        //     //....
+        // }
     }
     const handleInput=(event,field)=>{
         if(event.target.value){

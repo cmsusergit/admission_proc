@@ -68,14 +68,14 @@
                 </h2>                
                 <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
             </div>
-            {#if profile?.merit_number}
-                <div class="bg-white my-4 p-2 text-left">
-                    <h2 class="text-xl text-slate-700 px-4 font-bold">Merit Number</h2>                
+            <!-- {#if profile?.merit_number}
+                <div class="bg-orange-500 my-4 p-2 text-center">
+                    <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                     {#each profile?.merit_number as record}                   
-                        <span class="text-2xl text-slate-700 px-4 font-bold">{record.category=='M'?'Management Quata':'NRI'}-{record.number}</span>
+                        <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quata':'NRI'}-{record.number}</span>
                     {/each}
                 </div>
-            {/if}
+            {/if} -->
             <div class="text-gray-800 w-full shadow sm:rounded-lg">
                 <div class="bg-white border rounded my-2 text-gray-800">
                     <table class="border-slate-500 border w-full p-2">                        

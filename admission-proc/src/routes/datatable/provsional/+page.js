@@ -15,7 +15,6 @@ export async function load({ params,url }) {
     .from('ProvFormInfo')
     .select(`*,Course!inner(*),Branch(name,alias)`)
     .filter('academic_year','eq',ayear_id)
-    // 
     // .filter('is_removed','eq',false)
     .filter('Course.college_id','eq',college_id)
     if(dt_err)

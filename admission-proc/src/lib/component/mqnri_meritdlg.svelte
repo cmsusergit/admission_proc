@@ -32,6 +32,7 @@
 <Modal on:close={()=>{dispatch('close')}}>
     <div slot="header">Merit Information</div>
     <div slot="content">  
+        <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">ACPC Number: {meritRecord.acpcnumber}</p>
         <div class="flex flex-col">
             <label class="font-bold text-sm" for="acpc_meritnumber">ACPC Merit Number</label>
             <input type="number" step="1" class="input" min="0" bind:value={meritRecord.acpc_meritnumber} name="acpc_meritnumber">
