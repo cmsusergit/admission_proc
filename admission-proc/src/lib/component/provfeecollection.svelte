@@ -58,7 +58,7 @@
         const currDt=new Date(record.collected_on)
         const currDtStr=String(currDt.getDate()).padStart(2,'0')+'-'+String(currDt.getMonth()+1).padStart(2,'0')+'-'+currDt.getFullYear()
         const paidamt=record.amount
-        const contentText=`Received from "${collectFeeRecord.title?collectFeeRecord.title:''} ${collectFeeRecord.first_name?collectFeeRecord.first_name:''} ${collectFeeRecord.middle_name?collectFeeRecord.middle_name:''} ${collectFeeRecord.last_name?collectFeeRecord.last_name:''}" the sum of rupees ${paidamt} in words ${wordify(Number.parseFloat(paidamt))} Only on the account of applied for ${collectFeeRecord.Course.name} (${collectFeeRecord.Branch.name})`
+        const contentText=`Received from "${collectFeeRecord.title?collectFeeRecord.title:''} ${collectFeeRecord.first_name?collectFeeRecord.first_name:''} ${collectFeeRecord.middle_name?collectFeeRecord.middle_name:''} ${collectFeeRecord.last_name?collectFeeRecord.last_name:''}" the sum of rupees ${paidamt} in words ${wordify(Number.parseFloat(paidamt))} Only on the account of applied for ${collectFeeRecord.Course.name} (${collectFeeRecord.Branch.name} ${collectFeeRecord.is_d2d?'-D2D':''})`
         const titleText=`${$college.name}`
         let titleContent={columns:[]}
         if(dataUri)
@@ -76,7 +76,7 @@
                 border: [false, false, false, false],
                 table:{
                     body:[
-                        [{fontSize:12,alignment:'right',text:'(Student Copy)'}],
+                        [{fontSize:10,alignment:'right',text:'(Student Copy)'}],
                         [titleContent],                        
                         [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
                         [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
