@@ -20,11 +20,16 @@
         {name:'Form ID',field:'id',searchable:true,sortable:true},
         {name:'Merit Number',field:'merit_number',sortable:true},
         {name:'Merit Percentile',field:'total_merit'},
+        
+        {name:'ACPC Merit Number',field:'acpc_meritnumber',sortable:true},
+        {name:'ACPC Application Number',field:'acpcnumber',sortable:true},
+
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
+
         {slot:true}
     ]
     $:processData(data)    

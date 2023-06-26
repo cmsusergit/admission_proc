@@ -102,6 +102,7 @@ const handleSubmit=(record)=>{
     const dt=_.omit(record.detail,['AdmissionFeesCategory','AdmissionFeesScheme','Course','fees_category_name','course_name','fees_scheme_name'])
     dt['academic_year']=selectedAyear
     insertRecord(dt)
+    invalidateAll()
 }
 </script>
 <div class="bg-white w-full">    
