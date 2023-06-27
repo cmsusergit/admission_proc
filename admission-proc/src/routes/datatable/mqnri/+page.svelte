@@ -110,6 +110,7 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
+
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
             <div class="flex justify-end">            
@@ -170,6 +171,8 @@
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
 </div>
+
+
 <div>
     {#if recordToRemove!=-1}
         <Dialog>
