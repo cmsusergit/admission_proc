@@ -15,6 +15,7 @@
     $:getSelectableColumnList(data)
     $:st=(currPage-1)*pageSize
     $:en=(currPage-1)*pageSize+pageSize
+    $:localStorage.currPage=currPage
     $:totalPage=Math.ceil(dataTable.length/pageSize)
     $:{
         if(sortableField){
@@ -29,8 +30,14 @@
     }
     onMount(()=>{        
         getSelectableColumnList(data)
-        currPage=localStorage.getItem('currPage')
     })
+
+
+
+
+
+
+
     const handleChange=(event,field)=>{
         const value=event.target.value.trim()
         if(value && field){
@@ -80,11 +87,10 @@
     {:else}
         <div class="my-4 py-2 px-4 border border-slate-200 w-full flex justify-end items-center">   
             <div class="px-4 font-bold">Page {currPage} / {totalPage}</div>
-            <button disabled={currPage==1} on:click={()=>{currPage=currPage-1;currPage=currPage<1?1:currPage;localStorage.currPage=currPage??1}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded w-24 disabled:bg-gray-400">
+            <button disabled={currPage==1} on:click={()=>{currPage=currPage-1;currPage=currPage<1?1:currPage}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded w-24 disabled:bg-gray-400">
                 <span class="flex justify-around items-center w-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16"> <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/> </svg>Prev</span>
             </button>        
-
-            <button disabled={currPage>=totalPage} on:click={()=>{currPage=(currPage+1)%(totalPage+1);localStorage.currPage=currPage??1}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded disabled:bg-gray-400 w-24">
+            <button disabled={currPage>=totalPage} on:click={()=>{currPage=(currPage+1)%(totalPage+1)}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded disabled:bg-gray-400 w-24">
                 <span class="flex justify-around items-center w-full">Next<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16"> <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/> </svg></span>
             </button>
         </div>
@@ -143,14 +149,21 @@
                 {/each}  
             </table>
         </div>
+
+
+
+
+
+        
         <div class="my-4 py-2 px-4 border border-slate-200 w-full flex justify-end items-center">
             <div class="px-4 font-bold">Page {currPage} / {totalPage}</div>
-            <button disabled={currPage==1} on:click={()=>{currPage=currPage-1;currPage=currPage<1?1:currPage;localStorage.currPage=currPage??1}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded w-24 disabled:bg-gray-400">
+            <button disabled={currPage==1} on:click={()=>{currPage=currPage-1;currPage=currPage<1?1:currPage}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded w-24 disabled:bg-gray-400">
                 <span class="flex justify-around items-center w-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16"> <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/> </svg>Prev</span>
             </button>        
-            <button disabled={currPage>=totalPage} on:click={()=>{currPage=(currPage+1)%(totalPage+1);localStorage.currPage=currPage??1}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded disabled:bg-gray-400 w-24">
+            <button disabled={currPage>=totalPage} on:click={()=>{currPage=(currPage+1)%(totalPage+1)}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded disabled:bg-gray-400 w-24">
                 <span class="flex justify-around items-center w-full">Next<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16"> <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/> </svg></span>
             </button>
         </div>
     {/if}
 </div>
+
