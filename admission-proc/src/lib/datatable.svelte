@@ -15,7 +15,6 @@
     $:getSelectableColumnList(data)
     $:st=(currPage-1)*pageSize
     $:en=(currPage-1)*pageSize+pageSize
-    $:localStorage.currPage=currPage
     $:totalPage=Math.ceil(dataTable.length/pageSize)
     $:{
         if(sortableField){
