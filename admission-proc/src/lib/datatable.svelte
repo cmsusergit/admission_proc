@@ -6,7 +6,7 @@
     let dataTable
     let sortableField,sortableOrder='asc'
     let selectableColumn={},totalPage=1
-    let currPage=1,pageSize=20
+    let currPage,pageSize=100
     let st,en
     $:dataTable=[...data],currPage=1//....
             //....
@@ -29,14 +29,15 @@
     }
     onMount(()=>{        
         getSelectableColumnList(data)
+
+
+
+
+
+
+
+
     })
-
-
-
-
-
-
-
     const handleChange=(event,field)=>{
         const value=event.target.value.trim()
         if(value && field){
