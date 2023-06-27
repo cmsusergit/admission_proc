@@ -29,7 +29,7 @@
     }
     onMount(()=>{        
         getSelectableColumnList(data)
-        currPage=localStorage.currPage
+        currPage=localStorage.getItem('currPage')
     })
     const handleChange=(event,field)=>{
         const value=event.target.value.trim()
