@@ -43,12 +43,14 @@
             return ob.id==formDt.fees_scheme
         })
         tempDetail.AdmissionSubFeesInfo?.map(record1=>{
-                let temp1=record1.amount
-                if(record1.name=="Tuition Fee"){
-                        if(formDt.payment_status==0)
-                            temp1=temp1/2.0
+                if(record1.course==formDt.course){
+                    let temp1=record1.amount
+                    if(record1.name=="Tution Fee" || record1.name=="Tution Fees"){
+                            if(formDt.payment_status==0)
+                                temp1=temp1/2.0
+                    }
+                    formDt.amount_expected+=temp1
                 }
-                formDt.amount_expected+=temp1
             })
     }
     const fetchBranchList=(course1)=>{
@@ -90,12 +92,12 @@
             loading = false
         }
     }
+    const printReciept=()=>{    
 
-
-
-    const printReciept=()=>{        
+        console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[0]?.course)
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
-        acpc_recipt_print(data?.feeFormInfo[0],feeSchemeList)    
+        const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
+        acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
     }
 </script>
 <div class="">
@@ -105,12 +107,17 @@
             <button on:click={()=>error_mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}  
+
+
+
+
+
+
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
             <a class="button-primary w-20" href={`/datatable/acpc?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
         </div>
-
     {/if}
     {#if !data?.error}
         <div class="mx-2 p-2 text-blue-800 bg-white border rounded">

@@ -5,12 +5,13 @@ import _ from 'lodash'
 import {wordify} from'$lib/store.js'
 
 const acpc_recipt_print=async (formDt,feeSchemeList)=>{    
+    console.log('****',feeSchemeList)
     const college=formDt?.Course?.College
     const currAYear=formDt?.AcademicYear.name
     const dataUri=college.logo
     const titleText=`${college.name.toUpperCase()}
-        Academic Year: ${currAYear}`    
 
+    Academic Year: ${currAYear}`    
     const headerTbl1={
         layout:"noBorders",
         table:{         
@@ -46,14 +47,15 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         {fillColor:'#dde',alignment:'center',text:'Particulars'},
         {fillColor:'#dde',alignment:'center',text:'Fees in Rs.'}
     ])
-    const categoryList=_.groupBy(feeSchemeList?.AdmissionSubFeesInfo,ob=>ob.AdmissionFeesCategory.name)
+    const categoryList=_.groupBy(feeSchemeList,ob=>ob.AdmissionFeesCategory.id)
     _.forEach(categoryList,(categoryRecord,category)=>{
-        reportTable.push(['',{fontSize:12,bold:true,fontSize:11,text:category},''])
+        reportTable.push(['',{fontSize:12,bold:true,fontSize:11,text:categoryRecord[0].AdmissionFeesCategory.name},''])
         let count1=1,total=0.0        
         categoryRecord=_.orderBy(categoryRecord,['amount'],['desc'])
         categoryRecord.map(record1=>{
                 let temp1=record1.amount
-                if(record1.name=="Tuition Fee"){
+                console.log(record1.name);
+                if(record1.name=="Tution Fee" || record1.name=="Tution Fees"){
                     if(formDt?.payment_status==false)
                         temp1=temp1/2.0
                 }

@@ -1,4 +1,4 @@
-<script>
+<script> 
     import {supabase} from '$lib/db'
 
     import {goto}  from '$app/navigation'
