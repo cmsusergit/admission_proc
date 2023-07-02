@@ -19,7 +19,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         widths:[20,'*'],
         body:[
             [{image:dataUri,fit:[40,40]},
-            {margin: [0, 10, 0, 0],style:'header',alignment:'center',fontSize:12,bold:true,text:titleText}]
+            {margin: [0, 10, 0, 0],style:'header',alignment:'center',fontSize:10,bold:true,text:titleText}]
         ]
     }}
     let reportHeading={
@@ -49,7 +49,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
     ])
     const categoryList=_.groupBy(feeSchemeList,ob=>ob.AdmissionFeesCategory.id)
     _.forEach(categoryList,(categoryRecord,category)=>{
-        reportTable.push(['',{fontSize:12,bold:true,fontSize:11,text:categoryRecord[0].AdmissionFeesCategory.name},''])
+        reportTable.push(['',{fontSize:10,bold:true,fontSize:10,text:categoryRecord[0].AdmissionFeesCategory.name},''])
         let count1=1,total=0.0        
         categoryRecord=_.orderBy(categoryRecord,['amount'],['desc'])
         categoryRecord.map(record1=>{
@@ -59,40 +59,40 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
                     if(formDt?.payment_status==false)
                         temp1=temp1/2.0
                 }
-            reportTable.push([{alignment:'center',fontSize:11,text:count1},
-                {alignment:'left',fontSize:11,text:record1.name},
-                {alignment:'right',fontSize:11,text:temp1.toLocaleString('en-IN',{
+            reportTable.push([{alignment:'center',fontSize:10,text:count1},
+                {alignment:'left',fontSize:10,text:record1.name},
+                {alignment:'right',fontSize:10,text:temp1.toLocaleString('en-IN',{
                     maximumFractionDigits:2                              
                 })}])
                 count1=count1+1
                 total=total+temp1
         })
-        reportTable.push([{fillColor:'#dee',text:''},{fillColor:'#dee',fontSize:12,bold:true,text:'SubTotal',alignment:'right'},{fontSize:12,alignment:'right',fillColor:'#dee',bold:true,text:total.toLocaleString('en-IN',{
+        reportTable.push([{fillColor:'#dee',text:''},{fillColor:'#dee',fontSize:10,bold:true,text:'SubTotal',alignment:'right'},{fontSize:10,alignment:'right',fillColor:'#dee',bold:true,text:total.toLocaleString('en-IN',{
                         maximumFractionDigits:2
                     })}])
     })
-    reportTable.push(['',{fontSize:12,alignment:'right',bold:true,text:"Grand Total in Rs."},{fontSize:12,bold:true,alignment:'right',text:formDt.amount_expected.toLocaleString('en-IN',{
+    reportTable.push(['',{fontSize:10,alignment:'right',bold:true,text:"Grand Total in Rs."},{fontSize:10,bold:true,alignment:'right',text:formDt.amount_expected.toLocaleString('en-IN',{
                         maximumFractionDigits:2
                     })}])
     let detailTable=[
         [
-            {bold:true,fontSize:11,text:` Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
-            {text:`Type Of Payment:  CASH`,fontSize:11},{text:''}
+            {bold:true,fontSize:10,text:` Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {text:`Type Of Payment:  CASH`,fontSize:10},{text:''}
         ],
         [
-            {border:[true,true,true,false],fontSize:11,text:`Amount:  ${Number.parseFloat(formDt.amount_paid).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
-            {fontSize:11,text:`Type Of Payment:  ${formDt.payment_type?formDt?.payment_type:'-'}`,border:[true,true,true,false]},
-            {border:[true,true,true,false],fontSize:11,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
+            {border:[true,true,true,false],fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.amount_paid).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {fontSize:10,text:`Type Of Payment:  ${formDt.payment_type?formDt?.payment_type:'-'}`,border:[true,true,true,false]},
+            {border:[true,true,true,false],fontSize:10,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
         ],
         [
-                {border:[true,false,true,true],fontSize:11,text:''},
-                {fontSize:11,text:`Bank Name:  ${formDt.payment_bank_name??'-'}`,border:[true, false, false, false]},
-                {fontSize:11,text:`Ref. Number:  ${formDt.payment_refrence_number??'-'}`,border:[true, false, true, true]}
+                {border:[true,false,true,true],fontSize:10,text:''},
+                {fontSize:10,text:`Bank Name:  ${formDt.payment_bank_name??'-'}`,border:[true, false, false, false]},
+                {fontSize:10,text:`Ref. Number:  ${formDt.payment_refrence_number??'-'}`,border:[true, false, true, true]}
         ],
         [
-            {fontSize:11,text:`ACPC Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
-            {fontSize:11,text:`ACPC Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
-            {fontSize:11,text:`ACPC PaymentDate:  ${formDt.ACPC_amount>0?new Date(formDt.ACPC_payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"}):'-'}`},
+            {fontSize:10,text:`ACPC Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {fontSize:10,text:`ACPC Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
+            {fontSize:10,text:`ACPC PaymentDate:  ${formDt.ACPC_amount>0?new Date(formDt.ACPC_payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"}):'-'}`},
         ]  
     ]               
     const footText="Note:: In addition to above tuition fees, candiadate shall have to pay the fees of course/institute fixed by the Fees Regulatory Committee as and when declared from the acadamic year "+currAYear
@@ -102,13 +102,13 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         reportHeading,
         reportHeading1,
         {margin:[10,2,10,2],style:"subheader",text:"Recieved From,"},
-        {margin:[10,2,10,2],fontSize:11,style:"subheader",text:`${formDt?.stu_name}`},
+        {margin:[10,2,10,2],fontSize:10,style:"subheader",text:`${formDt?.stu_name}`},
         {
             margin:[10,2,10,5],style:"subheader",
             text:[
                 `The Following amount as Fees for the ${formDt.Course.alias} ${formDt.is_d2d?'(D2D)':''} for a `,
                 
-                    {bold:true,fontSize:11,decoration:'underline',text:`${formDt.is_d2d?(formDt.payment_status==false?'THIRD':'SECOND'):'FIRST'} ${formDt?.payment_status==false?'SEMESTER':'YEAR'}`},` ${currAYear}`
+                    {bold:true,fontSize:10,decoration:'underline',text:`${formDt.is_d2d?(formDt.payment_status==false?'THIRD':'SECOND'):'FIRST'} ${formDt?.payment_status==false?'SEMESTER':'YEAR'}`},` ${currAYear}`
             ]
         },        
         {
