@@ -39,6 +39,7 @@
     $:if(formDt.fees_scheme)calculateAmountExpected()
     const calculateAmountExpected=()=>{
         formDt.amount_expected=0.0
+        console.log('----',formDt.fees_scheme);
         const tempDetail=data?.feeSchemeList?.find(ob=>{
             return ob.id==formDt.fees_scheme
         })
@@ -49,9 +50,9 @@
                             if(formDt.payment_status==0)
                                 temp1=temp1/2.0
                     }
-                    formDt.amount_expected+=temp1
+                    formDt.amount_expected+=temp1                    
                 }
-            })
+        })       
     }
     const fetchBranchList=(course1)=>{
         const temp1=data?.courseList?.find(ob=>ob.id==course1)
@@ -93,7 +94,6 @@
         }
     }
     const printReciept=()=>{    
-
         console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[0]?.course)
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
@@ -107,15 +107,10 @@
             <button on:click={()=>error_mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}  
-
-
-
-
-
-
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
+
             <a class="button-primary w-20" href={`/datatable/acpc?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
         </div>
     {/if}
@@ -174,6 +169,8 @@
                 </div>
                 <div class="flex flex-col w-full m-1 px-2">                    
                     <label for="course" class="font-bold">Fees Scheme <span class="text-sm text-red-500">*</span></label>
+                    
+                    
                     <select  bind:value={formDt.fees_scheme} class="input" type="text" name="admissioncategory" id="admissioncategory" required>
                         {#if data?.feeSchemeList}
                             {#each data?.feeSchemeList as record}
@@ -224,7 +221,9 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
-                    <input type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                    <input on:focus={()=>{
+                         formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
+                    }}  on:blur={()=>{formDt.amount_paid=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
                 </div>    
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">          

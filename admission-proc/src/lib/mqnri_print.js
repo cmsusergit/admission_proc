@@ -310,6 +310,14 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         {
             table:headerTbl1,
         },
+
+        {
+            margin:[10,10,2,2],alignment:'right',canvas:[
+                {
+                    type:'rect',
+                    x:0,y:0,w:100,h:104
+                }]
+        },
         {
             margin:[0,5,0,0],
             columns: [
