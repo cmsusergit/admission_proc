@@ -203,16 +203,14 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
 const acpc_profile_print=async(college,currAYear,profile)=>{
     console.log(profile)
     const dataUri=college.logo
-    console.log(dataUri);
     const titleText=`${college.name}
                         Managed By: The New English School Trust ACPC Application Form (${currAYear})`
         const headerTbl1={         
         headerRows:0,
         widths:[50,'*'],
-
-
         body:[
             [   
+
                 {alignment:'left',image:dataUri,fit:[50,50]},
                 {alignment:'center',fontSize:12,bold:true,text:titleText},
             ]
@@ -309,6 +307,14 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
     let reportDefination=[        
         {
             table:headerTbl1,
+        },
+        
+        {
+            margin:[10,10,2,2],alignment:'right',canvas:[
+                {
+                    type:'rect',
+                    x:0,y:0,w:100,h:104
+                }]
         },
         {
             margin:[0,5,0,0],

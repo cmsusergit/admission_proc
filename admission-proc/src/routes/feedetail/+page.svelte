@@ -210,7 +210,8 @@
                 </div>    
                 <div class="flex flex-col w-full m-1">
                     <label for="acpcreceipt" class="font-bold">ACPC Receipt Number <span class="text-sm text-red-500">*</span></label>    
-                    <input bind:value={formDt.ACPC_reciept_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcreceipt" required>
+                
+                <input bind:value={formDt.ACPC_reciept_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcreceipt" required>
                 </div>    
                 <div class="flex flex-col w-full m-1">
                     <label for="acpcreciptdt" class="font-bold">ACPC Receipt Date <span class="text-sm text-red-500">*</span></label>    
@@ -220,11 +221,12 @@
             <div class="px-4 border-y py-1 text-white font-bold bg-cyan-500  text-lg rounded">
                 College Payment Detail
             </div>
-
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
-                    <input type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                    <input on:focus={()=>{
+                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
+                }}  on:blur={()=>{formDt.amount_paid=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
                 </div>    
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">          

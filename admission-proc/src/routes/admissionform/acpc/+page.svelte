@@ -1,16 +1,17 @@
 <script>
-    import { mesg,college } from '$lib/store.js'
+    import { academicYear,mesg,college } from '$lib/store.js'
     
     import {supabase} from "$lib/db"
     import { onMount } from 'svelte';
     
     import {createForm} from 'svelte-forms-lib'
+    import {acpc_profile_print} from '$lib/mqnri_print.js'
     import * as yup from 'yup'    
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
     import _ from 'lodash'
-    export let data
 
+    export let data
     let sameAddrSelected=false,is_d2d=false
     let isAICTEAccepted=false,isConditionAccepted=false    
     let boardList=['SSC','HSC']
@@ -173,6 +174,7 @@
             }
             else{                
                 let tempUploadList=[]
+                $form.id=dt[0].id
                 uploadFileList.forEach((file1)=>{
                     console.log(file1);
                     const temp={             
@@ -195,13 +197,7 @@
                 }
                 error_mesg=''
                 $mesg='Form Record Inserted/Updated Successully.'    
-
-
-
-
-
-
-             }            
+            }            
         } catch (error) {
             error_mesg=error.message
             window.scrollTo(0,50)
@@ -216,6 +212,7 @@
     //     uploadFileList=[...uploadFileList ,{f_label_id:labelId,document_path:file.detail}]//....
     //     console.log(file.detail)
     // }
+
     const onSameAddrChanged=()=>{
         if(sameAddrSelected){
             $form.present_addr1=$form.per_addr1
@@ -255,6 +252,23 @@
         console.log(file1);
 
     }   
+    const acpcPrint=async()=>{        
+        let { data: college, error } = await supabase
+        .from('College')
+        .select('*').eq('id',$form.college_id).single()        
+        if(error){
+            console.log('****',error)
+            return
+        }        
+        let { data: ayear, error1 } = await supabase
+        .from('AcademicYear')
+        .select('*').eq('id',$form.academic_year).single()
+        if(error1){
+            console.log('****',error1)
+            return
+        }
+        acpc_profile_print(college,ayear?.name,$form)
+    }
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -268,6 +282,10 @@
 {#if isSubmitted}
     <div class="min-h-[500] w-full">
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a Form</h1>
+    
+    <div class="my-2 text-center">
+        <button on:click={acpcPrint} class="bg-blue-500 text-white p-2 hover:bg-blue-400 rounded">Print Profile</button>
+    </div> 
     </div>
 {:else}
     <form class="text-sm p-2" on:submit={handleSubmit}>
@@ -640,7 +658,6 @@
                 <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                     <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
                         {#each uploadFileList as uploadFile}    
-                           
                         <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/> 
                         <!-- <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/>  
                         -->

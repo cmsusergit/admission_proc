@@ -27,16 +27,23 @@
 			}
 		}
 	}
-    const mqnriPrint=()=>{
-        mqnri_profile_print($college,$academicYear?.name,profile)
+    const mqnriPrint=async()=>{
+        let { data: college, error } = await supabase
+        .from('College')
+        .select('*').eq('id',profile.college_id).single()        
+        if(error){
+            console.log('****',error)
+            return
+        }        
+        let { data: ayear, error1 } = await supabase
+        .from('AcademicYear')
+        .select('*').eq('id',profile.academic_year).single()
+        if(error1){
+            console.log('****',error1)
+            return
+        }
+        mqnri_profile_print(college,ayear?.name,profile)
     }
-
-
-
-
-
-
-    
 </script>
 {#if profile}
     <div class="min-h-screen w-full">    
@@ -62,20 +69,42 @@
                     <p>{error1.message}</p>
                 {/await}
                     
-                <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
+                <!-- <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
                     {#if profile.form_number['M']}MQ Form Number - {profile.form_number['M']}{/if} |
                     {#if profile.form_number['N']}NRI Form Number - {profile.form_number['N']}{/if}
-                </h2>                
+                </h2>                 -->
                 <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
             </div>
-            <!-- {#if profile?.merit_number}
+            {#if profile?.merit_number}
                 <div class="bg-orange-500 my-4 p-2 text-center">
                     <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                     {#each profile?.merit_number as record}                   
-                        <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quata':'NRI'}-{record.number}</span>
+                        <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quota':'NRI/NRI Sponsored Quota'}-{record.number}</span>
+                        {#if record.category=='M' && record.number<=50}
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 10/07/2023 (12.00 noon to 01.00 p.m.)</p>
+                        {:else if record.category=='M' && (record.number>=51 && record.number<=150)}                        
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 10/07/2023 (02.00 p.m. to 04.00 p.m.)</p>
+                        {:else if record.category=='M' && (record.number>=151 && record.number<=200)}
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 11/07/2023 (10.00 a.m. to 11.00 a.m.)</p>
+                        {:else if record.category=='M' && (record.number>=201 && record.number<=250)}
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 11/07/2023 (12.00 noon to 01.00 p.m.)</p>
+                        {:else if record.category=='M' && record.number>=251}
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 11/07/2023 (02.00 p.m. to 04.00 p.m.)</p>
+                        {:else if record.category!=='M' && record.number<=50}
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 10/07/2023 (12.00 a.m. to 11.00 a.m.)</p>
+                        {/if}
+
+                        {#if record.category=='M'}
+                            <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/MQ%20Call%20Letter.pdf">Download Call Letter</a>
+                            <br>
+                        {:else}
+
+                            <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/NRI%20Call%20Letter.pdf">Download Call Letter (NRI/NRI Sponsored Quota)</a>
+                            <br>
+                        {/if}
                     {/each}
                 </div>
-            {/if} -->
+            {/if}
             <div class="text-gray-800 w-full shadow sm:rounded-lg">
                 <div class="bg-white border rounded my-2 text-gray-800">
                     <table class="border-slate-500 border w-full p-2">                        
