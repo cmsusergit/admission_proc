@@ -222,14 +222,9 @@
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
                     <input on:focus={()=>{
-<<<<<<< HEAD
                         formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
                 }}  on:blur={()=>{formDt.amount_paid=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
-=======
-                         formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
-                    }}  on:blur={()=>{formDt.amount_paid=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
->>>>>>> 0dcd21f434674664a968aa153990172ce04d4e05
-                </div>    
+            </div>    
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
                 <div class="flex flex-col w-full m-1">
