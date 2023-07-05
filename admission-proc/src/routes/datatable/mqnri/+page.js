@@ -28,14 +28,19 @@ export async function load({ params,url }) {
     
     let { data:dt, error:err_dt } = await supabase
         .from('prov_mqnri1')
-        .select(`mqnri_id,Course!inner(*),Branch!inner(*)`)
+        .select(`mqnri_id,first_name,Course!inner(*),Branch!inner(*)`)
         .filter('academic_year','eq',ayear_id)
         .filter('Course.college_id','eq',college_id)
+
+
+
+
+        
         if(err_dt)
             return {error:err_dt.message}
         if(dt){
             dataTable.forEach(ob=>{
-                const temp1=_.find(dt,tt=>tt.mqnri_id,ob.id)
+                const temp1=_.find(dt,tt=>tt.mqnri_id==ob.id)
                 if(temp1){
                     ob['branch']=temp1.Branch
                 }
