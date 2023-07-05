@@ -204,7 +204,7 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
     console.log(profile)
     const dataUri=college.logo
     const titleText=`${college.name}
-                        Managed By: The New English School Trust ACPC Application Form (${currAYear})`
+                        Managed By: The New English School Trust \n Application Form (${currAYear})`
         const headerTbl1={         
         headerRows:0,
         widths:[50,'*'],
@@ -216,18 +216,20 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
             ]
         ]
     }  
-    let admissionRecord={        
+    let admissionRecord={   
+        width: '*',     
         table: {
             headerRows:0,
-            widths:['*','*','*','*','*','*'],
+            heights:28,
+            widths:['*','*'],
             body: [
-                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
                 [   
-                    {text:'ACPC Number: ',style:{alignment:'center'}},{text:profile.acpcnumber,style:{alignment:'center'}},
-                    {text:'ACPC Merit Number: ',style:{alignment:'center'}},{text:profile.acpc_meritnumber,style:{alignment:'center'}},
+                    {text:'ACPC Number: ',style:{alignment:'center'}},{text:profile.acpcnumber,style:{alignment:'center'}}
+                ],[
+                    {text:'ACPC Merit Number: ',style:{alignment:'center'}},{text:profile.acpc_meritnumber,style:{alignment:'center'}}
+                ],[                    
                     {text:'Entrance Exam Number: ',style:{alignment:'center'}},{text:profile.entr_examnumber,style:{alignment:'center'}},
-                ],
-                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+                ]
             ]
         }
     }  
@@ -289,7 +291,6 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         [{text:'Subject',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Result',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}}],
     ]
 
-
     profile.subjectResultList.forEach(ob=>{
         let record=[{text:ob.subName,style:{alignment:'center',bold:true}}]
         record.push({text:ob.result,style:{alignment:'center',bold:true}})
@@ -308,15 +309,41 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         {
             table:headerTbl1,
         },
+
+
         {
-            margin:[0,5,0,0],
+            margin:[0,5,0,0],            
             columns: [
                 {margin:[10,0,10,0],text:`${form_number}`,style:{bold:true,alignment:'left',fontSize:11}}, 
-    
                 {margin:[10,0,10,0],text:`Applied For: ${profile.admission_category}`,style:{bold:true,alignment:'right',fontSize:11}},
             ]
         },
-        admissionRecord,
+        {
+            margin:[0,5,0,0],            
+            columns: [
+                admissionRecord,
+                {
+                    width: '121',
+                    margin:[5,0,2,10],alignment:'right',canvas:[
+                        {
+                            type:'rect',
+                            x:0,y:0,w:100,h:104
+                        }]
+                },
+            ]
+        },       
+
+
+
+
+
+
+
+
+
+
+
+
         separator('PERSONAL DETAILS'),     
         personalRecord,
         separator('ACADEMIC DETAILS'),     

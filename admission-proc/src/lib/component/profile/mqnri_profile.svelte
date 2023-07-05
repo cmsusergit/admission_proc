@@ -91,14 +91,12 @@
                         {:else if record.category=='M' && record.number>=251}
                             <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 11/07/2023 (02.00 p.m. to 04.00 p.m.)</p>
                         {:else if record.category!=='M' && record.number<=50}
-                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 10/07/2023 (12.00 a.m. to 11.00 a.m.)</p>
+                            <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 10/07/2023 (10.00 a.m. to 11.00 a.m.)</p>
                         {/if}
-
                         {#if record.category=='M'}
                             <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/MQ%20Call%20Letter.pdf">Download Call Letter</a>
                             <br>
                         {:else}
-
                             <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/NRI%20Call%20Letter.pdf">Download Call Letter (NRI/NRI Sponsored Quota)</a>
                             <br>
                         {/if}

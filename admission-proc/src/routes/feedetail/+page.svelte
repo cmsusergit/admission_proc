@@ -33,13 +33,15 @@
         formDt.ACPC_amount=20000
         formDt.fees_collector_id=(data?.session?.user?.id)?(data?.session?.user?.id):-1
         formDt.payment_date=getDateFormat(new Date())
+        formDt.dd_amount=0.0
+        formDt.online_amount=0.0
+        formDt.online_reference_number=''
         calculateAmountExpected()
     })
     $:fetchBranchList(formDt.course)
     $:if(formDt.fees_scheme)calculateAmountExpected()
     const calculateAmountExpected=()=>{
         formDt.amount_expected=0.0
-        console.log('----',formDt.fees_scheme);
         const tempDetail=data?.feeSchemeList?.find(ob=>{
             return ob.id==formDt.fees_scheme
         })
@@ -54,6 +56,7 @@
                 }
         })       
     }
+
     const fetchBranchList=(course1)=>{
         const temp1=data?.courseList?.find(ob=>ob.id==course1)
         branchList=temp1?temp1.Branch:[]
@@ -81,6 +84,7 @@
             }
             else{                
                 $mesg='Form Record Inserted/Updated Successully.'    
+                printReciept()
                 goto(`/datatable/acpc?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
             }            
         } catch (error) {
@@ -106,11 +110,11 @@
             <div class="w-full md:mt-0 text-center p-2 text-orange-800 text-xl">{error_mesg}</div>
             <button on:click={()=>error_mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
+
     {/if}  
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
-
             <a class="button-primary w-20" href={`/datatable/acpc?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
         </div>
     {/if}
@@ -127,9 +131,9 @@
             </div>            
         </div>
         {#if data?.prov2acpc?.length>0}
-        <div class="mx-2 p-2 text-blue-800 bg-white border rounded"> 
-            <p class="bg-teal-700 text-white text-lg text-center p-2 font-bold">Provisional Admission</p>
-        </div>
+            <div class="mx-2 p-2 text-blue-800 bg-white border rounded"> 
+                <p class="bg-teal-700 text-white text-lg text-center p-2 font-bold">Provisional Admission</p>
+            </div>
         {/if}
         <form class="text-sm p-2" on:submit|preventDefault={handleSubmit}>        
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
@@ -223,43 +227,50 @@
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
                     <input on:focus={()=>{
                         formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
-                }}  on:blur={()=>{formDt.amount_paid=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                }}  on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
             </div>    
             </div>
-            <div class="flex justify-between p-1 lg:flex-row flex-col">          
+
+
+
+
+
+
+            <div class="flex justify-between p-1 lg:flex-row flex-col border-y-2 border-stone-200">          
                 <div class="flex flex-col w-full m-1">
-                    <label for="paymenttype" class="font-bold">Payment Type</label>
-                    <select bind:value={formDt.payment_type} class="input" type="text" name="paymenttype" id="paymenttype">
-                        <option value=""></option>
-                        <option value='DD/Cheque'>DD/Cheque</option>
-                        <option value='Online'>Online</option>
-                    </select>
+                    <label for="ddamount" class="font-bold">DD/Cheque Amount</label>    
+                    <input type="number" step="0.001" bind:value={formDt.dd_amount}  class="border rounded px-1 py-2 border-blue-400" id="ddamount">
                 </div>
+                
                 <div class="flex flex-col w-full m-1">
-                    <label for="amountpaid" class="font-bold">Amount</label>    
-                    <input type="number" step="0.001" bind:value={formDt.amount_paid}  class="border rounded px-1 py-2 border-blue-400" id="amountpaid">
-                </div>    
-            </div>                        
-            <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">
-                    <label for="bname" class="font-bold">Bank Name</label>    
+                    <label for="bname" class="font-bold">DD/Cheque Bank Name</label>    
                     <input type="text" bind:value={formDt.payment_bank_name} class="border rounded px-1 py-2 border-blue-400" id="bname">
                 </div>    
                 <div class="flex flex-col w-full m-1">
-                    <label for="reference_number" class="font-bold">Reference Number</label>    
+                    <label for="reference_number" class="font-bold">DD/Cheque Reference Number</label>    
                     <input type="text" bind:value={formDt.payment_reference_number} class="border rounded px-1 py-2 border-blue-400" id="reference_number">
                 </div>                
                 <div class="flex flex-col w-full m-1">
-                    <label for="paymentdt" class="font-bold">Payment Date</label>    
+                    <label for="paymentdt" class="font-bold">DD/Cheque Payment Date</label>    
                     <input type="date" bind:value={formDt.payment_date}  class="border rounded px-1 py-2 border-blue-400" id="paymentdt">
-                </div>
-        </div>
-        <div class="flex justify-between p-1 lg:flex-row flex-col">
-            <div class="flex flex-col w-full m-1">
-                <label for="comment" class="font-bold">Comment</label>    
-                <textarea bind:value={formDt.comment}  class="border rounded px-1 py-2 border-blue-400" id="comment"></textarea>
+                </div>                 
+            </div>                        
+            <div class="flex justify-between p-1 lg:flex-row flex-col border-b-2 border-stone-200">
+                <div class="flex flex-col w-full m-1">
+                    <label for="onlineamount" class="font-bold">Online Amount</label>    
+                    <input type="number" step="0.001" bind:value={formDt.online_amount}  class="border rounded px-1 py-2 border-blue-400" id="onlineamount">
+                </div>                       
+                <div class="flex flex-col w-full m-1">
+                    <label for="reference_number" class="font-bold">Online Reference Number</label>    
+                    <input type="text" bind:value={formDt.online_reference_number} class="border rounded px-1 py-2 border-blue-400" id="reference_number">
+                </div>       
             </div>
-        </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">
+                    <label for="comment" class="font-bold">Comment</label>    
+                    <textarea bind:value={formDt.comment}  class="border rounded px-1 py-2 border-blue-400" id="comment"></textarea>
+                </div>
+            </div>
         </div>
         <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
             <button disabled={loading} type="submit" class="w-48 button-primary">
@@ -279,7 +290,7 @@
         <Dialog>
             <div slot="header">Insert Record</div>
             <div slot="content">
-                <p class="bg-slate-500 text-white text-center mb-2 text-lg p-2 font-bold">Total Amount For Payment: {(formDt.ACPC_amount?formDt.ACPC_amount:0.0)+(formDt.cash_amount?formDt?.cash_amount:0.0)+(formDt?.amount_paid?formDt?.amount_paid:0.0)}</p>   
+                <p class="bg-slate-500 text-white text-center mb-2 text-lg p-2 font-bold">Total Amount For Payment: {(formDt.ACPC_amount?formDt.ACPC_amount:0.0)+(formDt.cash_amount?formDt?.cash_amount:0.0)+(formDt?.dd_amount?formDt?.dd_amount:0.0)+(formDt?.online_amount?formDt?.online_amount:0.0)}</p>   
                 <p class="bg-slate-500 text-white text-center mb-2 text-lg p-2 font-bold">Expected Amount For Payment: {formDt.amount_expected}</p>
                 Do You Really Want To Insert a Record?            
         </div>

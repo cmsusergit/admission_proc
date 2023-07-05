@@ -9,7 +9,7 @@
     import {supabase} from '$lib/db'
     import Provfeecollection from '$lib/component/provfeecollection.svelte'
     import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
-    import * as XLSX from 'xlsx/xlsx.mjs';
+    import * as XLSX from 'xlsx/xlsx.mjs'
     
     export let data
     let loading=false
@@ -29,7 +29,7 @@
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
-
+        {name:'Prov_Branch',field:'prov_branch',selectable:true,sortable:true},
         {slot:true}
     ]
     $:processData(data)    
@@ -41,6 +41,7 @@
         dataTable=_.forEach(data.dataTable,ob=>{
                 ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
+                ob['prov_branch']=ob.branch?.name.trim()??'-'
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
@@ -92,8 +93,8 @@
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
-                let temp=_.pick(ob,["id","admission_category","title","first_name","middle_name","last_name","created_at","contact","email",
-                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","acpcnumber","acpc_merinumber"])
+                let temp=_.pick(ob,["id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
+                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
@@ -109,8 +110,8 @@
             <div class="w-full md:mt-0 text-center p-2 text-emerald-500 text-xl">{$mesg}</div>
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
-    {/if}
 
+    {/if}
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
             <div class="flex justify-end">            

@@ -12,13 +12,15 @@
 
     
     let sameAddrSelected=false
-    let isAICTEAccepted=false,isConditionAccepted=false
+    let isAICTEAccepted=false,isConditionAccepted=false    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let uploadFileList=[]
     let isSubmitted=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
-    const subjectList1=['Mathematics','Chemistry','Physics']
+    let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
+    // 
+    // const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
             acpcnumber:yup.string().notRequired(),
@@ -717,7 +719,7 @@
                         <table class="w-full bg-white">
                             <thead class="bg-blue-500 px-1 py-2 text-white">                        
                                 <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                                <th class="px-1 py-2 border border-blue-400 border-t-white">GUJCET</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">RESULT</th>
                                 <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
                             </thead>
                             <tbody class="w-full p-1 border border-blue-400 text-center">
@@ -753,7 +755,7 @@
                     </div>
                 </div>           
         </div>
-        {#if !data.formDt}
+        <!-- {#if !data.formDt}
             <div class="flex justify-start border md:flex-row px-4 mt-4 flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                 <div class="flex flex-row">
                     <input type="checkbox" bind:checked={isConditionAccepted} class="border w-4 p-2" id="document1"/>
@@ -764,7 +766,7 @@
                     <label class="mx-2 font-bold" for="document2">Accept <a target="_blank" class="underline text-orange-800" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/TC.pdf?t=2023-04-12T08%3A49%3A14.048Z">AICTE Anti-Ragging Affidavit</a></label>
                 </div>
             </div>
-        {/if}
+        {/if} -->
         {#each Object.entries($errors) as [property,error]}    
             {#if error}
                 <p class="bg-orange-400 text-white w-full text-sm mr-2 my-1 p-2 border">{error}</p>
@@ -780,7 +782,14 @@
                     {/if}
                 </button>
             {:else}
-                <button disabled={loading || !isAICTEAccepted || !isConditionAccepted} type="submit" class="w-48 button-primary">
+                <!-- <button disabled={loading || !isAICTEAccepted || !isConditionAccepted} type="submit" class="w-48 button-primary">
+                    {#if loading}
+                        Please Wait....
+                    {:else}
+                        Submit
+                    {/if}
+                </button> -->
+                <button disabled={loading } type="submit" class="w-48 button-primary">
                     {#if loading}
                         Please Wait....
                     {:else}

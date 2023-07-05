@@ -76,23 +76,40 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
                     })}])
     let detailTable=[
         [
-            {bold:true,fontSize:10,text:` Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
-            {text:`Type Of Payment:  CASH`,fontSize:10},{text:''}
+
+            {bold:true, fontSize:10,text:`CASH`},
+            {bold:true,colSpan:4, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {text:''},{text:``},{text:''}
         ],
-        [
-            {border:[true,true,true,false],fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.amount_paid).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
-            {fontSize:10,text:`Type Of Payment:  ${formDt.payment_type?formDt?.payment_type:'-'}`,border:[true,true,true,false]},
+        [               
+            {bold:true,fontSize:10,text:'DD/Cheque'},
+            {border:[true,true,true,false],fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.dd_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {fontSize:10,text:`Bank Name:  ${formDt.payment_bank_name?formDt.payment_bank_name:'-'}`,border:[true,true,true,false]},      
+            {fontSize:10,text:`Ref. Number:  ${formDt.payment_reference_number??'-'}`,border:[true, false, true, true]}, 
             {border:[true,true,true,false],fontSize:10,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
         ],
-        [
-                {border:[true,false,true,true],fontSize:10,text:''},
-                {fontSize:10,text:`Bank Name:  ${formDt.payment_bank_name??'-'}`,border:[true, false, false, false]},
-                {fontSize:10,text:`Ref. Number:  ${formDt.payment_refrence_number??'-'}`,border:[true, false, true, true]}
+
+
+
+
+
+
+
+
+
+        [   
+            {bold:true,fontSize:10,text:'Online'},
+            {border:[true,true,true,false],colSpan:2,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.online_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            
+            {text:''},
+            {fontSize:10,colSpan:2,text:`Reference Number:  ${formDt.online_reference_number??'-'}`,border:[true, true, true, true]},{text:''}
         ],
-        [
-            {fontSize:10,text:`ACPC Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
-            {fontSize:10,text:`ACPC Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
-            {fontSize:10,text:`ACPC PaymentDate:  ${formDt.ACPC_amount>0?new Date(formDt.ACPC_payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"}):'-'}`},
+        [   {fontSize:10,bold:true,text:'ACPC'},
+            {fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {fontSize:10,text:`Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
+
+            {fontSize:10,colSpan:2,text:`Payment Date:  ${formDt.ACPC_amount>0?new Date(formDt.ACPC_payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"}):'-'}`},
+            {text:''}
         ]  
     ]               
     const footText="Note:: In addition to above tuition fees, candiadate shall have to pay the fees of course/institute fixed by the Fees Regulatory Committee as and when declared from the acadamic year "+currAYear
@@ -107,10 +124,10 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             margin:[10,2,10,5],style:"subheader",
             text:[
                 `The Following amount as Fees for the ${formDt.Course.alias} ${formDt.is_d2d?'(D2D)':''} for a `,
-                
                     {bold:true,fontSize:10,decoration:'underline',text:`${formDt.is_d2d?(formDt.payment_status==false?'THIRD':'SECOND'):'FIRST'} ${formDt?.payment_status==false?'SEMESTER':'YEAR'}`},` ${currAYear}`
             ]
-        },        
+        },   
+        
         {
             table:{
                 headerRows:1,
@@ -122,7 +139,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         {
             table:{
                 headerRows:0,
-                widths:['*','*','*'],
+                widths:['*','*','*','*','*'],
                 body:detailTable
             }
         },  
@@ -153,5 +170,16 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
     pdfMake.createPdf({content:reportDefination,pageOrientation: 'portrait',pageSize: 'A4'}).open()
 }
 
+
 const mqnri_recipt_print=async()=>{}    
 export {acpc_recipt_print,mqnri_recipt_print}
+
+
+
+
+
+
+
+
+
+
