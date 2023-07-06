@@ -65,24 +65,39 @@
             loading=true
 
 
-            
             let list1=[]
+            let cashTotal=0.0
+            let ddTotal=0.0
+            let onlineTotal=0.0
+            let acpcTotal=0.0
+            let total=0.0
             dataTable.forEach((record,indx)=>{
                 let temp1={}
                 temp1['Sr.']=indx+1
-
                 temp1['Rec. Number']=record['reciept_number']
                 temp1['Rec. Date']=record['reciept_date']
-                
                 temp1['College ID']=record['stu_college_id']
                 temp1['Student Name']=record['stu_name']                
                 temp1['Cash Amount']=record['cash_amount']
+                cashTotal+=record['cash_amount']
                 temp1['DD/Cheque Amount']=record['dd_amount']
+                ddTotal+=record['dd_amount']
                 temp1['Online Amount']=record['online_amount']
+                onlineTotal+=record['online_amount']
                 temp1['ACPC Amount']=record['ACPC_amount']
+                acpcTotal+=record['ACPC_amount']
                 temp1['Total Amount']=record['total_amount']
+                total+=record['total_amount']
                 list1.push(temp1)
             })
+
+
+
+
+
+
+
+            list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Total Amount':total})
             const wb=XLSX.utils.book_new()      
             const wsheet=XLSX.utils.json_to_sheet(list1)
             const filename=`report_${new Date().getDate().toString().padStart(2,0)}_${(new Date().getMonth()+1).toString().padStart(2,0)}`

@@ -56,7 +56,6 @@
                 }
         })       
     }
-
     const fetchBranchList=(course1)=>{
         const temp1=data?.courseList?.find(ob=>ob.id==course1)
         branchList=temp1?temp1.Branch:[]
@@ -72,7 +71,6 @@
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
             .select('id')
-            console.log(dt,err1)
             if(err1)
             {
                 error_mesg=error.message     
@@ -84,7 +82,8 @@
             }
             else{                
                 $mesg='Form Record Inserted/Updated Successully.'    
-                printReciept()
+                // 
+                // printReciept()
                 goto(`/datatable/acpc?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
             }            
         } catch (error) {
@@ -104,6 +103,7 @@
         acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
     }
 </script>
+
 <div class="">
     {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">

@@ -15,7 +15,7 @@ export async function load({ params,url }) {
         .from('Course').select('*')    
     if(dt_err)
         return {error:dt_err}
-        
+    
     return {        
         aYearList,
         courseList,
