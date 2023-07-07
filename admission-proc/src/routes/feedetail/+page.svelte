@@ -20,13 +20,16 @@
     }
     onMount(()=>{
         if(data?.error){
+            formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':'MQNRI'
             return
-        }
-        formDt.academic_year=data?.formInfo.AcademicYear?.id
+        }        
+        formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':'MQNRI'
+        formDt.academic_year=data?.formInfo?.AcademicYear?.id
         formDt.stu_name=data?.formInfo?.title+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name+" "+data?.formInfo?.last_name
-        formDt.form_id=data?.formInfo.id
-        formDt.is_d2d=data?.formInfo.is_d2d
-        formDt.admission_category=data?.formInfo.admission_category
+        formDt.form_id=(data?.form_type.includes('acpc'))?(data?.formInfo?.id):null
+        formDt.mqnri_form_id=(data?.form_type.includes('mqnri'))?(data?.formInfo?.id):null
+        formDt.is_d2d=data?.formInfo?.is_d2d
+        formDt.admission_category=data?.formInfo?.admission_category
         formDt.course=data?.formInfo?.course
         formDt.branch=data?.formInfo?.branch
         formDt.payment_status=1
@@ -36,6 +39,7 @@
         formDt.dd_amount=0.0
         formDt.online_amount=0.0
         formDt.online_reference_number=''
+        console.log(formDt)
         calculateAmountExpected()
     })
     $:fetchBranchList(formDt.course)
@@ -45,15 +49,15 @@
         const tempDetail=data?.feeSchemeList?.find(ob=>{
             return ob.id==formDt.fees_scheme
         })
-        tempDetail.AdmissionSubFeesInfo?.map(record1=>{
-                if(record1.course==formDt.course){
-                    let temp1=record1.amount
-                    if(record1.name=="Tution Fee" || record1.name=="Tution Fees"){
-                            if(formDt.payment_status==0)
-                                temp1=temp1/2.0
-                    }
-                    formDt.amount_expected+=temp1                    
+        tempDetail.AdmissionSubFeesInfo?.map(record1=>{            
+            if(record1.course==formDt.course){
+                let temp1=record1.amount
+                if(record1.name=="Tution Fee" || record1.name=="Tution Fees"){
+                        if(formDt.payment_status==0)
+                            temp1=temp1/2.0
                 }
+                formDt.amount_expected+=temp1                    
+            }
         })       
     }
     const fetchBranchList=(course1)=>{
@@ -67,6 +71,14 @@
     const insertRecord=async()=>{
         try{
             loading = true
+            if(data?.form_type.includes('acpc')){
+                console.log('----',formDt.form_id)
+            }
+            else if(data?.form_type.includes('mqnri')) {
+                console.log('****',formDt.mqnri_form_id)
+            }
+
+            console.log('----',formDt)
             const { data:dt, error:err1 } = await supabase
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
@@ -84,7 +96,7 @@
                 $mesg='Form Record Inserted/Updated Successully.'    
                 // 
                 // printReciept()
-                goto(`/datatable/acpc?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
+                goto(`/datatable/${(data?.form_type.includes('acpc'))?'acpc':'mqnri'}?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
             }            
         } catch (error) {
             error_mesg=error.message
@@ -101,6 +113,7 @@
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
         acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
+        
     }
 </script>
 
@@ -115,7 +128,7 @@
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
-            <a class="button-primary w-20" href={`/datatable/acpc?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
+            <a class="button-primary w-20" href={`/datatable/${(data?.form_type.includes('acpc'))?'acpc':'mqnri'}?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
         </div>
     {/if}
     {#if !data?.error}
@@ -226,20 +239,16 @@
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
                     <input on:focus={()=>{
-                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0
-                }}  on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0}}
+                                on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount;formDt.dd_amount=formDt.dd_amount>0?formDt.dd_amount:0}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
             </div>    
             </div>
-
-
-
-
-
-
             <div class="flex justify-between p-1 lg:flex-row flex-col border-y-2 border-stone-200">          
                 <div class="flex flex-col w-full m-1">
                     <label for="ddamount" class="font-bold">DD/Cheque Amount</label>    
-                    <input type="number" step="0.001" bind:value={formDt.dd_amount}  class="border rounded px-1 py-2 border-blue-400" id="ddamount">
+                    <input type="number" step="0.001" bind:value={formDt.dd_amount}  
+                    
+                    on:blur={()=>{formDt.online_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.dd_amount;formDt.online_amount=formDt.online_amount>0?formDt.online_amount:0}} class="border rounded px-1 py-2 border-blue-400" id="ddamount">
                 </div>
                 
                 <div class="flex flex-col w-full m-1">

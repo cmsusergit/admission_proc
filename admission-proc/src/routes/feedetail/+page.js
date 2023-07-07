@@ -15,11 +15,15 @@ export async function load({ params,url }) {
     {
         return error
     }
-    const feeTableToFetch=(form_type.includes('acpc'))?'AdmissionFeesCollectionACPC':'AdmissionFeesCollectionMQNRI'    
+    // 
+    // const feeTableToFetch=(form_type.includes('acpc'))?'AdmissionFeesCollectionACPC':'AdmissionFeesCollectionACPC'    
+    const formType=(form_type.includes('acpc'))?'ACPC':'MQNRI'    
+    const formIdText=(form_type.includes('acpc'))?'form_id':'mqnri_form_id'
+    console.log('----',formIdText)
     let { data: feeFormInfo, error:feeError1 } = await supabase
-        .from(feeTableToFetch)
+        .from('AdmissionFeesCollectionACPC')
         .select('*,AcademicYear(*),Course(*, College(*)),Branch(*)')        
-        .eq('form_id',id)
+        .eq(formIdText,id).eq('form_type',formType)
     if(feeError1)
     {
         return feeError1
@@ -32,9 +36,12 @@ export async function load({ params,url }) {
         .from('AdmissionFeesScheme').select(`*,AdmissionSubFeesInfo(*,AdmissionFeesCategory(*))`)
     if(fs_error)
         return {error:fs_error.message} 
+
+    console.log('----',feeFormInfo)
     if(feeFormInfo.length>0){
         return {
             feeFormInfo,
+            form_type,
             feeSchemeList,
             ayear_id:formInfo.academic_year,
             college_id:formInfo.Course.college_id,

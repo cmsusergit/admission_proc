@@ -67,9 +67,9 @@
 
 
 
+        {"category":"NRI","alias":"N"},
+        {"category":"Management","alias":"M"},
         {"category":"Freeship/Centralized","alias":"GF"},
         {"category":"Freeship/VACANT","alias":"VF"}
     ]
 }
-
-

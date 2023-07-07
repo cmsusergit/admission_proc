@@ -11,8 +11,7 @@ export async function load({ params,url }) {
         if(error instanceof Error)        
         return {error:err1.message}
 
-
-        let { data:college, error } = await supabase
+    let { data:college, error } = await supabase
         .from('College').select('*').eq('id',college_id).single()
     if(error)
         if(error instanceof Error)        
@@ -25,17 +24,11 @@ export async function load({ params,url }) {
     .filter('Course.college_id','eq',college_id)
     if(dt_err)
         return {error:dt_err.message}
-    
     let { data:dt, error:err_dt } = await supabase
         .from('prov_mqnri1')
         .select(`mqnri_id,first_name,Course!inner(*),Branch!inner(*)`)
         .filter('academic_year','eq',ayear_id)
         .filter('Course.college_id','eq',college_id)
-
-
-
-
-        
         if(err_dt)
             return {error:err_dt.message}
         if(dt){

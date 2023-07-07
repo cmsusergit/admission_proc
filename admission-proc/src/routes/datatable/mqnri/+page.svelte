@@ -2,28 +2,30 @@
     import { goto,invalidateAll } from '$app/navigation'
 
     import { mesg,academicYear,college } from '$lib/store.js'    
-    import {  onMount } from 'svelte'
+    import {  onMount } from 'svelte'    
     import DataTable from '$lib/datatable.svelte'
+    import Modal from '$lib/modal.svelte'
     import Dialog from '$lib/dialog.svelte'
     import _ from 'lodash'
     import {supabase} from '$lib/db'
     import Provfeecollection from '$lib/component/provfeecollection.svelte'
     import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
-    import * as XLSX from 'xlsx/xlsx.mjs'
-    
+
+    import * as XLSX from 'xlsx/xlsx.mjs'    
     export let data
-    let loading=false
+    let loading=false,currRecord=null
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
-    let meritRecord=-1
+    let meritRecord=-1,branchList=[]
+    let selectedBranch
     let columnList=[
         {name:'Form ID',field:'id',searchable:true,sortable:true},
+
+        {name:'CollegeID',field:'student_college_id',searchable:true,sortable:true},
         {name:'Merit Number',field:'merit_number',sortable:true},
-        {name:'Merit Percentile',field:'total_merit'},
-        
+        {name:'Merit Percentile',field:'total_merit'},        
         {name:'ACPC Merit Number',field:'acpc_meritnumber',sortable:true},
         {name:'ACPC Application Number',field:'acpcnumber',sortable:true},
-
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
@@ -41,7 +43,7 @@
         dataTable=_.forEach(data.dataTable,ob=>{
                 ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
-                ob['prov_branch']=ob.branch?.name.trim()??'-'
+                ob['prov_branch']=ob.branch?.name?.trim()??'-'
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
@@ -66,14 +68,21 @@
         goto(`/profile/mqnri?id=${record.id}`)  
     }
     const setApproved=async(record,flag)=>{
+        console.log('****',record.branch)
+        if(!record.branch){
+            alert("Please, Select Branch")
+            return
+        }
         const { data, error } = await supabase
             .from('MQNRIFormInfo')
-            .update({ is_approved: flag })
+            .update({ is_approved: flag ,branch:flag==1?record.branch:null})
             .eq('id', record.id)
         if(error)
             alert(error.message)
-        else
+        else{
             invalidateAll()
+            currRecord=null
+        }
     }
     const removeRecord=async()=>{
         const { data, error } = await supabase
@@ -88,7 +97,6 @@
         recordToRemove=-1
         console.log(error);
     }
-
     const exportToFile=()=>{
             loading=true
             let list1=new Array()            
@@ -103,6 +111,21 @@
             XLSX.writeFile(wb,"provforminfo.xlsx")
             loading=false
     }
+
+
+    const fetchBranchList=async(course)=>{
+        try{
+            let { data:dt, error:err1 } = await supabase
+                .from('Branch').select(`*`).eq('course_id',course).eq('is_mqnri',true)
+            branchList=dt
+            if(err1){
+                console.log('****',err1)
+            }
+        }catch(error1){
+            console.log('****',error1)            
+        }
+        
+    }
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
@@ -110,9 +133,31 @@
             <div class="w-full md:mt-0 text-center p-2 text-emerald-500 text-xl">{$mesg}</div>
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
-
     {/if}
     {#if dataTable && dataTable.length>0}
+        {#if currRecord}
+            <Modal>                
+                <div slot="header">Confirm Branch</div>
+                <div slot="content">  
+                    <div class="flex flex-col">
+                        <label class="font-bold text-sm" for="acpc_meritnumber">Select Branch</label>
+                        <div class="px-2 w-full">
+                            <select bind:value={selectedBranch} class="w-full border font-normal text-sm px-1 py-1 text-center rounded">
+                                {#each branchList as temp}
+                                    <option value={temp.id}>{temp.name}</option>
+                                {/each}
+                            </select>
+                        </div>
+                    </div>        
+                </div>
+                <div slot="foot">
+                    <div class="">
+                        <button type="button" on:click={()=>{currRecord.branch=selectedBranch;setApproved(currRecord,1);}} class="px-2 py-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-blue-400 rounded disabled:bg-gray-400 uppercase w-48">submit</button>
+                        <button type="button" on:click={()=>{currRecord=null}} class="px-2 py-2 bg-orange-700 text-white hover:bg-orange-500 shadow shadow-orange-400 uppercase rounded disabled:bg-gray-400 w-48">Close</button>
+                    </div>
+                </div>                           
+            </Modal>
+        {/if}
         <div class="mt-2 overflow-auto">
             <div class="flex justify-end">            
                 <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
@@ -137,7 +182,11 @@
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M17 22H7C5.89543 22 5 21.1046 5 20V7H3V5H7V4C7 2.89543 7.89543 2 9 2H15C16.1046 2 17 2.89543 17 4V5H21V7H19V20C19 21.1046 18.1046 22 17 22ZM7 7V20H17V7H7ZM9 4V5H15V4H9ZM15 18H13V9H15V18ZM11 18H9V9H11V18Z" fill="currentColor"/> </svg>
                                 </button>
                                 {#if record.is_approved==1}
-                                    <button on:click={()=>{collectFeeRecord=record}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
+
+
+
+                                
+                                    <button on:click={()=>{goto(`/feedetail?form_type='mqnri'&id=${record.id}`)}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
                                         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
                                     </button>
                                     {:else if record.is_approved==0}
@@ -148,7 +197,7 @@
                             </div>
                         {:else}
                             {#if record.is_approved==2}
-                                <button on:click={()=>setApproved(record,1)} class="hover:bg-green-700 bg-green-800 p-2 text-white rounded">
+                                <button on:click={()=>{currRecord=record;fetchBranchList(record.Course.id);}} class="hover:bg-green-700 bg-green-800 p-2 text-white rounded">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16"> <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/> </svg>
                                 </button>
                                 <button on:click={()=>setApproved(record,0)} class="hover:bg-orange-700 bg-orange-800 p-2 text-white rounded">

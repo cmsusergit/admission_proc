@@ -26,9 +26,19 @@
         }
         alert('Record Updated')
         dispatch('close')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     }
 </script>
-
 <Modal on:close={()=>{dispatch('close')}}>
     <div slot="header">Merit Information</div>
     <div slot="content">  
@@ -58,21 +68,8 @@
             <input disabled type="number" step="0.1" class="input bg-gray-100" min="0" bind:value={meritRecord.total_merit} name="total_merit">
         </div>        
     </div>
-
-
-
-
-
-
-
-
-
     <div slot="foot">
         <div class="">
- 
- 
- 
- 
             <button type="button" on:click={onsubmit} class="px-2 py-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-blue-400 rounded disabled:bg-gray-400 uppercase w-48">submit</button>
             <button type="button" on:click={()=>{dispatch('close')}} class="px-2 py-2 bg-orange-700 text-white hover:bg-orange-500 shadow shadow-orange-400 uppercase rounded disabled:bg-gray-400 w-48">Close</button>
         </div>
