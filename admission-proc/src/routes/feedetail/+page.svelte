@@ -25,7 +25,7 @@
         }        
         formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
-        formDt.stu_name=data?.formInfo?.title+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name+" "+data?.formInfo?.last_name
+        formDt.stu_name=data?.formInfo?.last_name+" "+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name
         formDt.form_id=(data?.form_type.includes('acpc'))?(data?.formInfo?.id):null
         formDt.mqnri_form_id=(data?.form_type.includes('mqnri'))?(data?.formInfo?.id):null
         formDt.is_d2d=data?.formInfo?.is_d2d
@@ -110,6 +110,7 @@
     }
     const printReciept=()=>{    
         console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[0]?.course)
+
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
         acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    

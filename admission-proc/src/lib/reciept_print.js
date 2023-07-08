@@ -88,15 +88,6 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {fontSize:10,text:`Ref. Number:  ${formDt.payment_reference_number??'-'}`,border:[true, false, true, true]}, 
             {border:[true,true,true,false],fontSize:10,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
         ],
-
-
-
-
-
-
-
-
-
         [   
             {bold:true,fontSize:10,text:'Online'},
             {border:[true,true,true,false],colSpan:2,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.online_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
@@ -112,12 +103,15 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {text:''}
         ]  
     ]               
+
     const footText="Note:: In addition to above tuition fees, candiadate shall have to pay the fees of course/institute fixed by the Fees Regulatory Committee as and when declared from the acadamic year "+currAYear
     +"\n Note:: Rs.5,000/- refundable deposit after Final Semester clear and verification of original Marksheet"
     let reportDefination=[
         headerTbl1,
         reportHeading,
         reportHeading1,
+
+
         {margin:[10,2,10,2],style:"subheader",text:"Recieved From,"},
         {margin:[10,2,10,2],fontSize:10,style:"subheader",text:`${formDt?.stu_name}`},
         {
@@ -169,6 +163,8 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
     }
     pdfMake.createPdf({content:reportDefination,pageOrientation: 'portrait',pageSize: 'A4'}).open()
 }
+
+
 
 
 const mqnri_recipt_print=async()=>{}    

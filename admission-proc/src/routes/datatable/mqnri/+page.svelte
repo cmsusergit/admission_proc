@@ -8,19 +8,17 @@
     import Dialog from '$lib/dialog.svelte'
     import _ from 'lodash'
     import {supabase} from '$lib/db'
-    import Provfeecollection from '$lib/component/provfeecollection.svelte'
     import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
-
     import * as XLSX from 'xlsx/xlsx.mjs'    
+
     export let data
     let loading=false,currRecord=null
     let dataTable,recordToRemove=-1
-    let collectFeeRecord=-1,role=null
+    let role=null
     let meritRecord=-1,branchList=[]
     let selectedBranch
     let columnList=[
         {name:'Form ID',field:'id',searchable:true,sortable:true},
-
         {name:'CollegeID',field:'student_college_id',searchable:true,sortable:true},
         {name:'Merit Number',field:'merit_number',sortable:true},
         {name:'Merit Percentile',field:'total_merit'},        
@@ -102,7 +100,7 @@
             let list1=new Array()            
             dataTable.map(ob=>{
                 let temp=_.pick(ob,["id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
-                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact"])
+                "gender","dob","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
@@ -234,13 +232,8 @@
     {/if}
 </div>
 <div>    
-    {#if collectFeeRecord!=-1}
-        <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
-    {/if}
-</div>
-<div>    
     {#if meritRecord!=-1}
-
         <MeritDlg meritRecord={meritRecord} on:close={()=>{meritRecord=-1}}/>
     {/if}
 </div>
+

@@ -400,11 +400,6 @@
                     <label class="font-bold" for="mname">Midldle Name <span class="text-sm text-red-500">*</span></label>
                     <input use:uppercase on:blur={handleChange} bind:value={$form.middle_name} name="middle_name" class:border-orange-700={$errors.middle_name} class="input" type="text" id="mname" required>
                 </div>
-                <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="lname">Last Name <span class="text-sm text-red-500">*</span></label>
-                    <input use:uppercase on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
-                </div>
-
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">

@@ -1,6 +1,7 @@
 import pdfMake from "pdfmake/build/pdfmake"
-import 'pdfmake/build/vfs_fonts'
+import config from '$lib/config.json'
 
+import 'pdfmake/build/vfs_fonts'
 const separator=(text)=>{
     return {
         table: {
@@ -208,9 +209,10 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         const headerTbl1={         
         headerRows:0,
         widths:[50,'*'],
-        body:[
-            [   
 
+
+        body:[
+            [ 
                 {alignment:'left',image:dataUri,fit:[50,50]},
                 {alignment:'center',fontSize:12,bold:true,text:titleText},
             ]
@@ -220,7 +222,7 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         width: '*',     
         table: {
             headerRows:0,
-            heights:28,
+            heights:20,
             widths:['*','*'],
             body: [
                 [   
@@ -229,11 +231,14 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
                     {text:'ACPC Merit Number: ',style:{alignment:'center'}},{text:profile.acpc_meritnumber,style:{alignment:'center'}}
                 ],[                    
                     {text:'Entrance Exam Number: ',style:{alignment:'center'}},{text:profile.entr_examnumber,style:{alignment:'center'}},
+                ],
+                [
+                    {text:'Branch: ',style:{alignment:'center'}},{text:(profile?.Branch?.name)??'-',style:{alignment:'center'}}
                 ]
             ]
         }
     }  
-    const stuName=`${profile.title} ${profile.first_name} ${profile.middle_name} ${profile.last_name}`    
+    const stuName=`${profile.last_name} ${profile.first_name} ${profile.middle_name}`    
     let personalRecord={        
         table: {
             headerRows:0,
@@ -305,17 +310,16 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
     }
     const footText=`I hereby declare that the details furnished above are true and correct to the best of my knowledge and belief.`
     let form_number=profile?.id
+
     let reportDefination=[        
         {
             table:headerTbl1,
         },
-
-
         {
             margin:[0,5,0,0],            
             columns: [
                 {margin:[10,0,10,0],text:`${form_number}`,style:{bold:true,alignment:'left',fontSize:11}}, 
-                {margin:[10,0,10,0],text:`Applied For: ${profile.admission_category}`,style:{bold:true,alignment:'right',fontSize:11}},
+                {margin:[10,0,10,0],text:`Applied For: ${config.admissionCategoryList.find(ob=>ob.alias==profile?.admission_category)?.category}`,style:{bold:true,alignment:'right',fontSize:11}},
             ]
         },
         {
@@ -332,17 +336,6 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
                 },
             ]
         },       
-
-
-
-
-
-
-
-
-
-
-
 
         separator('PERSONAL DETAILS'),     
         personalRecord,
