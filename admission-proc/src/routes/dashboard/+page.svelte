@@ -8,7 +8,7 @@
     let profile,uploadFileList
     onMount(async()=>{
         let { data:formInfo, error:formErr } = await supabase.from('MQNRIFormInfo')
-            .select(`*,Course(*),College(*),AdmissionDocumentMQNRI(*,document_label(*))`).eq('email',profileEmail).single()
+            .select(`*,Course(*),College(*),AdmissionDocumentMQNRI(*,document_label(*))`).ilike('email',profileEmail).single()
             if(formErr){
 
                 return {error:formErr.message}        
