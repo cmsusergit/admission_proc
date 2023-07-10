@@ -4,7 +4,7 @@
     import {supabase} from "$lib/db"   
     import { academicYear,college } from '$lib/store.js'    
     export let profile,uploadedFileList
-    import {acpc_profile_print,mqnri_profile_print} from '$lib/mqnri_print.js'
+    import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js'
     let userPhotoUrl=null
     onMount(()=>{                  
     })
@@ -45,7 +45,7 @@
         mqnri_profile_print(college,ayear?.name,profile)
     }
     const acpcPrint=()=>{        
-        acpc_profile_print($college,$academicYear?.name,profile)
+        mqnri_profile_print1($college,$academicYear?.name,profile)
     }
 </script>
 {#if profile}
@@ -56,8 +56,7 @@
             {:else}
                 <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
             {/if}        
-            <!-- <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">ACPC Report</button> 
-            -->
+            <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
             <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
         </div> 
         <div>
