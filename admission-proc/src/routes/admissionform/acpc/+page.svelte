@@ -188,13 +188,13 @@
             .from('ACPCFormInfo')
             .upsert(record)
             .select('id')
-            console.log(dt,err1)
             if(err1)
             {
-                error_mesg=error.message     
+                error_mesg=err1.message     
                 window.scrollTo(0,50)
-                if(err1 instanceof Error){
+                if(err1){
                     error_mesg=err1.message
+                    console.log('****',err1)
                     $mesg=''
                 }
                 return
@@ -218,14 +218,15 @@
                     .from('AdmissionDocumentACPC')
                     .upsert(tempUploadList)
                 if(error1){                    
-                    console.log(error1)
-                    error_mesg=error1
+                    console.log('****',error1)
+                    error_mesg=error1.message
                     return
                 }
                 error_mesg=''
                 $mesg='Form Record Inserted/Updated Successully.'    
             }            
-        } catch (error) {
+        } catch (error) { 
+            console.log('****',error)
             error_mesg=error.message
             window.scrollTo(0,50)
             $mesg=''

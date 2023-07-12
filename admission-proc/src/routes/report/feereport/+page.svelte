@@ -64,7 +64,9 @@
     }   
     const processData=(dataTable)=>{
         dataTable=_.forEach(dataTable,ob=>{
-            ob['reciept_date']=new Date(ob.reciept_date).toLocaleDateString()
+
+            const dt=new Date(ob['reciept_date'])
+            ob['reciept_date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
             ob['total_amount']=(ob['cash_amount']??0)+(ob['dd_amount']??0)+(ob['online_amount']??0)+(ob['ACPC_amount']??0)
         })         
     }   
@@ -73,7 +75,7 @@
         fetchCourseList(selectedCollege)
     })
     const displayRecord=(record)=>{
-        goto(`/profile/acpc?id=${record.id}`)        
+        goto(`/profile/${record.form_type=='ACPC'?'acpc':'mqnri'}?id=${record.id}`)        
     }
     const fetchCourseList=(value)=>{
         courseList=data?.courseList.filter(ob=>ob.college_id==value)
@@ -90,7 +92,15 @@
                 let temp1={}
                 temp1['Sr.']=indx+1
                 temp1['Rec. Number']=record['reciept_number']
-                temp1['Rec. Date']=record['reciept_date']
+
+
+
+
+
+
+
+                const dt=new Date(record['reciept_date'])
+                temp1['Rec. Date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['College ID']=record['stu_college_id']
                 temp1['Student Name']=record['stu_name']                
                 temp1['Cash Amount']=record['cash_amount']
