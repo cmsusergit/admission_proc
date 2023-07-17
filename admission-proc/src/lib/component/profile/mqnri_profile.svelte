@@ -79,7 +79,7 @@
                 </h2>                 -->
                 <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
             </div>
-            {#if profile?.merit_number}
+            <!-- {#if profile?.merit_number}
                 <div class="bg-orange-500 my-4 p-2 text-center">
                     <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                     {#each profile?.merit_number as record}                   
@@ -106,10 +106,11 @@
                         {/if}
                     {/each}
                 </div>
-            {/if}
+            {/if} -->
             <div class="text-gray-800 w-full shadow sm:rounded-lg">
                 <div class="bg-white border rounded my-2 text-gray-800">
-                    <table class="border-slate-500 border w-full p-2">                        
+                    <table class="border-slate-500 border w-full p-2">        
+                        
                         <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
                             <td class="w-1/4 text-lg px-2 py-2 font-bold">Admission Details</td>
                             <td></td>

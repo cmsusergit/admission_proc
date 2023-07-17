@@ -11,64 +11,83 @@
     import { onMount } from 'svelte'
     let loading=false,is_d2d=false
 
-    const convertToDtstring = (dt,addt)=>{             
-        dt.setDate(dt.getDate()+addt)
-        let day = '' + dt.getDate()
-        let month = '' + (dt.getMonth() + 1)   
-        let year = dt.getFullYear()
-        if (month.length < 2) 
-            month = '0' + month;
-        if (day.length < 2) 
-            day = '0' + day;
-        return [year, month, day].join('-');
-    }
-    let from_dt=convertToDtstring(new Date(),0),to_dt=convertToDtstring(new Date(),1)
-    let columnList=[
-        {name:'Reciept Number',field:'reciept_number',searchable:true,sortable:true},
-        {name:'College ID',field:'stu_college_id',searchable:true,sortable:true},
-        {name:'Name',field:'stu_name',searchable:true,sortable:true},
-        {name:'Reciept Date',field:'reciept_date'},
-        {name:'Cash Amount',field:'cash_amount'},
-        {name:'DD/Cheque Amount',field:'dd_amount'},
-        {name:'Online Amount',field:'online_amount'},
-        {name:'ACPC Amount',field:'ACPC_amount'},
-        {name:'Total Amount',field:'total_amount'},
+    // const convertToDtstring = (dt,addt)=>{             
+    //     dt.setDate(dt.getDate()+addt)
+    //     let day = '' + dt.getDate()
+    //     let month = '' + (dt.getMonth() + 1)   
+    //     let year = dt.getFullYear()
+    //     if (month.length < 2) 
+    //         month = '0' + month;
+    //     if (day.length < 2) 
+    //         day = '0' + day;
+    //     return [year, month, day].join('-');
+    // }
+    let columnList=[ 
+        {name:'Form ID',field:'id',searchable:true},
+        {name:'College ID',field:'student_college_id',searchable:true,sortable:true},
+        {name:'Student Name',field:'stu_name',searchable:true,sortable:true},   
+        {name:'Student Contact',field:'contact',searchable:true,sortable:true},     
+        {name:'Student Email',field:'email',searchable:true,sortable:true},     
+        {name:'Admission Category',field:'admission_category',selectable:true},
+        {name:'Branch',field:'branch',selectable:true},
         {slot:true}
     ],courseList=[]
-    $:processData(dataTable)
-
-    $:if(selectedAyear && selectedCourse && from_dt && to_dt){
+    $:if(selectedAyear && selectedCourse){
             fetchFeesRecord()
     }     
     const fetchFeesRecord=async()=>{
-        if(!selectedAyear || !selectedCourse || !from_dt || !to_dt){
+        if(!selectedAyear || !selectedCourse){
             return
         }
-        loading=true
-        let { data:dt, error:dt_err } = await supabase.from('AdmissionFeesCollectionACPC')
+        loading=true        
+        let feeCollectionList=[]
+        try{            
+            let { data:dt, error:dt_err } = await supabase.from('AdmissionFeesCollectionACPC')
             .select(`*`)
             .eq('academic_year',selectedAyear)
             .eq('course',selectedCourse)
             .eq('is_d2d',is_d2d)
-            .gte('created_at', from_dt)
-            .lte('created_at', to_dt)
-        if(dt_err){
-            console.log(dt_err)
-            alert(dt_err.messaage)
-            return
-        }
-        else{
-            dataTable=dt
-        }   
-        loading=false
-    }   
-    const processData=(dataTable)=>{
-        dataTable=_.forEach(dataTable,ob=>{
-
-            const dt=new Date(ob['reciept_date'])
-            ob['reciept_date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
-            ob['total_amount']=(ob['cash_amount']??0)+(ob['dd_amount']??0)+(ob['online_amount']??0)+(ob['ACPC_amount']??0)
-        })         
+            if(dt_err){
+                console.log(dt_err)
+                return
+            }
+            else{
+                feeCollectionList=dt
+            }
+            let f_id,tableToFetch
+            
+            dataTable=[]
+            for (let indx = 0; indx < feeCollectionList.length; indx++) {
+                const record = feeCollectionList[indx]
+                if(record.form_type=='ACPC' && record.form_id){
+                    f_id=record.form_id
+                    tableToFetch='ACPCFormInfo'
+                }
+                else if(record.form_type=='MQNRI' && record.mqnri_form_id){
+                    f_id=record.mqnri_form_id
+                    tableToFetch='MQNRIFormInfo'
+                }
+                let { data:dt, error:dt_err1 } = await supabase.from(tableToFetch)
+                    .select(`*,Branch(*)`)
+                    .eq('id',f_id).single()
+                if(dt_err1){
+                    console.log(dt_err1)
+                    return
+                }
+                else{
+                    dt['stu_name']=dt?.last_name+" "+dt?.first_name+" "+dt?.middle_name
+                    dt['admission_category']=dt?.admission_category
+                    dt['branch']=dt?.Branch?.name
+                    dataTable=[...dataTable,dt]//....
+                    //....
+                }
+            }
+        }catch(error1){
+            console.log('****',error1)
+            alert(error1)
+        }finally{
+            loading=false
+        }  
     }   
     onMount(()=>{
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
@@ -83,47 +102,41 @@
     const exportToFile=()=>{
             loading=true
             let list1=[]
-            let cashTotal=0.0
-            let ddTotal=0.0
-            let onlineTotal=0.0
-            let acpcTotal=0.0
-            let total=0.0
             dataTable.forEach((record,indx)=>{
                 let temp1={}
                 temp1['Sr.']=indx+1
-                temp1['Rec. Number']=record['reciept_number']
-
-
-
-
-
-
-                
-                // const dt=new Date(record['reciept_date'])
-                // temp1['Rec. Date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
-                temp1['Rec. Number. Date']=record['reciept_date']
-                temp1['College ID']=record['stu_college_id']
+                const dt=new Date(record['dob'])               
+                temp1['College ID']=record['student_college_id']
                 temp1['Student Name']=record['stu_name']                
-                temp1['Cash Amount']=record['cash_amount']
-                cashTotal+=record['cash_amount']
-                temp1['DD/Cheque Amount']=record['dd_amount']
-                ddTotal+=record['dd_amount']
-                temp1['Online Amount']=record['online_amount']
-                onlineTotal+=record['online_amount']
-                temp1['ACPC Amount']=record['ACPC_amount']
-                acpcTotal+=record['ACPC_amount']
-                temp1['Total Amount']=record['total_amount']
-                total+=record['total_amount']
+                temp1['Branch']=record['branch']
+                temp1['Contact']=record['contact']
+                temp1['Email']=record['email']
+
+                temp1['Gender']=record['gender']
+                temp1['Category']=record['category']
+                temp1['Aadharnumber']=record['aadharnumber']
+                temp1['Father Name']=record['father_name']
+                temp1['Mother Name']=record['mother_name']
+                temp1['Permenant Address']=`${record['per_addr1']},${record['per_addr2']}`
+                temp1['Permenant City']=record['per_city']
+                temp1['Permenant State']=record['per_state']
+                temp1['Permenant Zipcode']=record['per_zipcode']                
+                temp1['Present Address']=`${record['present_addr1']},${record['present_addr2']}`
+                temp1['Present City']=record['present_city']
+                temp1['Present State']=record['present_state']
+                temp1['Present Zipcode']=record['present_zipcode']
+                temp1['dob']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
+                temp1['Father Contact']=record['father_contact']
+                temp1['Mother Contact']=record['mother_contact']
                 list1.push(temp1)
             })
-            list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Total Amount':total})
             const wb=XLSX.utils.book_new()     
             const wsheet=XLSX.utils.json_to_sheet([])
             const ayear=data?.aYearList.find(ob=>ob.id==selectedAyear)?.name??''
-
             const college1=data?.collegeList.find(ob=>ob.id==selectedCollege)?.name??''
-            XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}`]])
-            XLSX.utils.sheet_add_aoa(wsheet, [[`${is_d2d?'D2D-':''}From Date:${from_dt} To Date:${to_dt}`]],{origin:"A2"})            
+            const course=data?.courseList.find(ob=>ob.id==selectedCourse)?.name??''
+            XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}-${course}`]])            
+            XLSX.utils.sheet_add_aoa(wsheet, [[`${course}`]],{origin:"A2"})            
             XLSX.utils.sheet_add_json(wsheet,list1,{origin:"A4"})
             const merge = [
                 {s: { r: 0, c: 0 }, e: { r: 0, c: 11 } },{s: { r: 1, c: 0 }, e: { r: 1, c: 11 } },
@@ -133,7 +146,6 @@
             XLSX.utils.book_append_sheet(wb,wsheet,filename)
             XLSX.writeFile(wb,`${filename}.xlsx`)
             loading=false    
-
     }
 </script>
 <div class="">
@@ -173,19 +185,10 @@
                 {/each}
             </select>
         </div>
-        <div class="flex flex-col w-full md:w-1/2 m-1 px-1">
-            <label for="from_dt" class="text-slate-800 px-1 py-1 font-bold">From Date</label>
-            <input bind:value={from_dt} type="date" class="border rounded px-1 py-1 border-blue-400" name="from_dt" id="from_dt">
-        </div>        
-        <div class="flex flex-col w-full md:w-1/2 m-1 px-1">
-            <label for="to_dt" class="text-slate-800 px-1 py-1 font-bold">To Date</label>
-            <input bind:value={to_dt} type="date" class="border rounded px-1 py-1 border-blue-400" name="to_dt" id="to_dt">
-        </div>
     </div>
     {#if loading}
         <p class="text-4xl text-orange-700 text-center p-2">Loading....</p>
     {/if}
-
     <div class="w-full mb-2 border flex justify-end space-x-2 p-2">
         <div class="w-2 bg-slate-400 border text-white"></div>
         <button on:click={exportToFile} class="button-primary md:w-48">Export Excel</button>
@@ -201,8 +204,9 @@
                     <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1  text-white rounded">
                             Profile
                     </button>
+    
                 </div>
             </div>            
         </DataTable>    
-        {/if}
+    {/if}
 </div>

@@ -41,6 +41,7 @@
         dataTable=_.forEach(data.dataTable,ob=>{
                 ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
+                ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['prov_branch']=ob.branch?.name?.trim()??'-'
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
@@ -99,7 +100,7 @@
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
-                let temp=_.pick(ob,["id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
+                let temp=_.pick(ob,["id","student_college_id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
                 "gender","dob","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact"])
                 list1.push(temp)
             })
