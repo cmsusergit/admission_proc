@@ -75,7 +75,7 @@
         fetchCourseList(selectedCollege)
     })
     const displayRecord=(record)=>{
-        goto(`/profile/${record.form_type=='ACPC'?'acpc':'mqnri'}?id=${record.id}`)        
+        goto(`/profile/${record.form_type=='ACPC'?'acpc':'mqnri'}?id=${record.form_type=='ACPC'?record.form_id:record.mqnri_form_id}`)        
     }
     const fetchCourseList=(value)=>{
         courseList=data?.courseList.filter(ob=>ob.college_id==value)

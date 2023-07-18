@@ -29,6 +29,7 @@
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
+        {name:'Branch',field:'branch',selectable:true,sortable:true},
         {name:'Prov_Branch',field:'prov_branch',selectable:true,sortable:true},
         {slot:true}
     ]
@@ -42,7 +43,7 @@
                 ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
-                ob['prov_branch']=ob.branch?.name?.trim()??'-'
+                ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
