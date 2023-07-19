@@ -216,18 +216,28 @@
                         <td class="text-lg px-2 py-2 text-center font-bold">Board Name</td>
                         <td class="text-center text-lg px-2 py-2 font-bold">Result</td> 
                     </tr>
-                    {#each profile?.boardList as record}                            
-                        <tr class="border-slate-500 border-b w-full px-2 py-2">
-                            <td class="text-lg px-2 py-2 text-center">
-                                {record?.board}                                
-                            </td>
-                            <td class="text-lg px-2 py-2 text-center">                                        
-                                {record?.result}
-                            </td>                                
-                        </tr>
-                    {/each}
+
+                    {#if profile?.boardList}
+                        {#each profile?.boardList as record}                            
+                            <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                <td class="text-lg px-2 py-2 text-center">
+                                    {record?.board}                                
+                                </td>
+                                <td class="text-lg px-2 py-2 text-center">                                        
+                                    {record?.result}
+                                </td>                                
+                            </tr>
+                        {/each}
+                    {/if}
                 </table>
             </div>
+
+
+
+
+
+
+            
             {#if profile?.subjectResultList && profile?.subjectResultList.length>0}
                 <div class="bg-white border rounded my-2 text-gray-800">                    
                     <table class="border-slate-500 border w-full">                        
