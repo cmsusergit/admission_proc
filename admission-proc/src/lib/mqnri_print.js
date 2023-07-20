@@ -295,23 +295,23 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
         [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
         [{text:'Subject',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}},{text:'Result',fillColor: '#eeeeff',style:{bold:true,alignment:'center'}}],
     ]
-
-    profile.subjectResultList.forEach(ob=>{
-        console.log('****',ob)
-        let record=[{text:ob.subName,style:{alignment:'center',bold:true}}]
-        record.push({text:ob.result,style:{alignment:'center',bold:true}})
-        boardResultList.push(record)
-    })
+    if(profile.subjectResultList)
+        profile.subjectResultList.forEach(ob=>{
+            console.log('****',ob)
+            let record=[{text:ob.subName,style:{alignment:'center',bold:true}}]
+            record.push({text:ob.result,style:{alignment:'center',bold:true}})
+            boardResultList.push(record)
+        })
     let boardDetail={        
         table: {
             headerRows:0,    
             widths:['*','*'],
-            body: boardResultList
+            body: profile.subjectResultList?boardResultList:[[],[]]
         }
     }
     const footText=`I hereby declare that the details furnished above are true and correct to the best of my knowledge and belief.`
-    let form_number=profile?.id
 
+    let form_number=profile?.id
     let reportDefination=[        
         {
             table:headerTbl1,
