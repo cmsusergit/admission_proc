@@ -44,6 +44,23 @@
         }
         mqnri_profile_print(college,ayear?.name,profile)
     }
+    const vacantPrint=async()=>{
+        let { data: college, error } = await supabase
+        .from('College')
+        .select('*').eq('id',profile.college_id).single()        
+        if(error){
+            console.log('****',error)
+            return
+        }        
+        let { data: ayear, error1 } = await supabase
+        .from('AcademicYear')
+        .select('*').eq('id',profile.academic_year).single()
+        if(error1){
+            console.log('****',error1)
+            return
+        }
+        mqnri_profile_print(college,ayear?.name,profile)
+    }
     const acpcPrint=()=>{        
         mqnri_profile_print1($college,$academicYear?.name,profile)
     }
@@ -57,7 +74,11 @@
                 <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
             {/if}        
             <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
-            <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
+            {#if profile.admission_category=='V'}
+                <button on:click={vacantPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">VACANT Report</button>
+            {:else}
+                <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
+            {/if}
         </div> 
         <div>
             <div class="w-full overflow-auto flex justify-between items-center">        

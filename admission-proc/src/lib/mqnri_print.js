@@ -23,10 +23,9 @@ const separator=(text)=>{
 const mqnri_profile_print=async(college,currAYear,profile)=>{
     console.log(profile)
     const dataUri=college.logo
-
     const titleText=`${college.name}
                         Managed By: The New English School Trust
-                        MQ/NRI/NRI Sponsored Application Form (${currAYear})`
+                        ${profile.admission_category=='V'?'Vacant':'MQ/NRI/NRI Sponsored'} Application Form (${currAYear})`
     
         const headerTbl1={         
         headerRows:0,

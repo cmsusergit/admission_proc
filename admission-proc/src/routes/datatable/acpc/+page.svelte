@@ -15,6 +15,8 @@
     let columnList=[
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Form Number',field:'formnumber',searchable:true,sortable:true},
+        {name:'ACPC Number',field:'acpcnumber',searchable:true,sortable:true},
+        {name:'ACPC Merit Number',field:'acpc_meritnumber',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
