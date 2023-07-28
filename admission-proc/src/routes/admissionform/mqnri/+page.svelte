@@ -691,82 +691,82 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
+                <div class="text-indigo-800 overflow-x-auto">
+                    {#if $form.subjectResultList}
+                        <table class="w-full bg-white">
+                            <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                                <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
+                            </thead>
+                            <tbody class="w-full p-1 border text-center">
+                                {#each $form.subjectResultList as subject,indx}
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">  
+                                            {#if subject.subName.length>1}
+                                                    <div class="flex flex-col md:flex-row justify-center">
+                                                        {#each subject.subName as subjectEntry,indx1}
+                                                            <span>
+                                                                <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/>
+                                                                <label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                            </span>
+                                                        {/each}
+                                                    </div>
+                                            {:else}
+                                                {subject.subName[0]}
+                                            {/if}
+                                        </td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    </tr>
+                                {/each}
+                                <tr>
+                                    <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['theoryObtained']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['theoryOutof']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['practicalObtained']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['practicalOutof']}</td>
+                                </tr>
+                            </tbody>
+                            <!-- <tbody class="w-full p-1 border text-center">
+                                {#each subjectList as subject,indx}
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">                                
+                                            {#if subject.length>1}
+                                                    <div class="flex flex-col md:flex-row justify-center">
+                                                        {#each subject as subjectEntry,indx1}
+                                                            <span>
+                                                                <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                            </span>
+                                                        {/each}
+                                                    </div>
+                                            {:else}
+                                                {subject[0]}
+                                            {/if}
+                                        </td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    </tr>
+                                {/each}
+                                <tr>
+                                    <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                </tr>
+                            </tbody> -->
+                        </table>
+                    {/if}
+                </div>
                 {#if !$form.is_d2d}
-                    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
-                    <div class="text-indigo-800 overflow-x-auto">
-                        {#if $form.subjectResultList}
-                            <table class="w-full bg-white">
-                                <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                                    <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
-                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
-                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
-                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
-                                </thead>
-                                <tbody class="w-full p-1 border text-center">
-                                    {#each $form.subjectResultList as subject,indx}
-                                        <tr>
-                                            <td class="w-1/2 border border-blue-400 p-1">  
-                                                {#if subject.subName.length>1}
-                                                        <div class="flex flex-col md:flex-row justify-center">
-                                                            {#each subject.subName as subjectEntry,indx1}
-                                                                <span>
-                                                                    <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/>
-                                                                    <label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
-                                                                </span>
-                                                            {/each}
-                                                        </div>
-                                                {:else}
-                                                    {subject.subName[0]}
-                                                {/if}
-                                            </td>
-                                            <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        </tr>
-                                    {/each}
-                                    <tr>
-                                        <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
-                                        <td class="py-1 border border-blue-400 px-1">{total['theoryObtained']}</td>
-                                        <td class="py-1 border border-blue-400 px-1">{total['theoryOutof']}</td>
-                                        <td class="py-1 border border-blue-400 px-1">{total['practicalObtained']}</td>
-                                        <td class="py-1 border border-blue-400 px-1">{total['practicalOutof']}</td>
-                                    </tr>
-                                </tbody>
-                                <!-- <tbody class="w-full p-1 border text-center">
-                                    {#each subjectList as subject,indx}
-                                        <tr>
-                                            <td class="w-1/2 border border-blue-400 p-1">                                
-                                                {#if subject.length>1}
-                                                        <div class="flex flex-col md:flex-row justify-center">
-                                                            {#each subject as subjectEntry,indx1}
-                                                                <span>
-                                                                    <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
-                                                                </span>
-                                                            {/each}
-                                                        </div>
-                                                {:else}
-                                                    {subject[0]}
-                                                {/if}
-                                            </td>
-                                            <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                            <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        </tr>
-                                    {/each}
-                                    <tr>
-                                        <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
-                                        <td class="py-1 border border-blue-400 px-1"></td>
-                                        <td class="py-1 border border-blue-400 px-1"></td>
-                                        <td class="py-1 border border-blue-400 px-1"></td>
-                                        <td class="py-1 border border-blue-400 px-1"></td>
-                                    </tr>
-                                </tbody> -->
-                            </table>
-                        {/if}
-                    </div>
                     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
                     <div class="text-indigo-800 overflow-x-auto">
                         {#if $form.entrnceExamDetail}
