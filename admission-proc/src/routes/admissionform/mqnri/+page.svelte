@@ -15,7 +15,7 @@
     let isAICTEAccepted=false,isConditionAccepted=false    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
-    let uploadFileList=[]
+    let uploadFileList=[],branchList=[]
     let isSubmitted=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
@@ -84,6 +84,7 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
+            branchList=temp1?.Branch
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
@@ -304,6 +305,10 @@
                 if(ob?.label?.toString().includes("GATE (In Case of Application for ME)")){
                     ob['label']="Diploma All Year Marksheets (1 File)"
                 }
+                
+                if(ob?.label?.toString().includes("GUJCET (In case of Application for BE)")){
+                    ob['label']="Diploma Degree/Provisional Certificate"
+                }                
             })
         }else if(!is_d2d){
             $form.boardList=[]
@@ -359,6 +364,9 @@
                         </div>
                     </div>
                 {/if}
+
+            </div>
+            <div class="flex justify-between flex-col md:flex-row p-2 bg-white rounded">
                 <div class="flex flex-col w-full m-1">
                     <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
                     <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
@@ -370,7 +378,19 @@
                             {/each}
                         {/if}
                     </select> 
-                </div>          
+                </div>        
+                {#if $form.admission_category=='V'}
+                    <div class="flex flex-col w-full m-1 px-2">                    
+                        <label for="course" class="font-bold">Select Branch <span class="text-sm text-red-500">*</span></label>
+                        <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="admissioncategory" id="admissioncategory" required>
+                            {#if branchList}
+                                {#each branchList as record}
+                                    <option value={record.id}>{record.name}({record.alias})</option>
+                                {/each}
+                            {/if}
+                        </select>
+                    </div>  
+                {/if}
             </div>    
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
@@ -635,7 +655,7 @@
                             </select>
                         </div>
                         <div class="flex flex-col w-full m-1">
-                            <label for="examseat" class="font-bold">Examination Seat Number</label>
+                            <label for="examseat" class="font-bold">Examination Seat/Enrollment Number</label>
                             <input bind:value={$form.exam_seatnumber} class="border rounded px-1 py-2 border-blue-400" type="text" id="examseat">
                         </div>
                     </div>

@@ -50,7 +50,7 @@
     "categoryList":["OPEN","SEBC","SC","ST","PH","OTHER"],
     "nationalityList":["Indian","Foreign"],
     "occupationList":["Business","Service","Self Employed","Housewife","Retired","-"],
-    "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","OTHER"],
+    "examinationBoardList":["GSEB","CBSE","NIOS","ICSE","GTU","MSU","NIRMA","ITM","OTHER"],
     "admissionCategoryList":[
         {"category":"Centralized","alias":"G"},
         {"category":"TFWS","alias":"T"},        
