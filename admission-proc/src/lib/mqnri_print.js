@@ -2,6 +2,7 @@ import pdfMake from "pdfmake/build/pdfmake"
 import config from '$lib/config.json'
 
 import 'pdfmake/build/vfs_fonts'
+import {supabase} from "$lib/db"
 const separator=(text)=>{
     return {
         table: {
@@ -200,15 +201,27 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
         defaultStyle:{fontSize:11}
         }).open()
 }
+
 const acpc_profile_print=async(college,currAYear,profile)=>{
-    console.log(profile)
+    if(!profile.Branch){
+
+        let { data: Branch, error } = await supabase
+            .from('Branch')
+            .select('name')
+            .eq('id',profile.branch).single()
+        console.log('****',Branch)
+
+        profile.Branch={...Branch}//....
+        //....
+    }
+
+    console.log('----',profile)
     const dataUri=college.logo
     const titleText=`${college.name}
                         Managed By: The New English School Trust \n Application Form (${currAYear})`
         const headerTbl1={         
         headerRows:0,
         widths:[50,'*'],
-
 
         body:[
             [ 
@@ -248,7 +261,7 @@ const acpc_profile_print=async(college,currAYear,profile)=>{
                     {text:'Name ',style:{bold:true}},{text:stuName,colSpan:3}
                 ],
                 [
-                    {text:'Current Address ',style:{bold:true}},{text:profile.present_addr1+'\n'+profile.present_addr2,colSpan:3}
+                    {text:'Current Address ',style:{bold:true}},{text:profile.present_addr1+'\n'+profile.present_addr2??'',colSpan:3}
                 ],
                 [
                     {text:'State ',style:{bold:true}},{text:profile.present_state},                    

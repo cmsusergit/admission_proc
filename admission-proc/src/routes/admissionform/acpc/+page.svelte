@@ -293,7 +293,7 @@
         if(error1){
             console.log('****',error1)
             return
-        }
+        }        
         acpc_profile_print(college,ayear?.name,$form)
     }
 </script>
@@ -310,6 +310,7 @@
     <div class="min-h-[500] w-full">
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a Form</h1>
     <div class="my-2 text-center">
+
         <button on:click={acpcPrint} class="bg-blue-500 text-white p-2 hover:bg-blue-400 rounded">Print Profile</button>
     </div> 
 
