@@ -91,7 +91,7 @@
     }   
     onMount(()=>{
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
-        fetchCourseList(selectedCollege)
+        fetchCourseList(selectedCollege)       
     })
     const displayRecord=(record)=>{
         goto(`/profile/${record.form_type=='ACPC'?'acpc':'mqnri'}?id=${record.id}`)        
@@ -102,16 +102,21 @@
     const exportToFile=()=>{
             loading=true
             let list1=[]
+            let branchList=[]            
+            _.forEach(_.uniqBy(dataTable,ob=>ob.branch),ob=>{
+                branchList.push(ob.Branch)
+            })
             dataTable.forEach((record,indx)=>{
                 let temp1={}
                 temp1['Sr.']=indx+1
-                const dt=new Date(record['dob'])               
+                const dt=new Date(record['dob'])     
+                
                 temp1['College ID']=record['student_college_id']
                 temp1['Student Name']=record['stu_name']                
                 temp1['Branch']=record['branch']
+                temp1['Admission Category']=record['admission_category']
                 temp1['Contact']=record['contact']
                 temp1['Email']=record['email']
-
                 temp1['Gender']=record['gender']
                 temp1['Category']=record['category']
                 temp1['Aadharnumber']=record['aadharnumber']
@@ -130,20 +135,27 @@
                 temp1['Mother Contact']=record['mother_contact']
                 list1.push(temp1)
             })
-            const wb=XLSX.utils.book_new()     
-            const wsheet=XLSX.utils.json_to_sheet([])
+            const wb=XLSX.utils.book_new()             
             const ayear=data?.aYearList.find(ob=>ob.id==selectedAyear)?.name??''
             const college1=data?.collegeList.find(ob=>ob.id==selectedCollege)?.name??''
             const course=data?.courseList.find(ob=>ob.id==selectedCourse)?.name??''
-            XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}-${course}`]])            
-            XLSX.utils.sheet_add_aoa(wsheet, [[`${course}`]],{origin:"A2"})            
-            XLSX.utils.sheet_add_json(wsheet,list1,{origin:"A4"})
             const merge = [
                 {s: { r: 0, c: 0 }, e: { r: 0, c: 11 } },{s: { r: 1, c: 0 }, e: { r: 1, c: 11 } },
             ]
-            wsheet["!merges"] = merge
             const filename=`report_${new Date().getDate().toString().padStart(2,0)}_${(new Date().getMonth()+1).toString().padStart(2,0)}`
-            XLSX.utils.book_append_sheet(wb,wsheet,filename)
+            branchList.forEach(ob=>{            
+                const temp1=list1.filter(tt=>{
+                    return tt.Branch.toString().trim()==ob.name.toString().trim()
+                })
+                const wsheet=XLSX.utils.json_to_sheet([])
+                XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}-${course}`]])                
+                XLSX.utils.sheet_add_aoa(wsheet, [[`${course}`]],{origin:"A2"})            
+                wsheet["!merges"] = merge
+                XLSX.utils.sheet_add_json(wsheet,temp1,{origin:"A4"})
+                let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                .replace(/\s{2,}/g," ");
+                XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
+            })
             XLSX.writeFile(wb,`${filename}.xlsx`)
             loading=false    
     }

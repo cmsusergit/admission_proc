@@ -18,11 +18,7 @@
         const temp1=''+dt.getDate()
         return [dt.getFullYear(),temp.length<2?('0'+temp):temp,temp1.length<2?('0'+temp1):temp1].join('-')
     }
-    onMount(()=>{
-        if(data?.error){
-            formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
-            return
-        }        
+    const initFormDt=()=>{
         formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
         formDt.stu_name=data?.formInfo?.last_name+" "+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name
@@ -40,7 +36,13 @@
         formDt.dd_amount=0.0
         formDt.online_amount=0.0
         formDt.online_reference_number=''
-        console.log(formDt)
+    }
+    onMount(()=>{
+        if(data?.error){
+            formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
+            return
+        } 
+        initFormDt()
         calculateAmountExpected()
     })
     $:fetchBranchList(formDt.course)
@@ -95,7 +97,7 @@
             else{                
                 $mesg='Form Record Inserted/Updated Successully.'    
                 // 
-                // printReciept()
+                // printReciept()                
                 goto(`/datatable/${(data?.form_type.includes('acpc'))?'acpc':(data?.form_type.includes('vacant'))?'vacant':'mqnri'}?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
             }            
         } catch (error) {
@@ -108,12 +110,17 @@
             loading = false
         }
     }
+
     const printReciept=()=>{    
         console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[0]?.course)
-
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
         acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
+    }
+    const rePayment=()=>{              
+        console.log(data?.feeFormInfo[0])
+        data.error=null        
+        initFormDt()
     }
 </script>
 
@@ -123,12 +130,12 @@
             <div class="w-full md:mt-0 text-center p-2 text-orange-800 text-xl">{error_mesg}</div>
             <button on:click={()=>error_mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
-
     {/if}  
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
-            <a class="button-primary w-20" href={`/datatable/${(data?.form_type.includes('acpc'))?'acpc':(data?.form_type.includes('vacant'))?'vacant':'mqnri'}?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
+            <button on:click={rePayment} class="button-primary w-40">Re-Payment</button>
+            <a class="button-primary w-20" href={`/datatable/${(data?.form_type.includes('acpc'))?'acpc':(data?.form_type.includes('vacant'))?'vacant':'mqnri'}?ayear_id=${data?.formInfo?.academic_year}&college_id=${data?.formInfo?.college_id}`}>PrevPage</a>
         </div>
     {/if}
     {#if !data?.error}

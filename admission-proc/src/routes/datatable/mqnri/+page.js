@@ -20,7 +20,6 @@ export async function load({ params,url }) {
     .from('MQNRIFormInfo')
     .select(`*,Course!inner(*),Branch(*)`)
     .filter('academic_year','eq',ayear_id)
-    .filter('is_removed','eq',false)
     .filter('Course.college_id','eq',college_id)
     if(dt_err)
         return {error:dt_err.message}

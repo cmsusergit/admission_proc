@@ -41,22 +41,30 @@ export async function load({ params,url }) {
     if(feeFormInfo.length>0){
         return {
             feeFormInfo,
+            courseList,
             form_type,
             feeSchemeList,
-            ayear_id:formInfo.academic_year,
-            college_id:formInfo.Course.college_id,
+            formInfo,
             error:`Record Already Exists For Form ID ${id}`}
     }        
-
     let { data:prov2acpc, error:errorp } = await supabase
     .from('prov_acpc').select(`acpc_id`).eq('acpc_id',id)
     if(errorp)
         return {error:errorp.message}
-    return {    
+
+        
+
+
+
+
+        
+
+
+
+        return {    
         feeSchemeList,
         form_type,
         courseList,
         formInfo,        
         prov2acpc
-    }
-}
+    }}
