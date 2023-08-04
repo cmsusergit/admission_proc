@@ -8,7 +8,7 @@
     export let data
     let selectedAyear,count
     let role=null
-    const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"}]
+    const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"},{name:"Vacant",path:"vacant"}]
     
     
     $:{

@@ -4,7 +4,7 @@ import { supabase } from '$lib/db'
 export async function load({ params,url }) {
     const form_type = url.searchParams.get('form_type')
     const id = url.searchParams.get('id')
-    const tableToFetch=(form_type.includes('acpc'))?'ACPCFormInfo':'MQNRIFormInfo'
+    const tableToFetch=(form_type.includes('acpc'))?'ACPCFormInfo':(form_type.includes('vacant'))?'VacantFormInfo':'MQNRIFormInfo'
     console.log(form_type,tableToFetch)
     let { data: formInfo, error } = await supabase
         .from(tableToFetch)
@@ -17,8 +17,8 @@ export async function load({ params,url }) {
     }
     // 
     // const feeTableToFetch=(form_type.includes('acpc'))?'AdmissionFeesCollectionACPC':'AdmissionFeesCollectionACPC'    
-    const formType=(form_type.includes('acpc'))?'ACPC':'MQNRI'    
-    const formIdText=(form_type.includes('acpc'))?'form_id':'mqnri_form_id'
+    const formType=(form_type.includes('acpc'))?'ACPC':(form_type.includes('vacant'))?'VACANT':'MQNRI' 
+    const formIdText=(form_type.includes('acpc'))?'form_id':(form_type.includes('vacant'))?'vacant_form_id':'mqnri_form_id'
     console.log('----',formIdText)
     let { data: feeFormInfo, error:feeError1 } = await supabase
         .from('AdmissionFeesCollectionACPC')

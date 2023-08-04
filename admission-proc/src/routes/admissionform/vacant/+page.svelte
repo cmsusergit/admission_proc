@@ -11,11 +11,11 @@
     export let data
 
     
-    let sameAddrSelected=false
+    let sameAddrSelected=false,is_d2d=false
     let isAICTEAccepted=false,isConditionAccepted=false    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
-    let uploadFileList=[]
+    let uploadFileList=[],branchList=[]
     let isSubmitted=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
@@ -70,7 +70,7 @@
             last_schoolcity:yup.string().notRequired()
         })
     const {form,errors,handleChange,handleSubmit}=createForm({
-        initialValues:{title:'Mr.',per_country:'INDIA'},        
+        initialValues:{admission_category:'V',title:'Mr.',per_country:'INDIA'},        
         validationSchema:validationSchema,
         onSubmit:value=>{
             console.log(value)
@@ -84,6 +84,7 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
+            branchList=temp1?.Branch
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
@@ -117,12 +118,11 @@
                 uploadFileList.push(temp1)
             })            
         }
-
         else{
             $form.academic_year=data.academicYear.id
             $form.college_id=data.college.id    
-            $form.admission_category="M"
-
+            console.log('----',$form);
+            $form.admission_category="V"
             $form.boardList=[]
             _.forEach(boardList,ob=>{
                 $form.boardList.push({board:ob,result:0.0})
@@ -135,18 +135,22 @@
             _.forEach(subjectList1,ob=>{
                 $form.entrnceExamDetail.push({subName:ob,gujcetReult:0.0})
             })   
-            uploadFileList=[]
-            _.forEach(data?.uploadLabelList,label=>{
-                let temp1={
-                    label:label.name,
-                    f_label_id:label.id,
-                    document_path:'',
-                    is_required:label.is_required
-                }
-                uploadFileList.push(temp1)
-            })
-        }
+            fetchUploadFileList()
+            }
     })
+
+    const fetchUploadFileList=async()=>{
+        uploadFileList=[]
+        _.forEach(data?.uploadLabelList,label=>{
+            let temp1={
+                label:label.name,
+                f_label_id:label.id,
+                document_path:'',
+                is_required:label.is_required
+            }
+            uploadFileList.push(temp1)
+        })
+    }
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
 		node.addEventListener('input', transform, { capture: true })		
@@ -171,7 +175,7 @@
         try{
             loading = true
             const { data:dt, error:err1 } = await supabase
-            .from('MQNRIFormInfo')
+            .from('VacantFormInfo')
             .upsert(record)
             .select('id')
             console.log(dt,err1)
@@ -200,7 +204,7 @@
                 })    
                 console.log(tempUploadList);
                 const { data:data1, error:error1 } = await supabase
-                    .from('AdmissionDocumentMQNRI')
+                    .from('AdmissionDocumentVacant')
                     .upsert(tempUploadList)
                 if(error1){                    
                     console.log(error1)
@@ -265,7 +269,7 @@
     } 
     const removeFile= async(file1)=>{
         const { data, error } = await supabase
-            .from('AdmissionDocumentMQNRI')
+            .from('AdmissionDocumentVacant')
             .update({document_path:''})
             .eq('id', file1.id)
         if(error){
@@ -282,8 +286,35 @@
         uploadFileList=[...temp1]//....
         //....
         console.log(file1);
-
-    }   
+    }
+    const processBoardList=(is_d2d)=>{
+        $form.is_d2d=is_d2d
+        if(is_d2d){            
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })   
+            $form.boardList.push({board:"Diploma (Sem-5)",result:0.0})
+            $form.boardList.push({board:"Diploma (Sem-6)",result:0.0})            
+            
+            
+            uploadFileList=_.forEach(uploadFileList,ob=>{
+                if(ob?.label?.toString().includes("GATE (In Case of Application for ME)")){
+                    ob['label']="Diploma All Year Marksheets (1 File)"
+                }
+                
+                if(ob?.label?.toString().includes("GUJCET (In case of Application for BE)")){
+                    ob['label']="Diploma Degree/Provisional Certificate"
+                }                
+            })
+        }else if(!is_d2d){
+            $form.boardList=[]
+            _.forEach(boardList,ob=>{
+                $form.boardList.push({board:ob,result:0.0})
+            })            
+            fetchUploadFileList()
+        }
+    }    
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -292,38 +323,30 @@
         </div>
 {/if}    
 <div class="flex justify-between items-center border-b px-4 pb-4">   
-    <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
+    <div class="text-slate-800 font-bold text-2xl text-center w-full">Vacant Form - {data?.academicYear?.name}</div>
 </div>
 {#if isSubmitted}
     <div class="min-h-[500] w-full">
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
-        {#if $form.admission_category=="B"}
-
-            <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                To Proceed For Payment: <a href='https://pmny.in/rJp80sx2Bhca'>Click Here</a>
-            </div>
-
-
-        {:else}
-            <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                To Proceed For Payment: <a href='https://pmny.in/kIDcWXiuJGZz'>Click Here</a>
-            </div>
-        {/if}
+        <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+            To Proceed For Payment: <a href='https://pmny.in/kIDcWXiuJGZz'>Click Here</a>
+        </div>
     </div>
 {:else}
-
-
-
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
-                <div class="flex flex-col w-full m-1 px-2">
-                    <label for='mq' class="font-bold px-1">Select Admission Category</label>
+                <div class="flex flex-col w-1/2 m-1 px-2">
+                    <label for='mq' class="font-bold px-1">Admission Category</label>
                     <div class="flex flex-row border border-blue-400 p-2 rounded">
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="M" type="radio" class="border w-4 p-2" id="mq" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="mq">Management Quota (MQ)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="N" type="radio" class="border w-4 ml-5 p-2" id="nri" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="B" type="radio" class="border w-4 ml-5 p-2" id="both" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="both">BOTH</label></div>
+                        <label class="mx-2 font-bold" for="vacant">Vacant</label>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full md:w-1/2 m-1 px-1">
+                    <label for='isd2d' class="font-bold px-1">D2D Admission</label>
+                    <div class="flex flex-row border border-blue-400 p-2 rounded">
+                        <input type="checkbox" bind:checked={is_d2d} on:change={(event)=>processBoardList(is_d2d)} class="border w-4 p-2" id="isd2d"/><label class="mx-2 font-bold" for="isd2d">Is D2D?</label>
                     </div>
                 </div>
                 <div class="flex flex-col w-full m-1">
@@ -337,7 +360,17 @@
                             {/each}
                         {/if}
                     </select> 
-                </div>          
+                </div>        
+                <div class="flex flex-col w-full m-1 px-2">                    
+                        <label for="course" class="font-bold">Select Branch <span class="text-sm text-red-500">*</span></label>
+                        <select bind:value={$form.branch} class:border-orange-700={$errors.branch} class="input" type="text" name="admissioncategory" id="admissioncategory" required>
+                            {#if branchList}
+                                {#each branchList as record}
+                                    <option value={record.id}>{record.name}({record.alias})</option>
+                                {/each}
+                            {/if}
+                        </select>
+                </div>                  
             </div>    
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
@@ -602,7 +635,7 @@
                             </select>
                         </div>
                         <div class="flex flex-col w-full m-1">
-                            <label for="examseat" class="font-bold">Examination Seat Number</label>
+                            <label for="examseat" class="font-bold">Examination Seat/Enrollment Number</label>
                             <input bind:value={$form.exam_seatnumber} class="border rounded px-1 py-2 border-blue-400" type="text" id="examseat">
                         </div>
                     </div>
@@ -713,44 +746,47 @@
                         </table>
                     {/if}
                 </div>
-                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
-                <div class="text-indigo-800 overflow-x-auto">
-                    {#if $form.entrnceExamDetail}
-                        <table class="w-full bg-white">
-                            <thead class="bg-blue-500 px-1 py-2 text-white">                        
-                                <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
-                                <th class="px-1 py-2 border border-blue-400 border-t-white">RESULT</th>
-                                <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
-                            </thead>
-                            <tbody class="w-full p-1 border border-blue-400 text-center">
-                                {#each $form.entrnceExamDetail as subject}                    
+                {#if !$form.is_d2d}
+                    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
+                    <div class="text-indigo-800 overflow-x-auto">
+                        {#if $form.entrnceExamDetail}
+                            <table class="w-full bg-white">
+                                <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                                    <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                                    <th class="px-1 py-2 border border-blue-400 border-t-white">RESULT</th>
+                                    <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
+                                </thead>
+                                <tbody class="w-full p-1 border border-blue-400 text-center">
+                                    {#each $form.entrnceExamDetail as subject}                    
+                                        <tr>
+                                            <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
+                                            <td class="p-1 border border-blue-400">
+                                                <input bind:value={subject.gujcetReult} step='0.01' class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                            </td>
+                                            <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                            </td> -->
+                                        </tr>
+                                    {/each}
                                     <tr>
-                                        <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
-                                        <td class="p-1 border border-blue-400">
-                                            <input bind:value={subject.gujcetReult} step='0.01' class="w-full border hover:border-blue-400 rounded p-1" type="number">
-                                        </td>
-                                        <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                        <td class="font-bold p-1 border border-blue-400" >Total</td>
+                                        <td class="p-1 border border-blue-400">{total['entranceRsultTotal']}</td>
+                                        <!-- <td class="p-1 border border-blue-400"><input type="number">
                                         </td> -->
                                     </tr>
-                                {/each}
-                                <tr>
-                                    <td class="font-bold p-1 border border-blue-400" >Total</td>
-                                    <td class="p-1 border border-blue-400">{total['entranceRsultTotal']}</td>
-                                    <!-- <td class="p-1 border border-blue-400"><input type="number">
-                                    </td> -->
-                                </tr>
 
-                            </tbody>
-                        </table>
-                    {/if}
-                </div>
+                                </tbody>
+                            </table>
+                        {/if}
+                    </div>
+                {/if}
                 <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
                 <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                     <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
+                        
                         {#each uploadFileList as uploadFile}    
-                            <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/> 
-<!--                                
-                            <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/>  -->
+                            <!-- <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label} required={uploadFile.is_required}/>  
+                                -->                               
+                            <Upload on:removeFile={()=>removeFile(uploadFile)} bind:url={uploadFile.document_path} label={uploadFile.label}/> 
                         {/each}
                     </div>
                 </div>           

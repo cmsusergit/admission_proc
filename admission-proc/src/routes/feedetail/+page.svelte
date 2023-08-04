@@ -20,14 +20,15 @@
     }
     onMount(()=>{
         if(data?.error){
-            formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':'MQNRI'
+            formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
             return
         }        
-        formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':'MQNRI'
+        formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
         formDt.stu_name=data?.formInfo?.last_name+" "+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name
         formDt.form_id=(data?.form_type.includes('acpc'))?(data?.formInfo?.id):null
         formDt.mqnri_form_id=(data?.form_type.includes('mqnri'))?(data?.formInfo?.id):null
+        formDt.vacant_form_id=(data?.form_type.includes('vacant'))?(data?.formInfo?.id):null
         formDt.is_d2d=data?.formInfo?.is_d2d
         formDt.admission_category=data?.formInfo?.admission_category
         formDt.course=data?.formInfo?.course
@@ -77,7 +78,6 @@
             else if(data?.form_type.includes('mqnri')) {
                 console.log('****',formDt.mqnri_form_id)
             }
-
             console.log('----',formDt)
             const { data:dt, error:err1 } = await supabase
             .from('AdmissionFeesCollectionACPC')
@@ -96,7 +96,7 @@
                 $mesg='Form Record Inserted/Updated Successully.'    
                 // 
                 // printReciept()
-                goto(`/datatable/${(data?.form_type.includes('acpc'))?'acpc':'mqnri'}?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
+                goto(`/datatable/${(data?.form_type.includes('acpc'))?'acpc':(data?.form_type.includes('vacant'))?'vacant':'mqnri'}?ayear_id=${formDt.academic_year}&college_id=${data?.formInfo?.Course?.college_id}`)
             }            
         } catch (error) {
             error_mesg=error.message
@@ -114,7 +114,6 @@
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
         acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
-        
     }
 </script>
 
@@ -129,7 +128,7 @@
     {#if data?.error}
         <div class="flex justify-center px-2 py-2">
             <button on:click={printReciept} class="button-primary w-20">Receipt</button>
-            <a class="button-primary w-20" href={`/datatable/${(data?.form_type.includes('acpc'))?'acpc':'mqnri'}?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
+            <a class="button-primary w-20" href={`/datatable/${(data?.form_type.includes('acpc'))?'acpc':(data?.form_type.includes('vacant'))?'vacant':'mqnri'}?ayear_id=${data?.ayear_id}&college_id=${data?.college_id}`}>PrevPage</a>
         </div>
     {/if}
     {#if !data?.error}
@@ -187,8 +186,6 @@
                 </div>
                 <div class="flex flex-col w-full m-1 px-2">                    
                     <label for="course" class="font-bold">Fees Scheme <span class="text-sm text-red-500">*</span></label>
-                    
-                    
                     <select  bind:value={formDt.fees_scheme} class="input" type="text" name="admissioncategory" id="admissioncategory" required>
                         {#if data?.feeSchemeList}
                             {#each data?.feeSchemeList as record}
@@ -198,7 +195,6 @@
                     </select>
                 </div>
             </div>    
-
         </div>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Fees Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
