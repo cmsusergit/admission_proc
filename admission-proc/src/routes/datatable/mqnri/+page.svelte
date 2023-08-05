@@ -115,8 +115,7 @@
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
-                let temp=_.pick(ob,["id","student_college_id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
-                "gender","dob","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","board_name","exam_seatnumber","entr_examnumber"])
+                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)

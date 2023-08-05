@@ -1,4 +1,4 @@
-<script>
+<script> 
     import { goto,invalidateAll } from '$app/navigation'
 
     import { mesg,academicYear,college } from '$lib/store.js'    
