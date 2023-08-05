@@ -112,7 +112,6 @@
     }
 
     const printReciept=()=>{    
-        console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[data?.feeFormInfo.length-1]?.course)
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[data?.feeFormInfo.length-1]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[data?.feeFormInfo.length-1]?.course)
         console.log('****----',data?.feeFormInfo[data?.feeFormInfo.length-1]);

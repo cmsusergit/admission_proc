@@ -33,6 +33,7 @@
         {name:'Online Amount',field:'online_amount'},
         {name:'ACPC Amount',field:'ACPC_amount'},
         {name:'Total Amount',field:'total_amount'},
+        {name:"Comment",filed:'comment'},
         {slot:true}
     ],courseList=[]
     $:processData(dataTable)
@@ -92,13 +93,6 @@
                 let temp1={}
                 temp1['Sr.']=indx+1
                 temp1['Rec. Number']=record['reciept_number']
-
-
-
-
-
-
-                
                 // const dt=new Date(record['reciept_date'])
                 // temp1['Rec. Date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['Rec. Number. Date']=record['reciept_date']
@@ -114,13 +108,14 @@
                 acpcTotal+=record['ACPC_amount']
                 temp1['Total Amount']=record['total_amount']
                 total+=record['total_amount']
+                temp1['Comment']=record['comment']
                 list1.push(temp1)
+
             })
             list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Total Amount':total})
             const wb=XLSX.utils.book_new()     
             const wsheet=XLSX.utils.json_to_sheet([])
             const ayear=data?.aYearList.find(ob=>ob.id==selectedAyear)?.name??''
-
             const college1=data?.collegeList.find(ob=>ob.id==selectedCollege)?.name??''
             XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}`]])
             XLSX.utils.sheet_add_aoa(wsheet, [[`${is_d2d?'D2D-':''}From Date:${from_dt} To Date:${to_dt}`]],{origin:"A2"})            
