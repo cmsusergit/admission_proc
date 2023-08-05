@@ -33,11 +33,10 @@
         {name:'Online Amount',field:'online_amount'},
         {name:'ACPC Amount',field:'ACPC_amount'},
         {name:'Total Amount',field:'total_amount'},
-        {name:"Comment",filed:'comment'},
+        {name:"Comment",field:'comment'},
         {slot:true}
     ],courseList=[]
     $:processData(dataTable)
-
     $:if(selectedAyear && selectedCourse && from_dt && to_dt){
             fetchFeesRecord()
     }     
