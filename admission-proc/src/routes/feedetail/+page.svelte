@@ -115,7 +115,8 @@
         console.log(data?.feeFormInfo[0]?.fees_scheme,data?.feeFormInfo[0]?.course)
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[0]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[0]?.course)
-        acpc_recipt_print(data?.feeFormInfo[0],feeTempList)    
+        console.log('****----',data?.feeFormInfo[data?.feeFormInfo.length-1]);
+        acpc_recipt_print(data?.feeFormInfo[data?.feeFormInfo.length-1],feeTempList)    
     }
     const rePayment=()=>{              
         console.log(data?.feeFormInfo[0])
