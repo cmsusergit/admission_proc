@@ -12,7 +12,7 @@
 
     
     let sameAddrSelected=false,is_d2d=false
-    let isAICTEAccepted=false,isConditionAccepted=false    
+    let is_prov=false,prov_contact_number=''
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let uploadFileList=[],branchList=[]
@@ -287,6 +287,35 @@
         //....
         console.log(file1);
     }
+    
+    
+    
+    
+    
+    const fetchProvDt=async()=>{
+        try{
+            loading=true
+            let { data: provFormInfo, error } = await supabase
+                .from('ProvFormInfo')
+                .select('*').eq('contact',prov_contact_number).single()
+            
+            if(!provFormInfo){
+                handleReset()
+                return
+            }
+            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number"])
+            for(const record in temp1){
+                $form[record]=temp1[record]
+            }
+        }catch(error1){
+            error_mesg=error1
+            console.log('****',error1)
+
+        }finally{
+
+            loading=false
+        }
+    }
     const processBoardList=(is_d2d)=>{
         $form.is_d2d=is_d2d
         if(is_d2d){            
@@ -333,6 +362,16 @@
         </div>
     </div>
 {:else}
+        <div class="bg-slate-500 text-white p-2 m-2 justify-center text-lg flex items-center">
+            <input bind:checked={is_prov} type="checkbox" class="w-8 h-4" id="id_prov">
+            <label for="id_prov">Is Provisional Admission Given?</label>
+        </div> 
+        {#if is_prov}
+            <div class="flex flex-col w-full m-1">
+                <label for="prov_contact_number" class="font-bold">Provisional Contact Number</label>
+                <input on:blur={fetchProvDt} bind:value={prov_contact_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_contact_number">
+            </div>
+        {/if}
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">

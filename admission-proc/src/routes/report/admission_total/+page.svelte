@@ -119,6 +119,7 @@
                 temp1['Email']=record['email']
                 temp1['Gender']=record['gender']
                 temp1['Category']=record['category']
+                temp1['ACPC MeritNumber']=record['acpc_meritnumber']
                 temp1['Aadharnumber']=record['aadharnumber']
                 temp1['Father Name']=record['father_name']
                 temp1['Mother Name']=record['mother_name']
