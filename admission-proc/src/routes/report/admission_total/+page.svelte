@@ -54,18 +54,61 @@
             else{
                 feeCollectionList=dt
             }
-            let f_id,tableToFetch
-            
             dataTable=[]
+
+            let acpcIdList=[],mqnriIdList=[]
+            let vacantIdList=[]
             for (let indx = 0; indx < feeCollectionList.length; indx++) {
                 const record = feeCollectionList[indx]
                 if(record.form_type=='ACPC' && record.form_id){
+                    acpcIdList.push(record.form_id)
+                }
+                else if(record.form_type=='MQNRI' && record.mqnri_form_id){
+                    mqnriIdList.push(record.mqnri_form_id)
+                }
+                else if(record.form_type=='VACANT' && record.vacant_form_id){                    
+                    vacantIdList.push(record.vacant_form_id)
+                }
+            }
+            const formTypeList=[{table:"ACPCFormInfo",list:acpcIdList},{table:"MQNRIFormInfo",list:mqnriIdList},{table:"VacantFormInfo",list:vacantIdList}]
+            let templist=[]
+            for (let indx = 0; indx < formTypeList.length; indx++) {            
+                const tableToFetch = formTypeList[indx].table
+                let { data:dtList, error:dt_err1 } = await supabase.from(tableToFetch)
+                    .select(`*,Branch(*)`)
+                    .in('id',formTypeList[indx].list)
+                    .eq('is_removed','False')
+                if(dt_err1){
+                    console.log(dt_err1)
+                    return
+                }
+                else{
+                    dtList.map((record)=>{
+                        record['stu_name']=record?.last_name+" "+record?.first_name+" "+record?.middle_name
+                        record['admission_category']=record?.admission_category
+                        record['branch']=record?.Branch?.name
+                        templist.push(record)
+                    })
+                }
+                dataTable=[...templist]//....
+                //....
+
+            }
+            /*
+            let templist=[]
+            for (let indx = 0; indx < feeCollectionList.length; indx++) {
+                const record = feeCollectionList[indx]
+                    if(record.form_type=='ACPC' && record.form_id){
                     f_id=record.form_id
                     tableToFetch='ACPCFormInfo'
                 }
                 else if(record.form_type=='MQNRI' && record.mqnri_form_id){
                     f_id=record.mqnri_form_id
                     tableToFetch='MQNRIFormInfo'
+                }
+                else if(record.form_type=='VACANT' && record.vacant_form_id){
+                    f_id=record.vacant_form_id
+                    tableToFetch='VacantFormInfo'
                 }
                 let { data:dt, error:dt_err1 } = await supabase.from(tableToFetch)
                     .select(`*,Branch(*)`)
@@ -78,10 +121,12 @@
                     dt['stu_name']=dt?.last_name+" "+dt?.first_name+" "+dt?.middle_name
                     dt['admission_category']=dt?.admission_category
                     dt['branch']=dt?.Branch?.name
-                    dataTable=[...dataTable,dt]//....
-                    //....
+                    templist.push(dt)
                 }
+                dataTable=[...templist]//....
+                //....
             }
+            */
         }catch(error1){
             console.log('****',error1)
             alert(error1)
@@ -210,6 +255,7 @@
         <div class="flex flex-col justify-between md:flex-row">
             <p class="text-2xl bg-slate-400 text-center text-white p-2 border w-full">Total Matches Found {dataTable.length}</p>            
         </div>
+
         <DataTable data={dataTable} let:currRecord={record}
             columnlist={columnList}>
             <div slot='action'>
