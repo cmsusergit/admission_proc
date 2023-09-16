@@ -55,6 +55,7 @@
             </select>
         </div>
     </div>
+    
     {#if selectedAyear && count}
         <div class="mt-2 flex justify-center flex-col">
             {#each data?.collegeList as college}            
@@ -81,7 +82,5 @@
         </div>
     {/if}
 </div>
-
-
 
 

@@ -28,7 +28,17 @@
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
+
+
+
+
+
+
+
+
+
         {name:'Course',field:'course',selectable:true,sortable:true},
+        {name:'D2D',field:'is_d2d',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
         {slot:true}
     ]
@@ -42,6 +52,7 @@
                 ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
+                ob['is_d2d']=ob.is_d2d?"Y":'N'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
@@ -108,15 +119,12 @@
         recordToRestore=-1
         console.log(error);
     }
-
-
-
     const exportToFile=()=>{
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
                 let temp=_.pick(ob,["id","student_college_id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
-                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","board_name","exam_seatnumber","entr_examnumber"])
+                "gender","dob","course","branch","is_d2d","father_name","father_contact","mother_name","mother_contact","board_name","exam_seatnumber","entr_examnumber"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
