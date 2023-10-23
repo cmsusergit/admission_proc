@@ -67,11 +67,11 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
                 count1=count1+1
                 total=total+temp1
         })
-        reportTable.push([{fillColor:'#dee',text:''},{fillColor:'#dee',fontSize:10,bold:true,text:'SubTotal',alignment:'right'},{fontSize:10,alignment:'right',fillColor:'#dee',bold:true,text:total.toLocaleString('en-IN',{
+        reportTable.push([{fillColor:'#dee',text:''},{fillColor:'#dee',fontSize:8,bold:true,text:'SubTotal',alignment:'right'},{fontSize:8,alignment:'right',fillColor:'#dee',bold:true,text:total.toLocaleString('en-IN',{
                         maximumFractionDigits:2
                     })}])
     })
-    reportTable.push(['',{fontSize:10,alignment:'right',bold:true,text:"Grand Total in Rs."},{fontSize:10,bold:true,alignment:'right',text:formDt.amount_expected.toLocaleString('en-IN',{
+    reportTable.push(['',{fontSize:8,alignment:'right',bold:true,text:"Grand Total in Rs."},{fontSize:8,bold:true,alignment:'right',text:formDt.amount_expected.toLocaleString('en-IN',{
                         maximumFractionDigits:2
                     })}])
     let detailTable=[
