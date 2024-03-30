@@ -1,0 +1,30 @@
+{
+	"name": "admission-proc",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev --port 4400",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^1.0.0",
+		"@sveltejs/adapter-vercel": "^2.4.2",
+		"@sveltejs/kit": "^1.0.0",
+		"autoprefixer": "^10.4.13",
+		"postcss": "^8.4.21",
+		"svelte": "^3.54.0",
+		"tailwindcss": "^3.2.4",
+		"vite": "^4.2.1"
+	},
+	"type": "module",
+	"dependencies": {
+		"@supabase/auth-helpers-sveltekit": "^0.8.7",
+		"@supabase/supabase-js": "^2.7.0",
+		"lodash": "^4.17.21",
+		"pdfmake": "^0.2.7",
+		"svelte-forms-lib": "^2.0.1",
+		"xlsx": "^0.18.5",
+		"yup": "^1.0.0"
+	}
+}
