@@ -43,17 +43,27 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
             headerRows:0,
             widths:['*','*','*','*','*','*'],
             body: [
-                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
                 [   
-                    {text:'ACPC Number: ',style:{alignment:'center'}},{text:profile.acpcnumber,style:{alignment:'center'}},
-                    {text:'ACPC Merit Number: ',style:{alignment:'center'}},{text:profile.acpc_meritnumber,style:{alignment:'center'}},
-                    {text:'Entrance Exam Number: ',style:{alignment:'center'}},{text:profile.entr_examnumber,style:{alignment:'center'}},
-                ],
-                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+                    {text:'ACPC Number: ',style:{alignment:'center',fontSize:10}},{text:profile.acpcnumber,style:{alignment:'center',fontSize:10}},
+                    {text:'ACPC Merit Number: ',style:{alignment:'center',fontSize:10}},{text:profile.acpc_meritnumber,style:{alignment:'center',fontSize:10}},
+                    {text:'Entrance Exam Number: ',style:{alignment:'center',fontSize:10}},{text:profile.entr_examnumber,style:{alignment:'center',fontSize:10}},
+                ]
             ]
         }
     }  
-
+    let admissionRecord1={        
+        table: {
+            headerRows:0,
+            widths:['*','*','*','*'],
+            body: [
+                [   
+                    {text:'Student ABC Id: ',style:{alignment:'center',fontSize:10}},{text:profile.student_abc_id,style:{alignment:'center',fontSize:10}},
+                    {text:'UDISE Number: ',style:{alignment:'center',fontSize:10}},{text:profile.UDISE_Number,style:{alignment:'center',fontSize:10}},
+                ],                
+                [{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}],
+            ]
+        }
+    }  
     const stuName=`${profile.title} ${profile.first_name} ${profile.middle_name} ${profile.last_name}`    
     let personalRecord={        
         table: {
@@ -170,6 +180,7 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
             ]
         },
         admissionRecord,
+        admissionRecord1,
         separator('PERSONAL DETAILS'),     
         personalRecord,
         separator('ACADEMIC DETAILS'),     
@@ -398,7 +409,7 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
         width: '*',     
         table: {
             headerRows:0,
-            heights:20,
+            heights:8,
             widths:['*','*'],
             body: [
                 [   
@@ -410,6 +421,13 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
                 ],
                 [
                     {text:'Branch: ',style:{alignment:'center'}},{text:(profile?.Branch?.name)??'-',style:{alignment:'center'}}
+
+                ],
+                [
+                    {text:'Student ABC ID: ',style:{alignment:'center'}},{text:(profile?.student_abc_id)??'-',style:{alignment:'center'}}
+                ],
+                [
+                    {text:'UDISE: ',style:{alignment:'center'}},{text:(profile?.UDISE_Number)??'-',style:{alignment:'center'}}
                 ]
             ]
         }
@@ -511,7 +529,7 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
                     margin:[5,0,2,10],alignment:'right',canvas:[
                         {
                             type:'rect',
-                            x:0,y:0,w:100,h:104
+                            x:0,y:0,w:100,h:108
                         }]
                 },
             ]

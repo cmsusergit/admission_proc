@@ -4,7 +4,7 @@
     import {supabase} from "$lib/db"   
     import { academicYear,college } from '$lib/store.js'    
     export let profile,uploadedFileList
-    import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js'
+    import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
     let userPhotoUrl=null
     onMount(()=>{                  
     })
