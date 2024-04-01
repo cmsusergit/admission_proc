@@ -47,12 +47,14 @@
             per_addr1:yup.string().required(),
             per_addr2:yup.string().notRequired(),
             per_city:yup.string().required(),
+            per_district:yup.string().required(),
             per_state:yup.string().required(),
             per_country:yup.string().required(),
             per_zipcode:yup.number().required(),            
             present_addr1:yup.string().required(),
             present_addr2:yup.string().notRequired(),
             present_city:yup.string().required(),
+            present_district:yup.string().required(),
             present_state:yup.string().required(),
             present_country:yup.string().required(),
             present_zipcode:yup.number().required(),       
@@ -252,6 +254,7 @@
             $form.present_addr1=$form.per_addr1
             $form.present_addr2=$form.per_addr2
             $form.present_city=$form.per_city
+            $form.present_district=$form.per_district
             $form.present_state=$form.per_state
             $form.present_country=$form.per_country
             $form.present_zipcode=$form.per_zipcode
@@ -260,6 +263,7 @@
             $form.present_addr1=''
             $form.present_addr2=''
             $form.present_city=''
+            $form.present_district=''
             $form.present_state=''
             $form.present_country='' 
             $form.present_zipcode=''
@@ -358,10 +362,11 @@
             
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
-                    <label for="student_abc_id" class="font-bold">Student ABC Id</label>                        <input on:blur={handleChange} bind:value={$form.student_abc_id} class:border-orange-700={$errors.student_abc_id} class="border rounded px-1 py-2 border-blue-400" type="text" name="student_abc_id" id="student_abc_id">
+                    <span><label for="student_abc_id" class="font-bold">ABC Id </label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline">Get More Information</a></span>
+                    <input on:blur={handleChange} bind:value={$form.student_abc_id} class:border-orange-700={$errors.student_abc_id} class="border rounded px-1 py-2 border-blue-400" type="text" name="student_abc_id" id="student_abc_id">
                 </div>
                 <div class="flex flex-col w-full m-1">
-                    <label for="UDISE_Number" class="font-bold">UDISE Number</label>    
+                    <label for="UDISE_Number" class="font-bold">UDISE (According to Leaving Certificate)</label>    
                     <input on:blur={handleChange} bind:value={$form.UDISE_Number} class:border-orange-700={$errors.UDISE_Number} class="border rounded px-1 py-2 border-blue-400" type="text" name="UDISE_Number" id="UDISE_Number">
                 </div>
             </div>               
@@ -486,6 +491,11 @@
                             <label class="font-bold" for="city">City <span class="text-sm text-red-500">*</span></label>
                             <input on:blur={handleChange} bind:value={$form.per_city} name="per_city" class:border-orange-700={$errors.per_city} use:uppercase class="input" type="text" id="city" required>
                         </div>
+                        
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="per_district">District <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.per_district} name="per_district" class:border-orange-700={$errors.per_district} use:uppercase class="input" type="text" id="district" required>
+                        </div>
                         <div class="flex flex-col w-full m-1">
                             <label class="font-bold" for="state">State <span class="text-sm text-red-500">*</span></label>
                             <input on:blur={handleChange} bind:value={$form.per_state} name="per_state" class:border-orange-700={$errors.per_state} use:uppercase class="input" type="text" id="state" required>
@@ -519,6 +529,10 @@
                         <div class="flex flex-col w-full m-1">
                             <label class="font-bold" for="pre_city">City <span class="text-sm text-red-500">*</span></label>
                             <input on:blur={handleChange} bind:value={$form.present_city} name="present_city" class:border-orange-700={$errors.present_city} use:uppercase class="input" type="text" id="pre_city" required>
+                        </div>
+                        <div class="flex flex-col w-full m-1">
+                            <label class="font-bold" for="present_district">District <span class="text-sm text-red-500">*</span></label>
+                            <input on:blur={handleChange} bind:value={$form.present_district} name="present_district" class:border-orange-700={$errors.present_district} use:uppercase class="input" type="text" id="present_district" required>
                         </div>
                         <div class="flex flex-col w-full m-1">
                             <label class="font-bold" for="pre_state">State <span class="text-sm text-red-500">*</span></label>
