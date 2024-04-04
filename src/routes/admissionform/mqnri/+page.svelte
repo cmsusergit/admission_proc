@@ -44,6 +44,7 @@
             category:yup.string().notRequired(),
             caste:yup.string().notRequired(),
             aadharnumber:yup.number().required(),
+            name_as_per_aadhar:yup.string().required(),
             per_addr1:yup.string().required(),
             per_addr2:yup.string().notRequired(),
             per_city:yup.string().required(),
@@ -374,7 +375,7 @@
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
             <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex m-1 flex-col w-48">
+                <div class="flex m-1 flex-col md:w-48 w-full ">
                     <label class="font-bold" for="title">Title <span class="text-sm text-red-500">*</span></label>
                     <select bind:value={$form.title} name="title" class:border-orange-700={$errors.title} class="input" type="text" id="title" required>
                         <option>Mr.</option>
@@ -452,7 +453,7 @@
                 </div>           
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col md:w-1/4 w-full m-1">      
                     <label class="font-bold" for="category">Category</label>                
                     <select bind:value={$form.category} name="category" class="input" id="category">
                         {#each config.categoryList as category}
@@ -460,13 +461,17 @@
                         {/each}
                     </select>
                 </div>    
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col md:w-1/4 w-full m-1">      
                     <label class="font-bold" for="caste">Caste</label>                
                     <input bind:value={$form.caste} class="input" use:uppercase type="text" id="caste">                
                 </div>  
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col md:w-1/2 w-full m-1">      
                     <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
                     <input on:blur={handleChange} bind:value={$form.aadharnumber}  class="input" class:border-orange-700={$errors.aadharnumber} type="text" id="aadharnumber" required>                
+                </div>  
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="name_as_per_aadhar">Name AS Per AadharCard <span class="text-sm text-red-500">*</span></label>                
+                    <input on:blur={handleChange} bind:value={$form.name_as_per_aadhar}  class="input" class:border-orange-700={$errors.name_as_per_aadhar} type="text" id="name_as_per_aadhar" required>                
                 </div>  
             </div>
         </div>

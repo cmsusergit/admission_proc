@@ -5,6 +5,7 @@
     import { goto } from '$app/navigation'
     import { onMount } from 'svelte';
     import {createForm} from 'svelte-forms-lib'
+    import { env } from '$env/dynamic/public'
     import * as yup from 'yup'
     export let data
     let branchList=[],sameAddrSelected=false
@@ -110,7 +111,6 @@
 		node.addEventListener('input', transform, { capture: true })		
 		transform()
 	}
-
     const onSameAddrChanged=()=>{
         if(sameAddrSelected){
             $form.present_addr1=$form.per_addr1
@@ -128,16 +128,33 @@
             $form.present_country='' 
             $form.present_zipcode=''
         }
+    }    
+    const fetchProvDt=async()=>{
+        try{
+            loading=true
+            const option={
+                    method: 'GET',mode: 'cors'
+                }                
+            let url1=`${env.PUBLIC_INQUERY_URL}/inquery/detailbycontact?mobile=9879944771`
+            console.log(url1);
+            const dt = await fetch(url1,{headers:option})
+            if(dt.status==200){
+                const rr=await dt.json()
+                if(rr.found){
+                    $form.title=rr.dt[0].title
+                    $form.first_name=rr.dt[0].first_name?.toUpperCase()
+                    $form.middle_name=rr.dt[0].middle_name?.toUpperCase()
+                    $form.last_name=rr.dt[0].last_name?.toUpperCase()
+                }
+            }
+        }catch(error1){
+            error_mesg=error1
+            console.log('****',error1)
+
+        }finally{
+            loading=false
+        }
     }
-
-
-
-
-
-
-
-
-    
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -147,6 +164,14 @@
 {/if}    
 <div class="flex justify-center items-center border-b px-4 pb-4">    
     <div class="text-slate-800 font-bold text-2xl">Provisional Form - {data?.academicYear?.name}</div>
+</div>
+<div class="flex">
+    <div class="flex flex-col w-full md:w-1/2 mt-1 px-2">
+        <label for='mq' class="font-bold px-1">D2D Admission</label>
+        <div class="flex flex-row border border-blue-400 p-2 rounded">
+        </div>
+    </div>
+    <button on:click={fetchProvDt}>Fetch Inquiry</button>
 </div>
 <form class="text-sm p-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
