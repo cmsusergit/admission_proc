@@ -8,12 +8,11 @@
     let userPhotoUrl=null
     onMount(()=>{                  
     })
-    
-
-    
     const downloadImage = async (path) => {
 		try {
-            const { data, error } = await supabase.storage.from('userphoto').download(path)
+  
+
+	const { data, error } = await supabase.storage.from('userphoto').download(path)
             if (error) {
 				throw error
 			}
