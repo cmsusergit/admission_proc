@@ -11,7 +11,7 @@
     let branchList=[],sameAddrSelected=false
     
 
-
+    let inquiry_contact='1001'
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
             is_d2d:yup.boolean().required(),
@@ -135,7 +135,7 @@
             const option={
                     method: 'GET',mode: 'cors'
                 }                
-            let url1=`${env.PUBLIC_INQUERY_URL}/inquery/detailbycontact?mobile=9879944771`
+            let url1=`${env.PUBLIC_INQUERY_URL}/inquery/detailbycontact?mobile=1001`
             console.log(url1);
             const dt = await fetch(url1,{headers:option})
             if(dt.status==200){
@@ -145,6 +145,11 @@
                     $form.first_name=rr.dt[0].first_name?.toUpperCase()
                     $form.middle_name=rr.dt[0].middle_name?.toUpperCase()
                     $form.last_name=rr.dt[0].last_name?.toUpperCase()
+                    $form.contact=rr.dt[0].mobile
+                    $form.email=rr.dt[0].email
+                    $form.per_addr1=rr.dt[0].address                    
+                    $form.per_city=rr.dt[0].city
+
                 }
             }
         }catch(error1){
@@ -165,13 +170,11 @@
 <div class="flex justify-center items-center border-b px-4 pb-4">    
     <div class="text-slate-800 font-bold text-2xl">Provisional Form - {data?.academicYear?.name}</div>
 </div>
-<div class="flex">
-    <div class="flex flex-col w-full md:w-1/2 mt-1 px-2">
-        <label for='mq' class="font-bold px-1">D2D Admission</label>
-        <div class="flex flex-row border border-blue-400 p-2 rounded">
-        </div>
-    </div>
-    <button on:click={fetchProvDt}>Fetch Inquiry</button>
+<div class="mx-4 my-2 flex justify-around gap-2 flex-row">
+    <label class="font-bold w-40" for="fname">Mobile Number<span class="text-sm text-red-500">*</span></label>
+    <input on:blur={fetchProvDt} bind:value={inquiry_contact} name="first_name" class:border-orange-700={$errors.first_name} use:uppercase class="input w-full" type="text" id="fname" required/>               
+
+    <button on:click={fetchProvDt} class="bg-blue-700 hover:bg-blue-800 text-white p-2 w-1/4 rounded">Fetch Inquiry</button>
 </div>
 <form class="text-sm p-2" on:submit={handleSubmit}>
     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
