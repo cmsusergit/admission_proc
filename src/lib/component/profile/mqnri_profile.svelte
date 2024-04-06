@@ -1,4 +1,4 @@
-<script> 
+<script>
     import {  onMount } from 'svelte'
 
     import {supabase} from "$lib/db"   
