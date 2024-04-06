@@ -69,10 +69,12 @@
     <div class="min-h-screen w-full">    
         <div class="flex justify-end">        
             {#if profile.admission_category=="B"}
-                <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/rJp80sx2Bhca'>Payment</a>
-                <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
+                <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/rJp80sx2Bhca'>Payment</a> -->
+                
+                <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a>
             {:else}
-                <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
+            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a>
+                <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a> -->
             {/if}        
             <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
             {#if profile.admission_category=='V'}
