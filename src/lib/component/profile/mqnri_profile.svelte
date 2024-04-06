@@ -131,8 +131,7 @@
             {/if} -->
             <div class="text-gray-800 w-full shadow sm:rounded-lg">
                 <div class="bg-white border rounded my-2 text-gray-800">
-                    <table class="border-slate-500 border w-full p-2">        
-                        
+                    <table class="border-slate-500 border w-full p-2">                                
                         <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
                             <td class="w-1/4 text-lg px-2 py-2 font-bold">Admission Details</td>
                             <td></td>
@@ -179,6 +178,12 @@
                             <td class="w-1/4 text-lg px-2 py-2 font-bold">Name</td>
                             <td class="text-lg px-2 py-2">
                                 {profile?.title} {profile?.first_name} {profile?.middle_name} {profile?.last_name}
+                            </td>
+                        </tr>
+                        <tr class="border-slate-500 border-b w-full px-2 py-2">
+                            <td class="w-1/4 text-lg px-2 py-2 font-bold">Name AS Per AadharCard</td>
+                            <td class="text-lg px-2 py-2">
+                                {profile?.name_as_per_aadhar??'-'}
                             </td>
                         </tr>
                         <tr class="border-slate-500 border-b w-full px-2 py-2">

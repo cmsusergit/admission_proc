@@ -34,7 +34,7 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
         body:[
             [   
                 {alignment:'left',image:dataUri,fit:[50,50]},
-                {alignment:'center',fontSize:12,bold:true,text:titleText},
+                {alignment:'center',fontSize:10,bold:true,text:titleText},
             ]
         ]
     }  
@@ -74,6 +74,9 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
                 [   
                     {text:'Name ',style:{bold:true}},{text:stuName,colSpan:3}
                 ],
+                [   
+                    {text:'Name As Per AadharCard',style:{bold:true}},{text:profile.name_as_per_aadhar??'-',colSpan:3}
+                ],                
                 [
                     {text:'Current Address ',style:{bold:true}},{text:profile.present_addr1+'\n'+profile.present_addr2,colSpan:3}
                 ],
@@ -123,18 +126,18 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
     let thTotal=0,prTotal=0
     let thTotal1=0,prTotal1=0
     profile.subjectResultList.forEach(ob=>{
-        let record=[{text:ob.subName[ob.selectedIndx],style:{alignment:'center',bold:true}}]
+        let record=[{text:ob.subName[ob.selectedIndx],style:{alignment:'center',fontSize:9,bold:true}}]
         thTotal+=ob.theoryObtained
-        record.push({text:ob.theoryObtained,style:{alignment:'center',bold:true}})
+        record.push({text:ob.theoryObtained,style:{alignment:'center',fontSize:9,bold:true}})
         thTotal1+=ob.theoryOutof
-        record.push({text:ob.theoryOutof,style:{alignment:'center',bold:true}})
+        record.push({text:ob.theoryOutof,style:{alignment:'center',fontSize:9,bold:true}})
         prTotal+=ob.practicalObtained
-        record.push({text:ob.practicalObtained,style:{alignment:'center',bold:true}})
+        record.push({text:ob.practicalObtained,style:{alignment:'center',fontSize:9,bold:true}})
         prTotal1+=ob.practicalOutof
-        record.push({text:ob.practicalOutof,style:{alignment:'center',bold:true}})
+        record.push({text:ob.practicalOutof,style:{alignment:'center',fontSize:9,bold:true}})
         boardResultList.push(record)
     })
-    boardResultList.push([{text:'Total',style:{alignment:'center',bold:true}},{text:thTotal,style:{alignment:'center',bold:true}},{text:thTotal1,style:{alignment:'center',bold:true}},{text:prTotal,style:{alignment:'center',bold:true}},{text:prTotal1,style:{alignment:'center',bold:true}}])
+    boardResultList.push([{text:'Total',style:{alignment:'center',fontSize:9,bold:true}},{text:thTotal.toFixed(2),style:{alignment:'center',fontSize:9,bold:true}},{text:thTotal1.toFixed(2),style:{alignment:'center',fontSize:9,bold:true}},{text:prTotal.toFixed(2),style:{alignment:'center',fontSize:9,bold:true}},{text:prTotal1.toFixed(2),style:{alignment:'center',fontSize:9,bold:true}}])
     boardResultList.push([{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]},{text:'',border:[false,false,false,false]}])
     let boardDetail={        
         table: {
@@ -151,12 +154,12 @@ const mqnri_profile_print=async(college,currAYear,profile)=>{
 
 
     profile.entrnceExamDetail.forEach(ob=>{
-        let record=[{text:ob.subName,style:{alignment:'center',bold:true}}]
+        let record=[{text:ob.subName,style:{alignment:'center',fontSize:10-1,bold:true}}]
         gjTotal+=ob.gujcetReult
-        record.push({text:ob.gujcetReult,style:{alignment:'center'}})
+        record.push({text:ob.gujcetReult.toFixed(2),style:{alignment:'center',fontSize:10-1,}})
         entrnceDetailList.push(record)
     })   
-    entrnceDetailList.push([{text:'Total',style:{alignment:'center',bold:true}},{text:gjTotal,style:{alignment:'center',bold:true}}])
+    entrnceDetailList.push([{text:'Total',style:{alignment:'center',fontSize:10-1,bold:true}},{text:gjTotal.toFixed(2),style:{alignment:'center',fontSize:10-1,bold:true}}])
     let entrnceDetail={        
         table: {
             headerRows:0,    
@@ -442,6 +445,10 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
                 [   
                     {text:'Name ',style:{bold:true}},{text:stuName,colSpan:3}
                 ],
+                [   
+                    
+                    {text:'Name as per AadharCard',style:{bold:true}},{text:profile.name_as_per_aadhar??'-',colSpan:3}
+                ],                
                 [
                     {text:'Current Address ',style:{bold:true}},{text:profile.present_addr1+'\n'+profile.present_addr2,colSpan:3}
                 ],
