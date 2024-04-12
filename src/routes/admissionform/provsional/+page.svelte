@@ -135,7 +135,7 @@
             const option={
                     method: 'GET',mode: 'cors'
                 }                
-            let url1=`${env.PUBLIC_INQUERY_URL}/inquery/detailbycontact?mobile=1001`
+            let url1=`${env.PUBLIC_INQUERY_URL}/inquery/detailbycontact?mobile=${inquiry_contact}`
             console.log(url1);
             const dt = await fetch(url1,{headers:option})
             if(dt.status==200){
@@ -151,9 +151,15 @@
                     $form.per_city=rr.dt[0].city
 
                 }
+                else{
+                    error_mesg="Record For Enquiry Nt Found"
+                }
+            }
+            else{alert("Something Wrong!!!!")
             }
         }catch(error1){
             error_mesg=error1
+            alert("Something Wrong!!!!"+error1)
             console.log('****',error1)
 
         }finally{
@@ -173,7 +179,6 @@
 <div class="mx-4 my-2 flex justify-around gap-2 flex-row">
     <label class="font-bold w-40" for="fname">Mobile Number<span class="text-sm text-red-500">*</span></label>
     <input on:blur={fetchProvDt} bind:value={inquiry_contact} name="first_name" class:border-orange-700={$errors.first_name} use:uppercase class="input w-full" type="text" id="fname" required/>               
-
     <button on:click={fetchProvDt} class="bg-blue-700 hover:bg-blue-800 text-white p-2 w-1/4 rounded">Fetch Inquiry</button>
 </div>
 <form class="text-sm p-2" on:submit={handleSubmit}>

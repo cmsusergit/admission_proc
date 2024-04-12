@@ -1,8 +1,9 @@
+import { supabase } from '$lib/db'
 export async function POST({ url,request }) {
-	const dt=await request.text()
 
+	const dt=await request.text()
 	const record1=JSON.parse(dt)
-	console.log(record1.customerPhone,record1.customerEmail)
+	console.log(record1)
 	
 	if(record1.status=='Success'){
 		const { data, error } = await supabase.from('MQNRIFormInfo')
@@ -15,6 +16,5 @@ export async function POST({ url,request }) {
 			console.log('****',error);
 		}
 	}
-
 	return new Response(dt);
 }
