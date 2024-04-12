@@ -7,7 +7,7 @@ export async function POST({ url,request }) {
 	if(record1.status=='Success'){
 		const { data1, error1 } = await supabase
 		.from('MQNRIFormInfo')
-		.select("*").like('email', `sindhuprasad1@gmail.com`)
+		.select("*").like('email', `%${record1.customerEmail}%`)
 		console.log('dt::',data1)
 	
 	
@@ -15,7 +15,7 @@ export async function POST({ url,request }) {
 			console.log('error1::',error1)
 		const { data, error } = await supabase.from('MQNRIFormInfo')
 		.update({ is_payment_done: true })
-		.like('email',`sindhuprasad1@gmail.com`)
+		.like('email',`%${record1.customerEmail}%`)
 		.select()
 		console.log('****',data);
 		if(error){
