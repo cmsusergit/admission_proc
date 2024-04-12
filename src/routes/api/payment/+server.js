@@ -8,14 +8,14 @@ export async function POST({ url,request }) {
 	if(record1.status=='Success'){
 		const { data1, error1 } = await supabase
 		.from('MQNRIFormInfo')
-		.select("*").eq('contact', `'${record1.customerPhone}'`)
+		.select("*").like('contact', `'%${record1.customerPhone}%'`)
 		console.log('dt::',data1)
 
 		if(error1)
 			console.log('error1::',error1)
 		const { data, error } = await supabase.from('MQNRIFormInfo')
-		.update({ is_payment_done: 'TRUE' })
-		.eq('contact',`'${record1.customerPhone}'`)
+		.update({ is_payment_done: true })
+		.like('contact',`'%${record1.customerPhone}%'`)
 		.select()
 		console.log('****',data);
 		if(error){
