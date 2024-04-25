@@ -17,6 +17,7 @@
     let role=null,recordToRestore=-1
     let meritRecord=-1,branchList=[]
     let selectedBranch
+    let recordToCancle=-1
     let columnList=[
         {name:'Form ID',field:'id',searchable:true,sortable:true},
         {name:'CollegeID',field:'student_college_id',searchable:true,sortable:true},
@@ -151,6 +152,19 @@
         else
             processData(data)
     }
+    const setAdmissionCancel=async()=>{        
+        const { data, error } = await supabase
+        .from('VacantFormInfo')
+        .update({ admission_status: 2 })
+        .eq('id', recordToCancle)
+        if(error){
+            alert(error)
+            console.log('****'.error)
+        }
+
+        recordToCancle=-1
+        invalidateAll()
+    } 
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
@@ -225,6 +239,13 @@
                                     {:else}
                                         <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
                                 {/if}
+                                {#if record.admission_status!=2}
+                                    <button on:click={()=>{recordToCancle=record.id}} class="hover:bg-orange-400 bg-orange-500 p-1 w-8 text-white font-bold rounded">
+                                        C 
+                                    </button>
+                                {:else}
+                                    Admission Cancelled
+                                {/if}
                             </div>
                         {:else}
                             {#if !record.is_removed}                     
@@ -286,4 +307,14 @@
         <MeritDlg meritRecord={meritRecord} on:close={()=>{meritRecord=-1}}/>
     {/if}
 </div>
+<div>
+    {#if recordToCancle!=-1}
+        <Dialog>
 
+            <div slot="header">Cancle Admission</div>
+            <p slot="content">Do You Really Want To Cancle an Admission?</p>
+            <button on:click={setAdmissionCancel} slot="confirm" class="w-24 px-2 py-1 text-white bg-emerald-500 hover:bg-emerald-400 rounded">Yes</button>                        
+            <button on:click={()=>recordToCancle=-1} slot="close" class="w-24 px-2 py-1 text-white bg-red-500 hover:bg-red-400 rounded">No</button>
+        </Dialog>
+    {/if}
+</div>

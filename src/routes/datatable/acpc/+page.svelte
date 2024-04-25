@@ -12,6 +12,7 @@
     let loading=false
 
     let dataTable,recordToRemove=-1
+    let recordToCancle=-1
     let columnList=[
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Form Number',field:'formnumber',searchable:true,sortable:true},
@@ -62,8 +63,7 @@
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
-                let temp=_.pick(ob,["id","admission_category","title","first_name","middle_name","last_name","created_at","contact","email",
-                
+                let temp=_.pick(ob,["id","admission_category","title","first_name","middle_name","last_name","created_at","contact","email",                
                 "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","acpcnumber","acpc_merinumber"])
                 list1.push(temp)
             })
@@ -73,6 +73,20 @@
             XLSX.writeFile(wb,"acpcforminfo.xlsx")
             loading=false
     }
+
+    const setAdmissionCancel=async()=>{        
+        const { data, error } = await supabase
+        .from('ACPCFormInfo')
+        .update({ admission_status: 2 })
+        .eq('id', recordToCancle)
+        if(error){
+            alert(error)
+            console.log('****'.error)
+        }
+
+        recordToCancle=-1
+        invalidateAll()
+    } 
 </script>
 <div class="min-h-screen w-full">
     {#if $mesg}
@@ -106,7 +120,27 @@
                         </button>
                         <button on:click={()=>{goto(`/feedetail?form_type='acpc'&id=${record.id}`)}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
                             <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
-                        </button>                            
+                        
+                        </button>  
+                        {#if record.admission_status!=2}
+                            <button on:click={()=>{recordToCancle=record.id}} class="hover:bg-orange-400 bg-orange-500 p-1 w-8 text-white font-bold rounded">
+                                C 
+                            </button>
+
+
+
+
+
+
+
+
+
+
+
+
+                        {:else}
+                            Admission Cancelled
+                        {/if}
                     </div>
                     </div>            
             </DataTable>
@@ -115,6 +149,11 @@
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
 </div>
+
+
+
+
+
 <div>
     {#if recordToRemove!=-1}
         <Dialog>
@@ -125,5 +164,25 @@
         </Dialog>
     {/if}
 </div>
+<div>
+    {#if recordToCancle!=-1}
+        <Dialog>
+
+            <div slot="header">Cancle Admission</div>
+            <p slot="content">Do You Really Want To Cancle an Admission?</p>
+            <button on:click={setAdmissionCancel} slot="confirm" class="w-24 px-2 py-1 text-white bg-emerald-500 hover:bg-emerald-400 rounded">Yes</button>                        
+            <button on:click={()=>recordToCancle=-1} slot="close" class="w-24 px-2 py-1 text-white bg-red-500 hover:bg-red-400 rounded">No</button>
+        </Dialog>
+    {/if}
+</div>
+
+
+
+
+
+
+
+
+
 
 
