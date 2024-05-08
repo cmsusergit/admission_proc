@@ -68,7 +68,7 @@
 {#if profile}
     <div class="min-h-screen w-full">    
         <div class="flex justify-end">        
-            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIDcWXiuJGZz'>Payment</a>
+            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a>
             <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
             <button on:click={vacantPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">VACANT Report</button>
         </div> 

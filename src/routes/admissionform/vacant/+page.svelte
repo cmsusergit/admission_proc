@@ -358,7 +358,7 @@
     <div class="min-h-[500] w-full">
         <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
         <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-            To Proceed For Payment: <a href='https://pmny.in/kIDcWXiuJGZz'>Click Here</a>
+            To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
         </div>
     </div>
 {:else}
