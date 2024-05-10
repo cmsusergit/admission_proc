@@ -102,6 +102,10 @@
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
         }
+        if($form){
+
+            localStorage.setItem('form_dt',JSON.stringify($form))
+        }
     }
     onMount(()=>{
         if(data.formDt){               
@@ -122,12 +126,10 @@
                 uploadFileList.push(temp1)
             })            
         }
-
         else{
             $form.academic_year=data.academicYear.id
             $form.college_id=data.college.id    
             $form.admission_category="M"
-
             $form.boardList=[]
             _.forEach(boardList,ob=>{
                 $form.boardList.push({board:ob,result:0.0})
@@ -171,7 +173,6 @@
         }
         return total
     }    
-
     const insertRecord=async(record)=>{
         try{
             loading = true
@@ -182,7 +183,8 @@
             console.log(dt,err1)
             if(err1)
             {
-                error_mesg=error.message     
+
+                error_mesg=err1.details +"----"+ err1.message 
                 window.scrollTo(0,50)
                 if(err1 instanceof Error){
                     error_mesg=err1.message
@@ -830,6 +832,7 @@
         </div>
     </form>
 {/if}
+
 
 
 
