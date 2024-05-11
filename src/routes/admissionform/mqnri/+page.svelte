@@ -102,10 +102,7 @@
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
         }
-        if($form){
-
-            localStorage.setItem('form_dt',JSON.stringify($form))
-        }
+       
     }
     onMount(()=>{
         if(data.formDt){               
@@ -183,7 +180,6 @@
             console.log(dt,err1)
             if(err1)
             {
-
                 error_mesg=err1.details +"----"+ err1.message 
                 window.scrollTo(0,50)
                 if(err1 instanceof Error){
