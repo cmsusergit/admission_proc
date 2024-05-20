@@ -62,6 +62,12 @@
         console.log('----',record)
         meritRecord=record
     }
+
+
+
+
+
+    
     const updateRecord=(record)=>{        
         goto(`/admissionform/mqnri?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${data?.college.id}`)        
     }

@@ -5,14 +5,15 @@
     import { academicYear,college } from '$lib/store.js'    
     export let profile,uploadedFileList
     import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
+    import {goto} from '$app/navigation'
     let userPhotoUrl=null
     onMount(()=>{                  
     })
+
+
     const downloadImage = async (path) => {
 		try {
-  
-
-	const { data, error } = await supabase.storage.from('userphoto').download(path)
+    const { data, error } = await supabase.storage.from('userphoto').download(path)
             if (error) {
 				throw error
 			}
@@ -63,26 +64,32 @@
     const acpcPrint=()=>{        
         mqnri_profile_print1($college,$academicYear?.name,profile)
     }
+    const updateRecord=(record)=>{      
+        goto(`/admissionform/mqnri?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${record?.college_id}`)        
+    }
 </script>
 {#if profile}
     <div class="min-h-screen w-full">    
-        <div class="flex justify-end">     
+        <div class="flex justify-end p-1 gap-2">     
             {#if !profile.is_payment_done}   
                 {#if profile.admission_category=="B"}
-                    <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
+                    <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
                     <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
                 {:else}
                 <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
 
-                <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
+                <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
                 {/if}        
             {/if}
-            <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
+            <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">Profile Report</button>
             {#if profile.admission_category=='V'}
                 <button on:click={vacantPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">VACANT Report</button>
             {:else}
                 <button on:click={mqnriPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">MQNRI Report</button>
             {/if}
+
+
+            <button on:click={()=>updateRecord(profile)} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded text-center">Edit</button>
         </div> 
         <div>
             <div class="w-full overflow-auto flex justify-between items-center">        

@@ -31,16 +31,10 @@
                 }   
                 let temp1=merit_number.find(ob=>ob.category=='M')
 
-                
-                
-                
-                
-                
-                
-                temp1.number=temp1.number>0?temp1.number+24:temp1.number
+                if(temp1)
+                    temp1.number=temp1?.number>0?temp1?.number+24:temp1?.number
                 profile.merit_number=merit_number
                 uploadFileList=profile['AdmissionDocumentMQNRI']
-
             }        
     })
 </script>

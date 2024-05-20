@@ -8,15 +8,16 @@
     import config from '$lib/config.json'
     import Upload from '$lib/component/upload.svelte'
     import _ from 'lodash'
-    export let data
+    import { page } from '$app/stores'
+    import { goto } from '$app/navigation';
 
-    
+    export let data
     let sameAddrSelected=false
     let isAICTEAccepted=false,isConditionAccepted=false    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let uploadFileList=[]
-    let isSubmitted=false
+    let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
     // 
@@ -101,12 +102,32 @@
         }
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
+        }        
+    }
+    const isExistEmail=async()=>{
+        console.log($form.email);
+        if(!isEdit && $form.email){ 
+            let { data, error:formErr } = await supabase.from('MQNRIFormInfo').select(`*`).eq('email',$form.email).single() 
+            if(data){
+                alert("Record with Given Email already exists. For Further Enquiry Contact SVIT Help Line Number")
+
+                isSubmitted=true
+            }   
         }
-       
     }
     onMount(()=>{
         if(data.formDt){               
             $form=data.formDt
+            isEdit=true
+            if(data.formDt.email && $page?.data?.session?.user?.user_metadata.email && $page?.data?.session?.user?.user_metadata.email==data.formDt.email)
+                console.log('****');
+            else{
+                if(isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin"))
+                {
+                    alert("Authorization Required ")
+                    goto('/')
+                }
+            }
             uploadFileList=[]     
             _.forEach(data.uploadLabelList,record=>{                
                 const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)
@@ -124,6 +145,7 @@
             })            
         }
         else{
+            isEdit=false
             $form.academic_year=data.academicYear.id
             $form.college_id=data.college.id    
             $form.admission_category="M"
@@ -333,7 +355,7 @@
                 </div>
                 <div class="flex flex-col w-full m-1">
                     <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
-                    <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
+                    <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
                         {#if data?.courselist}
                             {#each data?.courselist as course}
                                 {#if course.is_mqnri==true}
@@ -357,8 +379,7 @@
                     <label for="entr_examnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)<span class="text-sm text-red-500">*</span> </label>    
                     <input on:blur={handleChange} bind:value={$form.entr_examnumber} class:border-orange-700={$errors.entr_examnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="entr_examnumber" id="entr_examnumber" required>
                 </div>
-            </div>               
-            
+            </div>                           
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <span><label for="student_abc_id" class="font-bold">ABC Id </label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline">Get More Information</a></span>
@@ -398,17 +419,19 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="contact">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" >
+                    <input on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")}>
                 </div>
+
+
                 <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="email">Email <span class="text-sm text-red-500">*</span></label>
-                    <input on:blur={handleChange} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" >
+                    <label class="font-bold" for="email">Email <span class="text-sm text-red-500">*</span></label>                                        
+                    <input on:blur={(ee)=>{handleChange(ee);isExistEmail()}} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")}>
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">                
                 <div class="flex flex-col w-full m-1">
-                    <label class="font-bold" for="dob">Birth Date <span class="text-sm text-red-500">*</span></label>               
-                    <input on:blur={handleChange} bind:value={$form.dob} name="dob" class:border-orange-700={$errors.dob} class="input" type="date" id="dob" required>
+                    <label class="font-bold" for="dob">Birth Date <span class="text-sm text-red-500">*</span></label>
+                    <input on:blur={handleChange} bind:value={$form.dob} name="dob" class:border-orange-700={$errors.dob} class="input" type="date" id="dob" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
                 </div>
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="gender">Gender <span class="text-sm text-red-500">*</span></label>
