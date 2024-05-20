@@ -75,7 +75,7 @@
                                 <div class="px-2 w-full">
                                     <label for="password" class="block mb-2 text-sm font-medium text-white">Role</label>
                                     <select bind:value={role} class="w-full border font-normal text-sm p-2.5 text-center rounded">
-                                        {#each ["","deo","admin","trustee","-"] as temp}
+                                        {#each ["","deo","admin","trustee","hod","-"] as temp}
                                             <option>{temp}</option>
                                         {/each}
                                     </select>

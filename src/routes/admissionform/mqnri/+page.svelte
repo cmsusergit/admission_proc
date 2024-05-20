@@ -322,25 +322,26 @@
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
 {#if isSubmitted}
-    <div class="min-h-[500] w-full">
-        <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
-        {#if $form.admission_category=="B"}
-
-            <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a>
-            </div>
-
-
-        {:else}
-            <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
-            </div>
-        {/if}
-    </div>
+    {#if $form && $form.is_payment_done}
+        <div class="min-h-[500] w-full text-center flex flex-col gap-2">
+            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
+            <a class="text-2xl bg-slate-500 text-center text-white p-2" href="/">Goto Dashboard</a>
+        </div>
+    {:else}
+        <div class="min-h-[500] w-full">
+            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
+            {#if $form.admission_category=="B"}
+                <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                    To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a>
+                </div>
+            {:else}
+                <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                    To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
+                </div>
+            {/if}
+        </div>
+    {/if}
 {:else}
-
-
-
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
