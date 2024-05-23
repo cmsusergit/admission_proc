@@ -119,7 +119,7 @@
         if(data.formDt){               
             $form=data.formDt
             isEdit=true
-            if(data.formDt.email && $page?.data?.session?.user?.user_metadata.email && $page?.data?.session?.user?.user_metadata.email==data.formDt.email)
+            if(data.formDt.email && $page?.data?.session?.user?.email && $page?.data?.session?.user?.email==data.formDt.email)
                 console.log('****');
             else{
                 if(isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin"))
@@ -210,6 +210,7 @@
                 }
                 return
             }
+
             else{                
                 let tempUploadList=[]
                 uploadFileList.forEach((file1)=>{
@@ -233,21 +234,26 @@
                     return
                 }
                 error_mesg=''
+
+
+
                 $mesg='Form Record Inserted/Updated Successully.'    
+                window.scrollTo(0,50)
                 if(!data.formDt){  
                     const tempD1=new Date($form.dob)                    
                     let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
-
                     const { data, error } = await supabase.auth.signUp({
                         email: $form.email,
                         password:pwd1,
-                        email_confirm: true
+                        email_confirm: false
                     })
-
                     if(error){
                         console.log(error)
                         return
                     }
+                    
+                    if(data)
+                        isSubmitted=true
                 }
                 // if(error){                    
                 //     console.log(error)
