@@ -11,16 +11,16 @@
                 
                 
                 
-                const { data, error } = await supabase.auth.signUp(
-                {                 
-                    email: email,
-                    password: password,
-                    options: {
-                    data: {
-                        role: role
+                    const { data, error } = await supabase.auth.signUp(
+                    {                 
+                        email: email,
+                        password: password,
+                        // options: {
+                        //     data: {
+                        //         role: role
+                        //     }
+                        // }
                     }
-                    }
-                }
                 )
                 if (error) {
                     if(error instanceof Error)
