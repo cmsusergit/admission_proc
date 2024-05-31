@@ -23,7 +23,6 @@
         return () => {
         subscription.unsubscribe()
         }        
-    
     })
 </script>
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
@@ -51,14 +50,10 @@
             {#if $page.data.session.user.user_metadata.role=='deo'}
                 {#if $page.route.id.includes('admissionform/acpc') ||$page.route.id.includes('admissionform/vacant') || $page.route.id.includes('admissionform/mqnri')}    
                     <slot></slot>
-                {:else if $page.data.session.user.user_metadata.role=='deo'}
+                {:else}
                     <DeoDashboard></DeoDashboard>
                 {/if}
-        
             {:else if $page.data.session.user.user_metadata.role=='hod'}
-
-            
-            
                 <HodDashboard></HodDashboard>
             {:else}
                 <slot></slot>

@@ -210,6 +210,7 @@
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>
+
                         {#if role=='admin'}
                             <div class="flex justify-center space-x-2 items-center">
                                 <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
@@ -253,6 +254,10 @@
                                 {/if}
                             </div>
                         {:else}
+                            
+                        <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
+                            <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
+                        </button>
                             {#if record.is_approved==2}           
                                 {#if !record.is_removed}                     
                                     <button on:click={()=>recordToRemove=record.id} class="hover:bg-orange-700 bg-orange-800 p-1 text-white rounded">
