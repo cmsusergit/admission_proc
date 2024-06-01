@@ -6,7 +6,7 @@
     let dataTable
     let sortableField,sortableOrder='asc'
     let selectableColumn={},totalPage=1
-    let currPage=1,pageSize=20
+    let currPage=1,pageSize=100
     let st,en
     $:dataTable=[...data],currPage=1//....
             //....
@@ -141,12 +141,6 @@
                 {/each}  
             </table>
         </div>
-
-
-
-
-
-        
         <div class="my-4 py-2 px-4 border border-slate-200 w-full flex justify-end items-center">
             <div class="px-4 font-bold">Page {currPage} / {totalPage}</div>
             <button disabled={currPage==1} on:click={()=>{currPage=currPage-1;currPage=currPage<1?1:currPage}} class="px-2 py-2 mr-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-gray-400 rounded w-24 disabled:bg-gray-400">
