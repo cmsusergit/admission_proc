@@ -19,6 +19,10 @@
         {
             "college_id":4,
             "list":[{"subList":["Mathematics","Biology"],"selected":0},{"subList":["English"],"selected":0},{"subList":["Computer"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["Physics"],"selected":0}]            
+        },
+        {
+            "college_id":5,
+            "list":[{"subList":["English"],"selected":0},{"subList":["Social Science"],"selected":0},{"subList":["Science"],"selected":0},{"subList":["Gujarati"],"selected":0},{"subList":["Hindi","Sanskrit" ],"selected":0},{"subList":["Basic Maths"],"selected":0}]            
         }
     ],
     "subjectEntrList":[
@@ -39,13 +43,16 @@
         {
             "college_id":4,
             "list":["Mathematics","Chemistry","Physics"]
+        },
+        {
+            "college_id":5,            
+            "list":[]
         }
     ],    
     "bloodGroupList":[
         "A +Ve","A -Ve","B +Ve","B -Ve","O +Ve","O -Ve","AB +Ve","AB -Ve"
     ],
-    "test":[],    
-        
+    "test":[],            
     "religionList":["Hindu","Muslim","Christian","Jain","Other"],
     "categoryList":["OPEN","SEBC","SC","ST","PH","OTHER"],
     "nationalityList":["Indian","Foreign"],
@@ -56,20 +63,17 @@
         {"category":"TFWS","alias":"T"},        
         {"category":"Freeship","alias":"F"},
         {"category":"VACANT","alias":"V"},
-
-
-
-
-
-
-
-
-
-
-
         {"category":"NRI","alias":"N"},
         {"category":"Management","alias":"M"},
         {"category":"Freeship/Centralized","alias":"GF"},
         {"category":"Freeship/VACANT","alias":"VF"}
     ]
 }
+
+
+
+
+
+
+
+

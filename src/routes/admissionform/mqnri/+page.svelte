@@ -16,6 +16,7 @@
     let isAICTEAccepted=false,isConditionAccepted=false    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
+    let boardListForDipl=['SSC']
     let uploadFileList=[]
     let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
@@ -150,9 +151,17 @@
             $form.college_id=data.college.id    
             $form.admission_category="M"
             $form.boardList=[]
-            _.forEach(boardList,ob=>{
-                $form.boardList.push({board:ob,result:0.0})
-            })   
+            if ($form.college_id==5) {
+                _.forEach(boardListForDipl,ob=>{
+                    $form.boardList.push({board:ob,result:0.0})
+                })       
+            }
+            else{
+                _.forEach(boardList,ob=>{
+                    $form.boardList.push({board:ob,result:0.0})
+                })   
+            }
+            
             $form.subjectResultList=[]
             _.forEach(subjectList,ob=>{
                 $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
@@ -375,21 +384,23 @@
             </div>    
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
-                    <label for="acpcnumber" class="font-bold">ACPC Application Number</label>    
+                    <label for="acpcnumber" class="font-bold">ACPC/ACPDC Application Number</label>    
                     <input bind:value={$form.acpcnumber}  class="border rounded px-1 py-2 border-blue-400" type="text" id="acpcnumber">
                 </div>
                 <div class="flex flex-col w-full m-1">
-                    <label for="acpc_meritnumber" class="font-bold">ACPC Merit Number</label>    
+                    <label for="acpc_meritnumber" class="font-bold">ACPC/ACPDC Merit Number</label>    
                     <input on:blur={handleChange} bind:value={$form.acpc_meritnumber} class:border-orange-700={$errors.acpc_meritnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="acpc_meritnumber" id="acpc_meritnumber">
                 </div>
-                <div class="flex flex-col w-full m-1">
-                    <label for="entr_examnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)<span class="text-sm text-red-500">*</span> </label>    
-                    <input on:blur={handleChange} bind:value={$form.entr_examnumber} class:border-orange-700={$errors.entr_examnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="entr_examnumber" id="entr_examnumber" required>
-                </div>
+                {#if $form.college_id!==5}
+                    <div class="flex flex-col w-full m-1">
+                        <label for="entr_examnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)<span class="text-sm text-red-500">*</span> </label>    
+                        <input on:blur={handleChange} bind:value={$form.entr_examnumber} class:border-orange-700={$errors.entr_examnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="entr_examnumber" id="entr_examnumber" required>
+                    </div>
+                {/if}
             </div>                           
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
-                    <span><label for="student_abc_id" class="font-bold">ABC Id </label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline">Get More Information</a></span>
+                    <span><label for="student_abc_id" class="font-bold">ABC Id </label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline" rel="noreferrer">Get More Information</a></span>
                     <input on:blur={handleChange} bind:value={$form.student_abc_id} class:border-orange-700={$errors.student_abc_id} class="border rounded px-1 py-2 border-blue-400" type="text" name="student_abc_id" id="student_abc_id">
                 </div>
                 <div class="flex flex-col w-full m-1">
@@ -771,16 +782,16 @@
                         </table>
                     {/if}
                 </div>
-                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
-                <div class="text-indigo-800 overflow-x-auto">
-                    {#if $form.entrnceExamDetail}
+                {#if $form.entrnceExamDetail && $form.entrnceExamDetail.length>0}
+                    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
+                    <div class="text-indigo-800 overflow-x-auto">
                         <table class="w-full bg-white">
                             <thead class="bg-blue-500 px-1 py-2 text-white">                        
                                 <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
                                 <th class="px-1 py-2 border border-blue-400 border-t-white">RESULT</th>
                                 <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
                             </thead>
-                            <tbody class="w-full p-1 border border-blue-400 text-center">
+                            <tbody class="w-full p-1 border border-blue-400 text-center">                                
                                 {#each $form.entrnceExamDetail as subject}                    
                                     <tr>
                                         <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
@@ -800,8 +811,8 @@
 
                             </tbody>
                         </table>
-                    {/if}
-                </div>
+                    </div>
+                {/if}
                 <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
                 <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                     <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
