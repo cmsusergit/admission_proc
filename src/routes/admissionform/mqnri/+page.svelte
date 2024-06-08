@@ -30,7 +30,7 @@
             acpcnumber:yup.string().notRequired(),
             acpc_meritnumber:yup.string().notRequired(),
             course:yup.string().required(),
-            entr_examnumber:yup.string().required(),
+            entr_examnumber:yup.string().notRequired(),
             title:yup.string().required(),
             first_name:yup.string().required(),
             middle_name:yup.string().required(),
@@ -345,13 +345,20 @@
     {:else}
         <div class="min-h-[500] w-full">
             <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
-            {#if $form.admission_category=="B"}
-                <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                    To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a>
-                </div>
+            {#if $form.college_id!=5}
+                {#if $form.admission_category=="B"}
+                    <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                        To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a>
+                    </div>
+                {:else}
+                    <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                        To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
+                    </div>
+                {/if}
+
             {:else}
                 <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                    To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
+                    To Proceed For Payment: <a href='https://pmny.in/OrXjLv0h2DZz'>Click Here</a>
                 </div>
             {/if}
         </div>
@@ -365,8 +372,8 @@
                     <label for='mq' class="font-bold px-1">Select Admission Category</label>
                     <div class="flex flex-row border border-blue-400 p-2 rounded">
                         <div class="flex items-center"><input bind:group={$form.admission_category} value="M" type="radio" class="border w-4 p-2" id="mq" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="mq">Management Quota (MQ)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="N" type="radio" class="border w-4 ml-5 p-2" id="nri" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label></div>
-                        <div class="flex items-center"><input bind:group={$form.admission_category} value="B" type="radio" class="border w-4 ml-5 p-2" id="both" name="admission_category" disabled={data.formDt}/><label class="mx-2 font-bold" for="both">BOTH</label></div>
+                        <div class="flex items-center"><input bind:group={$form.admission_category} value="N" type="radio" class="border w-4 ml-5 p-2" id="nri" name="admission_category" disabled={data.formDt || $form.college_id==5}/><label class="mx-2 font-bold" for="nri">NRI Quota (NRI)</label></div>
+                        <div class="flex items-center"><input bind:group={$form.admission_category} value="B" type="radio" class="border w-4 ml-5 p-2" id="both" name="admission_category" disabled={data.formDt || $form.college_id==5}/><label class="mx-2 font-bold" for="both">BOTH</label></div>
                     </div>
                 </div>
                 <div class="flex flex-col w-full m-1">
