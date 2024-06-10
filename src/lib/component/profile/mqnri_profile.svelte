@@ -8,7 +8,20 @@
     import {goto} from '$app/navigation'
     let userPhotoUrl=null
     let isEditEnabled=false
-    onMount(()=>{                  
+    onMount(()=>{           
+
+
+        //....
+        let temp1=[...profile.merit_number]//....
+
+        temp1.map((dt)=>{
+            if(dt.category=='M' && dt.number>=4)
+                dt.number=dt.number+127
+        })
+        let tempp={...profile}
+        tempp.merit_number=[...temp1]
+        profile={...tempp}
+        console.log('----',profile);
     })
 
     const downloadImage = async (path) => {
@@ -128,13 +141,13 @@
                             <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quota':'NRI/NRI Sponsored Quota'}-{record.number}</span>
                             {#if record.category=='M' && record.number<=50}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (12.30 noon to 01.30 p.m.)</p>
-                            {:else if record.category=='M' && (record.number>=51 && record.number<=150)}                        
+                            {:else if record.category=='M' && (record.number>=51 && record.number<127)}                        
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (01.30 p.m. to 02.30 p.m.)</p>
-                            {:else if record.category=='M' && (record.number>=151 && record.number<=200)}
+                            {:else if record.category=='M' && (record.number>=127 && record.number<=174)}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (10.30 a.m. to 11.30 a.m.)</p>
-                            {:else if record.category=='M' && (record.number>=201 && record.number<=250)}
+                            {:else if record.category=='M' && (record.number>=175 && record.number<=225)}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (12.30 noon to 01.30 p.m.)</p>
-                            {:else if record.category=='M' && record.number>=251}
+                            {:else if record.category=='M' && record.number>=225}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (01.30 p.m. to 02.30 p.m.)</p>
                             {:else if record.category!=='M' && record.number<=50}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (10.30 a.m. to 11.30 a.m.)</p>
@@ -415,5 +428,15 @@
             </div>
     {/if}
 {/if}
+
+
+
+
+
+
+
+
+
+
 
 

@@ -27,12 +27,18 @@
 </script>
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
     {#if !$page.data.session}
-        {#if $page.route.id.includes('admissionform/mqnri')}    
+        <!-- {#if $page.route.id.includes('admissionform/mqnri')}    
             <Header/>
             <slot></slot>
         {:else}
             <Auth/>
-        {/if}
+        {/if} -->
+
+
+
+
+
+        <Auth/>
     {:else if !$page.data.session.user.user_metadata.role}
         {#if $page.route.id.includes('admissionform/mqnri')}    
             <Header/>

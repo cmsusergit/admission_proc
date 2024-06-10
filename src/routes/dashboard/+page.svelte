@@ -29,16 +29,17 @@
                     if(err1_1)
                         return {error:err1_1.message}       
                     merit_number.push({category:'N',number:meritdt1.merit_number})
-                }   
-                let temp1=merit_number.find(ob=>ob.category=='M')
-                if(temp1)
-                    temp1.number=temp1?.number>0?temp1?.number+24:temp1?.number
+                }  
+                //  
+                // let temp1=merit_number.find(ob=>ob.category=='M')
+                // if(temp1)
+                //     temp1.number=temp1?.number>0?temp1?.number+24:temp1?.number
                 profile.merit_number=merit_number
                 uploadFileList=profile['AdmissionDocumentMQNRI']
             }        
     })
 </script>
-<div class="text-indigo-500 min-h-screen p-2 border">   
+<div class="text-indigo-500 min-h-screen p-2 border">    
     {#if profile && uploadFileList}
         <Profile college={$college} profile={profile} uploadedFileList={uploadFileList}></Profile> 
     {/if}
