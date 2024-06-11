@@ -27,7 +27,7 @@
 </script>
 <div class="container mx-auto w-11/12 min-h-screen text-blue-800">
     {#if !$page.data.session}
-        {#if (''+$page.url).includes('mqnri?ayear_id=3&college_id=5')}
+        {#if (''+$page.url).includes('mqnri?ayear_id=3')}
             <Header/>
             <slot></slot>
         {:else}
