@@ -13,7 +13,6 @@
 
         //....
         let temp1=[...profile.merit_number]//....
-
         temp1.map((dt)=>{
             if(dt.category=='M' && dt.number>=4)
                 dt.number=dt.number+127
@@ -89,6 +88,17 @@
 
     <p class="text-4xl text-center">Your Payment is Pending</p>
     <p class="text-xl text-center">For further Query Please, Contact Admission Officer</p>
+    <div class="mt-4 flex border justify-center p-2 border">
+        {#if !profile.is_payment_done}   
+            {#if profile.admission_category=="B"}
+                <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
+                <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
+            {:else}
+            <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
+            <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
+            {/if}        
+        {/if}
+    </div>
 {:else}
     {#if profile}
         <div class="min-h-screen w-full">    
