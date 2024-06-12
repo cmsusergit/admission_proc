@@ -6,7 +6,9 @@
     if(data?.merit_number){
         let temp1=data?.merit_number.find(ob=>ob.category=='M')
         if(temp1){
-            temp1.number=temp1.number>11?temp1.number+24:temp1.number
+
+            // 
+            // temp1.number=temp1.number>11?temp1.number+24:temp1.number
             profile['merit_number']=data?.merit_number
         }
         else{

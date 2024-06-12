@@ -90,6 +90,7 @@
     <p class="text-xl text-center">For further Query Please, Contact Admission Officer</p>
     <div class="mt-4 flex border justify-center p-2 border">
         {#if !profile.is_payment_done}   
+        {#if profile.college_id!=5}
             {#if profile.admission_category=="B"}
                 <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
                 <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
@@ -97,6 +98,11 @@
             <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
             <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
             {/if}        
+        {:else}
+            <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                To Proceed For Payment: <a href='https://pmny.in/OrXjLv0h2DZz'>Click Here</a>
+            </div>
+        {/if}
         {/if}
     </div>
 {:else}
@@ -104,14 +110,21 @@
         <div class="min-h-screen w-full">    
             <div class="flex justify-end p-1 gap-2">     
                 {#if !profile.is_payment_done}   
-                    {#if profile.admission_category=="B"}
-                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
-                        <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
-                    {:else}
-                    <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
 
-                    <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
-                    {/if}        
+                    {#if profile.college_id!=5}
+                        {#if profile.admission_category=="B"}
+                            <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
+                            <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
+                        {:else}
+                        <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
+
+                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
+                        {/if}  
+                    {:else}
+                        <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
+                            To Proceed For Payment: <a href='https://pmny.in/OrXjLv0h2DZz'>Click Here</a>
+                        </div>
+                    {/if}      
                 {/if}
                 <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">Profile Report</button>
                 {#if profile.admission_category=='V'}
@@ -144,7 +157,10 @@
                     </h2>                 -->
                     <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
                 </div>
-                <!-- {#if profile?.merit_number}
+
+
+
+                {#if profile?.merit_number}
                     <div class="bg-slate-500 text-white my-4 p-2 text-center">
                         <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                         {#each profile?.merit_number as record}                   
@@ -172,7 +188,7 @@
                         {/each}
                         <p class="bg-orange-500 text-white px-2 py-2 font-bold w-full mt-4 text-2xl">*Tuition fee are subjected to approval of FRC Technical for year 2024-25</p>
                     </div>
-                {/if} -->
+                {/if}
                 <div class="text-gray-800 w-full shadow sm:rounded-lg">
                     <div class="bg-white border rounded my-2 text-gray-800">
                         <table class="border-slate-500 border w-full p-2">                                
