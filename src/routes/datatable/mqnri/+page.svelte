@@ -216,6 +216,16 @@
                                 <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
                                     <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
                                 </button>
+
+                                {#if record.is_approved==1}
+                                    <button on:click={()=>{goto(`/feedetail?form_type='mqnri'&id=${record.id}`)}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
+                                        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
+                                    </button>
+                                    {:else if record.is_approved==0}
+                                        <span class="text-sm text-orange-800 p-2 bg-orange-400 rounded-md text-center">Rejected</span>
+                                    {:else}
+                                        <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
+                                {/if}
                                 <button on:click={()=>updateMeritResult(record)} class="hover:bg-blue-400 bg-blue-500 p-1 text-white rounded">
                                     <svg width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 30 30.000001" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="id1"><path d="M 5.492188 2.902344 L 24.363281 2.902344 L 24.363281 26.128906 L 5.492188 26.128906 Z M 5.492188 2.902344 " clip-rule="nonzero"/></clipPath></defs><g clip-path="url(#id1)"><path fill="white" d="M 24.300781 25.355469 L 19.851562 16.890625 C 22.324219 15.730469 23.835938 13.28125 23.835938 10.359375 C 23.835938 5.832031 20.496094 2.902344 15.324219 2.902344 L 6.019531 2.902344 C 5.730469 2.902344 5.492188 3.140625 5.492188 3.429688 L 5.492188 25.601562 C 5.492188 25.890625 5.730469 26.128906 6.019531 26.128906 L 9.6875 26.128906 C 9.976562 26.128906 10.210938 25.890625 10.210938 25.601562 L 10.210938 17.683594 L 14.929688 17.683594 L 19.222656 25.847656 C 19.3125 26.019531 19.492188 26.128906 19.683594 26.128906 L 23.835938 26.128906 C 24.019531 26.128906 24.191406 26.03125 24.285156 25.875 C 24.378906 25.714844 24.386719 25.519531 24.300781 25.355469 Z M 14.941406 13.988281 L 10.210938 13.988281 L 10.210938 6.597656 L 14.84375 6.597656 C 17.5 6.597656 19.121094 8.007812 19.121094 10.300781 C 19.121094 12.640625 17.597656 13.988281 14.941406 13.988281 Z M 14.941406 13.988281 " fill-opacity="1" fill-rule="nonzero"/></g></svg>
                                 </button>
@@ -231,20 +241,6 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14zM6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zm8 7v4h-4v-4H8l4-4 4 4h-2z" fill="currentColor"/></svg>
                                     </button>
                                 {/if}
-                            
-                                
-                                {#if record.is_approved==1}
-                                    <button on:click={()=>{goto(`/feedetail?form_type='mqnri'&id=${record.id}`)}} class="hover:bg-emerald-700 bg-emerald-800 p-1 text-white rounded">
-                                        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M1 12C1 5.925 5.925 1 12 1s11 4.925 11 11-4.925 11-11 11S1 18.075 1 12zm7-6a1 1 0 0 0 0 2h3c.34 0 .872.11 1.29.412.19.136.372.321.505.588H7.997a1 1 0 1 0 0 2h4.798a1.58 1.58 0 0 1-.504.588A2.352 2.352 0 0 1 11 12H7.997a1 1 0 0 0-.625 1.781l5.003 4a1 1 0 1 0 1.25-1.562L10.848 14h.15c.661 0 1.629-.19 2.46-.789A3.621 3.621 0 0 0 14.896 11H16a1 1 0 1 0 0-2h-1.104a3.81 3.81 0 0 0-.367-1H16a1 1 0 1 0 0-2H8z" clip-rule="evenodd"/></svg>
-                                    </button>
-                                    {:else if record.is_approved==0}
-                                        <span class="text-sm text-orange-800 p-2 bg-orange-400 rounded-md text-center">Rejected</span>
-                                    {:else}
-                                        <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
-                                {/if}
-
-
-
                                 {#if record.admission_status!=2}
                                     <button on:click={()=>{recordToCancle=record.id}} class="hover:bg-orange-400 bg-orange-500 p-1 w-8 text-white font-bold rounded">
                                         C 
