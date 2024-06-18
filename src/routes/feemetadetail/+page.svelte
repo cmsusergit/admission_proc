@@ -81,6 +81,7 @@ const insertRecord=async(record)=>{
                     error_mesg=err1.message
                     mesg=''
                 }
+                loading=false
                 return
             }
             else{                
