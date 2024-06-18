@@ -4,6 +4,7 @@
     import DataTable from '$lib/datatable.svelte'
     import {goto} from '$app/navigation'
     import _ from 'lodash'
+    import { page } from '$app/stores'
     export let data    
     let dataTable,selectedCourse
     let selectedAyear,selectedCollege=1
@@ -63,11 +64,13 @@
         loading=false
     }   
     const processData=(dataTable)=>{
-        dataTable=_.forEach(dataTable,ob=>{
-
+        dataTable=_.forEach(dataTable,async(ob)=>{
             const dt=new Date(ob['reciept_date'])
             ob['reciept_date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
             ob['total_amount']=(ob['cash_amount']??0)+(ob['dd_amount']??0)+(ob['online_amount']??0)+(ob['ACPC_amount']??0)
+            let user = await supabase.rpc('get_user_email_by_id',{id:ob['fees_collector_id']})
+            console.log(user?.data[0]?.email);
+            ob["fees_collector_id"]=user?.data[0]?.email
         })         
     }   
     onMount(()=>{
@@ -107,9 +110,9 @@
                 acpcTotal+=record['ACPC_amount']
                 temp1['Total Amount']=record['total_amount']
                 total+=record['total_amount']
+                temp1['CollectedBy']=record['fees_collector_id']
                 temp1['Comment']=record['comment']
                 list1.push(temp1)
-
             })
             list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Total Amount':total})
             const wb=XLSX.utils.book_new()     

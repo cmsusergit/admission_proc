@@ -160,7 +160,7 @@
 
 
 
-                {#if profile?.merit_number}
+                <!-- {#if profile?.merit_number}
                     <div class="bg-slate-500 text-white my-4 p-2 text-center">
                         <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                         {#each profile?.merit_number as record}                   
@@ -188,7 +188,7 @@
                         {/each}
                         <p class="bg-orange-500 text-white px-2 py-2 font-bold w-full mt-4 text-2xl">*Tuition fee are subjected to approval of FRC Technical for year 2024-25</p>
                     </div>
-                {/if}
+                {/if} -->
                 <div class="text-gray-800 w-full shadow sm:rounded-lg">
                     <div class="bg-white border rounded my-2 text-gray-800">
                         <table class="border-slate-500 border w-full p-2">                                
