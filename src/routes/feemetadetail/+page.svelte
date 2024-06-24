@@ -73,6 +73,7 @@ const insertRecord=async(record)=>{
             .upsert(record)
             .select('id')
             console.log(dt,err1)
+            loading=false
             if(err1)
             {
                 error_mesg=error.message     
@@ -86,7 +87,8 @@ const insertRecord=async(record)=>{
             }
             else{                
                 error_mesg=''
-                mesg='Form Record Inserted/Updated Successully.'    
+                mesg='Form Record Inserted/Updated Successully.' 
+                loading=false   
                 invalidateAll()
             }            
         } catch (error) {

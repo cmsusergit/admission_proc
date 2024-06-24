@@ -122,8 +122,8 @@
             isEdit=true
             if(data.formDt.email && $page?.data?.session?.user?.email && $page?.data?.session?.user?.email==data.formDt.email)
                 console.log('****');
-            else{
-                if(isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin"))
+            else{                
+                if(isEdit && (!$page?.data?.session?.user?.user_metadata?.role || ($page?.data?.session?.user?.user_metadata?.role!=="admin" && $page?.data?.session?.user?.user_metadata?.role!=="trustee") ))
                 {
                     alert("Authorization Required ")
                     goto('/')

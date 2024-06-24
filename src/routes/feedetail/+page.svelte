@@ -54,8 +54,9 @@
         })
         tempDetail.AdmissionSubFeesInfo?.map(record1=>{            
             if(record1.course==formDt.course){
+                console.log('$$$$',record1.name);
                 let temp1=record1.amount
-                if(record1.name=="Tution Fee" || record1.name=="Tution Fees"){
+                if(record1.name.includes("Tution Fee") || record1.name.includes("Tution Fees")){
                         if(formDt.payment_status==0)
                             temp1=temp1/2.0
                 }
