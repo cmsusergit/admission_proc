@@ -29,15 +29,6 @@
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
-
-
-
-
-
-
-
-
-
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'D2D',field:'is_d2d',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
@@ -55,6 +46,8 @@
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['is_d2d']=ob.is_d2d?"Y":'N'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
+
+                ob['admission_status']=ob.admission_status==2?'C':''
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
@@ -108,7 +101,6 @@
         recordToRemove=-1
         console.log(error);
     }
-
     const restoreRecord=async()=>{
         const { data, error } = await supabase
             .from('VacantFormInfo').update({ is_removed: 'False' })
@@ -118,6 +110,7 @@
         invalidateAll()
         $mesg="Record Restored Successfully"
         recordToRestore=-1
+
         console.log(error);
     }
     const exportToFile=()=>{
@@ -125,7 +118,7 @@
             let list1=new Array()            
             dataTable.map(ob=>{
                 let temp=_.pick(ob,["id","student_college_id","admission_category","acpcnumber","acpc_meritnumber","total_merit","merit_number","title","first_name","middle_name","last_name","created_at","contact","email",
-                "gender","dob","course","branch","is_d2d","father_name","father_contact","mother_name","mother_contact","board_name","exam_seatnumber","entr_examnumber"])
+                "gender","dob","course","branch","is_d2d","father_name","father_contact","mother_name","mother_contact","board_name","exam_seatnumber","entr_examnumber","admission_status"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)

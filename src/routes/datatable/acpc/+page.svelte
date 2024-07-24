@@ -33,6 +33,7 @@
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
             ob['formnumber']=ob.admission_category+ob.form_number[ob.admission_category]   
+            ob['admission_status']=ob.admission_status==2?'C':''
         })  
         dataTable=_.orderBy(dataTable,['created_at'],['desc'])
     }   
@@ -64,7 +65,7 @@
             let list1=new Array()            
             dataTable.map(ob=>{
                 let temp=_.pick(ob,["id","admission_category","title","first_name","middle_name","last_name","created_at","contact","email",                
-                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","acpcnumber","acpc_merinumber"])
+                "gender","dob","course","branch","father_name","father_contact","mother_name","mother_contact","acpcnumber","acpc_merinumber","admission_status"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
@@ -95,10 +96,8 @@
             <button on:click={()=>$mesg=''} class="bg-gray-200 p-2 w-12 hover:bg-gray-400 hover:text-white rounded-full">X</button>
         </div>
     {/if}
-
     {#if dataTable && dataTable.length>0}
         <div class="mt-2 overflow-auto">
-
             <div class="flex justify-end">            
                 <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
                     {#if !loading}Export Excel{:else}Loading....{/if}
@@ -126,18 +125,6 @@
                             <button on:click={()=>{recordToCancle=record.id}} class="hover:bg-orange-400 bg-orange-500 p-1 w-8 text-white font-bold rounded">
                                 C 
                             </button>
-
-
-
-
-
-
-
-
-
-
-
-
                         {:else}
                             Admission Cancelled
                         {/if}
@@ -149,9 +136,6 @@
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
 </div>
-
-
-
 
 
 <div>

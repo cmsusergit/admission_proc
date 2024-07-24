@@ -45,6 +45,7 @@
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
+                ob['admission_status']=ob.admission_status==2?'C':''
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
@@ -115,7 +116,7 @@
             loading=true
             let list1=new Array()            
             dataTable.map(ob=>{
-                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit"])
+                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit","admission_status"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
