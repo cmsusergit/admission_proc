@@ -30,6 +30,7 @@
         {name:'Student Email',field:'email',searchable:true,sortable:true},     
         {name:'Admission Category',field:'admission_category',selectable:true},
         {name:'Branch',field:'branch',selectable:true},
+        {name:'Status',field:'admission_status',selectable:true},
         {slot:true}
     ],courseList=[]
     $:if(selectedAyear && selectedCourse){
@@ -87,6 +88,7 @@
                         record['stu_name']=record?.last_name+" "+record?.first_name+" "+record?.middle_name
                         record['admission_category']=record?.admission_category
                         record['branch']=record?.Branch?.name
+                        record['admission_status']=record?.admission_status==1?'DONE':(record?.admission_status==2?'CANCLE':'-')
                         templist.push(record)
                     })
                 }
@@ -178,7 +180,8 @@
                 temp1['Present Zipcode']=record['present_zipcode']
                 temp1['dob']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['Father Contact']=record['father_contact']
-                temp1['Mother Contact']=record['mother_contact']
+                temp1['Mother Contact']=record['mother_contact'],
+                temp1['Admission Status']=(record['admission_status']==2)?'CANCLE':''
                 list1.push(temp1)
             })
             const wb=XLSX.utils.book_new()             
