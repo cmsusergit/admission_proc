@@ -181,7 +181,7 @@
                 temp1['dob']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['Father Contact']=record['father_contact']
                 temp1['Mother Contact']=record['mother_contact'],
-                temp1['Admission Status']=(record['admission_status']==2)?'CANCLE':''
+                temp1['Admission Status']=record['admission_status']
                 list1.push(temp1)
             })
             const wb=XLSX.utils.book_new()             
