@@ -397,7 +397,7 @@
                     </select> 
                 </div>          
             </div>    
-            <div class="flex m-1 w-full px-2">
+            <!-- <div class="flex m-1 w-full px-2">
                 <div class="flex flex-col w-full m-1">
                     <label for="branch1" class="font-bold">Select Branch1 <span class="text-sm text-red-500">*</span></label>
                     <select bind:value={selectedBranch[0]} class:border-orange-700={$errors.course} class="input" type="text" name="branch1" id="course" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
@@ -434,7 +434,7 @@
                         {/if}
                     </select> 
                 </div>  
-            </div>
+            </div> -->
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label for="acpcnumber" class="font-bold">ACPC/ACPDC Application Number</label>    
