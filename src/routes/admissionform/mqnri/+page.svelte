@@ -21,7 +21,7 @@
     let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
-    let branchList=[],selectedBranch=['','','']
+    let branchList=[]
     // 
     // const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
@@ -76,7 +76,6 @@
             exam_seatnumber:yup.string().notRequired(),
             last_schoolname:yup.string().notRequired(),
             last_schoolcity:yup.string().notRequired(),
-            diploma_branch:yup.string().notRequired()
         })
     const {form,errors,handleChange,handleSubmit}=createForm({
         initialValues:{title:'Mr.',per_country:'INDIA'},        
@@ -108,12 +107,9 @@
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
         }      
-        if(selectedBranch){
-
-
-            selectedBranch.map(record=>{})
-        }  
     }
+
+
     const isExistEmail=async()=>{
         console.log($form.email);
         if(!isEdit && $form.email){ 
@@ -212,7 +208,6 @@
     const insertRecord=async(record)=>{
         try{
             loading = true
-            record.diploma_branch=JSON.stringify(selectedBranch)
 
 
 
