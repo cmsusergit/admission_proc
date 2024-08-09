@@ -21,6 +21,7 @@
     let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
+    let branchList=[],selectedBranch=['','','']
     // 
     // const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
@@ -74,7 +75,8 @@
             board_name:yup.string().notRequired(),
             exam_seatnumber:yup.string().notRequired(),
             last_schoolname:yup.string().notRequired(),
-            last_schoolcity:yup.string().notRequired()
+            last_schoolcity:yup.string().notRequired(),
+            diploma_branch:yup.string().notRequired()
         })
     const {form,errors,handleChange,handleSubmit}=createForm({
         initialValues:{title:'Mr.',per_country:'INDIA'},        
@@ -91,6 +93,8 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
+            //....
+            branchList=[...temp1.Branch]//....
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
@@ -103,7 +107,12 @@
         }
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
-        }        
+        }      
+        if(selectedBranch){
+
+
+            selectedBranch.map(record=>{})
+        }  
     }
     const isExistEmail=async()=>{
         console.log($form.email);
@@ -161,7 +170,6 @@
                     $form.boardList.push({board:ob,result:0.0})
                 })   
             }
-            
             $form.subjectResultList=[]
             _.forEach(subjectList,ob=>{
                 $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
@@ -181,7 +189,7 @@
                 uploadFileList.push(temp1)
             })
         }
-    })
+    })     
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
 		node.addEventListener('input', transform, { capture: true })		
@@ -204,6 +212,10 @@
     const insertRecord=async(record)=>{
         try{
             loading = true
+            record.diploma_branch=JSON.stringify(selectedBranch)
+
+
+
             const { data:dt, error:err1 } = await supabase
             .from('MQNRIFormInfo')
             .upsert(record)
@@ -219,7 +231,6 @@
                 }
                 return
             }
-
             else{                
                 let tempUploadList=[]
                 uploadFileList.forEach((file1)=>{
@@ -243,9 +254,6 @@
                     return
                 }
                 error_mesg=''
-
-
-
                 $mesg='Form Record Inserted/Updated Successully.'    
                 window.scrollTo(0,50)
                 if(!data.formDt){  
@@ -389,6 +397,44 @@
                     </select> 
                 </div>          
             </div>    
+            <div class="flex m-1 w-full px-2">
+                <div class="flex flex-col w-full m-1">
+                    <label for="branch1" class="font-bold">Select Branch1 <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={selectedBranch[0]} class:border-orange-700={$errors.course} class="input" type="text" name="branch1" id="course" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
+                        {#if branchList}
+                            {#each branchList as branch}
+                                {#if branch.is_mqnri==true}
+                                    <option value={branch.name}>{branch.name}({branch.alias})</option>
+                                {/if}
+                            {/each}
+                        {/if}
+                    </select> 
+                </div>                  
+                <div class="flex flex-col w-full m-1">
+                    <label for="branch2" class="font-bold">Select Branch2 <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={selectedBranch[1]} class:border-orange-700={$errors.course} class="input" type="text" name="branch2" id="course" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
+                        {#if branchList}
+                            {#each branchList as branch}
+                                {#if branch.is_mqnri==true}
+                                    <option value={branch.name}>{branch.name}({branch.alias})</option>
+                                {/if}
+                            {/each}
+                        {/if}
+                    </select> 
+                </div>                  
+                <div class="flex flex-col w-full m-1">
+                    <label for="branch1_1" class="font-bold">Select Branch1 <span class="text-sm text-red-500">*</span></label>
+                    <select bind:value={selectedBranch[2]} class:border-orange-700={$errors.course} class="input" type="text" name="branch1_1" id="course" disabled={isEdit && (!$page?.data?.session?.user?.user_metadata?.role || $page?.data?.session?.user?.user_metadata?.role!=="admin")} required>
+                        {#if branchList}
+                            {#each branchList as branch}
+                                {#if branch.is_mqnri==true}
+                                    <option value={branch.name}>{branch.name}({branch.alias})</option>
+                                {/if}
+                            {/each}
+                        {/if}
+                    </select> 
+                </div>  
+            </div>
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
                     <label for="acpcnumber" class="font-bold">ACPC/ACPDC Application Number</label>    

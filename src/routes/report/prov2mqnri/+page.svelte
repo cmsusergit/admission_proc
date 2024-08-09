@@ -50,7 +50,8 @@
     const fetchProvMQNRIDt=async()=>{
         loading=true
         let { data:dt, error:dt_err } = await supabase
-            .from('prov_mqnri')
+
+            .from('prov_mqnri1')
             .select(`*`)
             .filter('academic_year','eq',selectedAyear)
             .filter('college_id','eq',selectedCollege)
@@ -61,6 +62,13 @@
         }
         else{
             dataTable=dt
+
+
+
+
+
+
+            console.log(selectedCollege,dt);
         }        
         let { data:dtprov, error } = await supabase
         .from('prov_without_mqnri')

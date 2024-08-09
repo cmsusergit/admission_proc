@@ -9,9 +9,11 @@
     $:calculateTotalMerit(meritRecord)
     onMount(async()=>{        
     })    
-    const calculateTotalMerit=(record)=>{
-        if(record)
 
+
+    const calculateTotalMerit=(record)=>{
+        console.log('record',record);
+        if(record)
             meritRecord.total_merit=(meritRecord.pcm_percentile/2.0)+(meritRecord.gujcet_percentile/2.0)
     }
     const onsubmit=async()=>{
@@ -42,11 +44,6 @@
 <Modal on:close={()=>{dispatch('close')}}>
     <div slot="header">Merit Information</div>
     <div slot="content">  
-        
-        
-        
-        
-        
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">ACPC Number: {meritRecord.acpcnumber}</p>
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">{meritRecord.title??''} {meritRecord.first_name??''} {meritRecord.middle_name??''} {meritRecord.last_name??''}</p>
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">Board Name: {meritRecord.board_name}</p>

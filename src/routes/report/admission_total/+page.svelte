@@ -88,13 +88,12 @@
                         record['stu_name']=record?.last_name+" "+record?.first_name+" "+record?.middle_name
                         record['admission_category']=record?.admission_category
                         record['branch']=record?.Branch?.name
-                        record['admission_status']=record?.admission_status==1?'DONE':(record?.admission_status==2?'CANCLE':'-')
+                        record['admission_status']=record?.admission_status==1?'DONE':(record?.admission_status==2?'CANCEL':'-')
                         templist.push(record)
                     })
                 }
                 dataTable=[...templist]//....
                 //....
-
             }
             /*
             let templist=[]

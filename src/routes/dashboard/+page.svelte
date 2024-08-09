@@ -39,6 +39,7 @@
             }        
     })
 </script>
+
 <div class="text-indigo-500 min-h-screen p-2 border">    
     {#if profile && uploadFileList}
         <Profile college={$college} profile={profile} uploadedFileList={uploadFileList}></Profile> 
