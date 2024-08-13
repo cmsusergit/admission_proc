@@ -75,7 +75,6 @@
         // else {
         //     dataTable_provonly=dtprov.filter(ob=>ob.Course.college_id==selectedCollege)
         // }
-
         // let { data:dtmqnri, error1 } = await supabase
         // .from('mqnri_without_prov')
         // .select(`*,Course(*)`)

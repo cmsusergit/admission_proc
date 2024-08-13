@@ -6,6 +6,7 @@
     export let profile,uploadedFileList
     import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
     import {goto} from '$app/navigation'
+    import { LETTER } from 'pdfmake/src/standardPageSizes';
     let userPhotoUrl=null
     let isEditEnabled=false
     onMount(()=>{           
@@ -15,14 +16,13 @@
         let temp1=[...profile.merit_number]//....
         temp1.map((dt)=>{
             if(dt.category=='M' && dt.number>=4)
-                dt.number=dt.number+127
+                dt.number=dt.number
         })
         let tempp={...profile}
         tempp.merit_number=[...temp1]
         profile={...tempp}
         console.log('----',profile);
     })
-
     const downloadImage = async (path) => {
 		try {
     const { data, error } = await supabase.storage.from('userphoto').download(path)
@@ -149,24 +149,20 @@
                     {/if}
                     {:catch error1}
                         <p>{error1.message}</p>
-                    {/await}
-                        
-                    <!-- <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
+                    {/await}                        
+                    <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
                         {#if profile.form_number['M']}MQ Form Number - {profile.form_number['M']}{/if} |
                         {#if profile.form_number['N']}NRI Form Number - {profile.form_number['N']}{/if}
-                    </h2>                 -->
+                    </h2>                
                     <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
                 </div>
-
-
-
-                <!-- {#if profile?.merit_number}
+                {#if profile?.merit_number}
                     <div class="bg-slate-500 text-white my-4 p-2 text-center">
                         <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                         {#each profile?.merit_number as record}                   
                             <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quota':'NRI/NRI Sponsored Quota'}-{record.number}</span>
-                            {#if record.category=='M' && record.number<=50}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (12.30 noon to 01.30 p.m.)</p>
+                            {#if record.category=='M' && record.number<=100}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 20/08/2024 (11.30 a.m. onwards)</p>
                             {:else if record.category=='M' && (record.number>=51 && record.number<127)}                        
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (01.30 p.m. to 02.30 p.m.)</p>
                             {:else if record.category=='M' && (record.number>=127 && record.number<=174)}
@@ -178,7 +174,9 @@
                             {:else if record.category!=='M' && record.number<=50}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (10.30 a.m. to 11.30 a.m.)</p>
                             {/if}
-                            {#if record.category=='M'}
+                            {#if record.college_id==5 && record.category=='M'}
+                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/call%20lettr%20Diploma%202024.pdf">Download Call Letter</a>
+                            {:else if record.category=='M'}
                                 <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/MQ_Call_letter.pdf">Download Call Letter</a>
                                 <br>
                             {:else}
@@ -188,7 +186,7 @@
                         {/each}
                         <p class="bg-orange-500 text-white px-2 py-2 font-bold w-full mt-4 text-2xl">*Tuition fee are subjected to approval of FRC Technical for year 2024-25</p>
                     </div>
-                {/if} -->
+                {/if}
                 <div class="text-gray-800 w-full shadow sm:rounded-lg">
                     <div class="bg-white border rounded my-2 text-gray-800">
                         <table class="border-slate-500 border w-full p-2">                                
