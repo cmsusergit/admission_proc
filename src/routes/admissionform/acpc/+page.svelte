@@ -2,7 +2,7 @@
     import { academicYear,mesg,college } from '$lib/store.js'
     
     import {supabase} from "$lib/db"
-    import { onMount } from 'svelte';
+    import { onMount } from 'svelte';import { page } from '$app/stores'
     
     import {createForm} from 'svelte-forms-lib'
     import {acpc_profile_print} from '$lib/mqnri_print.js'
@@ -316,6 +316,8 @@
 
     </div>
 {:else}
+
+{#if $page.data?.session?.user?.user_metadata}
     <div class="bg-slate-500 text-white p-2 m-2 justify-center text-lg flex items-center">
         <input bind:checked={is_prov} type="checkbox" class="w-8 h-4" id="id_prov">
         <label for="id_prov">Is Provisional Admission Given?</label>
@@ -326,7 +328,7 @@
             <input on:blur={fetchProvDt} bind:value={prov_contact_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_contact_number">
         </div>
     {/if}
-
+{/if}
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
