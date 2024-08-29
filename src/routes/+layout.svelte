@@ -37,7 +37,7 @@
 
 
 
-        {#if (''+$page.url).includes('admissionform/acpc?ayear_id=3&college_id=1')}
+        {#if (''+$page.url).includes('admissionform/acpc?ayear_id=3')}
             <Header/>
             <slot></slot>
         {:else}
