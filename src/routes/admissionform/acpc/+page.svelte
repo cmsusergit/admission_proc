@@ -352,6 +352,7 @@
                 <div class="flex flex-col w-full m-1">
                     <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
                     <select bind:value={$form.course} class:border-orange-700={$errors.course} class="input" type="text" name="course" id="course" required>
+			<option value='' selected disable></option>
                         {#if data?.courselist}
                             {#each data?.courselist as course}
                                 <option value={course.id}>{course.name}({course.alias})</option>
