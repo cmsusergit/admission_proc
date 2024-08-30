@@ -23,7 +23,7 @@
         {
             "college_id":5,
             "list":[{"subList":["English"],"selected":0},{"subList":["Social Science"],"selected":0},{"subList":["Science"],"selected":0},{"subList":["Gujarati"],"selected":0},{"subList":["Hindi","Sanskrit" ],"selected":0},{"subList":["Basic Maths"],"selected":0}]            
-        }
+        }     
     ],
     "subjectEntrList":[
         {
@@ -34,7 +34,6 @@
             "college_id":2,
             "list":["Mathematics","Chemistry","Physics"]
         },
-
         {
             "college_id":3,
 
@@ -47,6 +46,10 @@
         {
             "college_id":5,            
             "list":[]
+        },
+        {
+            "college_id":6,                    
+            "list":["CMET"]
         }
     ],    
     "bloodGroupList":[

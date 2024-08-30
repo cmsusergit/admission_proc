@@ -127,6 +127,19 @@
             _.forEach(boardList,ob=>{
                 $form.boardList.push({board:ob,result:0.0})
             })   
+
+
+
+
+
+
+
+
+
+
+            if($form.college_id==6){
+                $form.boardList.push({board:'BBA/B.Com',result:0.0})
+            }
             $form.subjectResultList=[]
             _.forEach(subjectList,ob=>{
                 $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
