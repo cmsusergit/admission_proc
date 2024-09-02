@@ -373,9 +373,15 @@
         <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
             To Proceed For Payment:
             {#if $form.college_id==5+1}
-                <a href=https://pmny.in/DrZ5yTtOQLzs>Click Here</a>
+            
+                <a href='https://pmny.in/DrZ5yTtOQLzs'>Click Here</a>
             {:else}            
-                <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>            
+
+                {#if $form.course==10}
+                    <a href="https://pmny.in/DrZ5yTtOQLzs">Click Here</a>
+                {:else}
+                    <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>            
+                {/if}
             {/if}
         </div>
     </div>
