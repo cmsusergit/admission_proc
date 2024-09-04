@@ -375,8 +375,11 @@
             {#if $form.college_id==5+1}
             
                 <a href='https://pmny.in/DrZ5yTtOQLzs'>Click Here</a>
-            {:else}            
 
+            
+            {:else if $form.college_id==5}
+                To Proceed For Payment: <a href='https://pmny.in/OrXjLv0h2DZz'>Click Here</a>
+            {:else}            
                 {#if $form.course==10}
                     <a href="https://pmny.in/DrZ5yTtOQLzs">Click Here</a>
                 {:else}
