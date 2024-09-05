@@ -11,9 +11,9 @@
     let isEditEnabled=false
     onMount(()=>{           
 
-
+            
         //....
-        let temp1=[...profile.merit_number]//....
+        let temp1=[...profile?.merit_number]//....
         temp1.map((dt)=>{
             if(dt.category=='M' && dt.number>=4)
                 dt.number=dt.number
@@ -89,9 +89,9 @@
     <p class="text-4xl text-center">Your Payment is Pending</p>
     <p class="text-xl text-center">For further Query Please, Contact Admission Officer</p>
     <div class="mt-4 flex border justify-center p-2 border">
-        {#if !profile.is_payment_done}   
-        {#if profile.college_id!=5}
-            {#if profile.admission_category=="B"}
+        {#if !profile?.is_payment_done}   
+        {#if profile?.college_id!=5}
+            {#if profile?.admission_category=="B"}
                 <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
                 <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
             {:else}
@@ -113,12 +113,13 @@
 
                     {#if profile.college_id!=5}
                         {#if profile.admission_category=="B"}
-                            <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
-                            <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
+                            <!-- <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/kIvMHRAlgOIT'>Payment</a>            
+                            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/0rHjN55yRlY9'>Payment</a> -->
+                            <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/qr16orXnJuCp'>Payment</a>
                         {:else}
-                        <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a> -->
-
-                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a> 
+                        <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a>
+                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a>  -->
+                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/6IuYjePG0lpv'>Payment</a> 
                         {/if}  
                     {:else}
                         <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
