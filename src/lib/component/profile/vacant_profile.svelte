@@ -71,7 +71,7 @@
             {#if !profile.is_payment_done} 
                 {#if profile.college_id==1}        
                 
-                    {#if profile.course==10}
+                    {#if profile.course==10 || profile.course==5+1}
                         <a class="p-2 mr-2 text-center bg-blue-700 text-white cursor-pointer hover:bg-blue-500 w-48 rounded" href="https://pmny.in/DrZ5yTtOQLzs">Payment</a>
                     {:else}
                     <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a>
