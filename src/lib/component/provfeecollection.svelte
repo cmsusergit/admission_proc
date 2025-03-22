@@ -2,7 +2,7 @@
     import {supabase} from '$lib/db.js'
 
     import Modal from '$lib/modal.svelte'
-    import {college,wordify} from '$lib/store.js'
+    import {academicYear,college,wordify} from '$lib/store.js'
     import { createEventDispatcher, onMount } from 'svelte'
     import pdfMake from "pdfmake/build/pdfmake"
     export let collectFeeRecord
@@ -31,7 +31,8 @@
         const { data, error } = await supabase
         .from('ProvAdmissionFee')
         .insert(
-            { collected_on: new Date(),amount: amount,form_id:collectFeeRecord.id }
+            { collected_on: new Date(),amount: amount,
+                form_id:collectFeeRecord.id,academic_year:$academicYear.id,college_id:$college.id }
         ).select().single()
         if(error){
             alert(error.message)
@@ -79,7 +80,7 @@
                         [{fontSize:10,alignment:'right',text:'(Student Copy)'}],
                         [titleContent],                        
                         [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
-                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number: ${collectFeeRecord.Course.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
+                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${$college.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
                         [{margin:[20,10,20,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
                         [{margin:[20,25,20,2],fontSize:10,bold:true,alignment:'right',text:`Receiver Signature\n${$college.alias},Vasad`}]
                     ]
@@ -135,6 +136,12 @@
             <div class="font-bold p-1 text-center my-1 border-b">
                 {collectFeeRecord.title?collectFeeRecord.title:''} {collectFeeRecord.first_name?collectFeeRecord.first_name:''} {collectFeeRecord.middle_name?collectFeeRecord.middle_name:''} {collectFeeRecord.last_name?collectFeeRecord.last_name:''}
             </div>
+            {#if $college?.qrcode_image}
+                <div class="flex flex-col justify-center text-center px-2 py-4">
+                    <img class="mx-auto w-1/2" src={$college?.qrcode_image} alt="QR" width="250" height="250">
+                    <p class="bg-orange-800 text-white text-xl font-bold">Please, Don't use credit card for Payment</p>
+                </div>                            
+            {/if}
             <div>
                 {#if provAdmissionFeeRecord && provAdmissionFeeRecord.length>0}
                     <table class="my-4 border w-full text-center">
