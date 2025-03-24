@@ -47,7 +47,6 @@
                 console.log('****',err1)
                 return
             }
-
             generateReceipt(data,form_number?.form_number)
             dispatch("close")
         }
@@ -88,7 +87,6 @@
         const tbl2=JSON.parse(JSON.stringify(tbl1))
         tbl2.table.body[0][0].text="(Institute Copy)"
         const tbl1_1=JSON.parse(JSON.stringify(tbl1))
-
         tbl1_1.table.body[0][0].text="(Account Office Copy)"
         //  
         // const tbl2_1=JSON.parse(JSON.stringify(tbl2))
