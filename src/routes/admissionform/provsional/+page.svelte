@@ -7,10 +7,12 @@
     import {createForm} from 'svelte-forms-lib'
     import { env } from '$env/dynamic/public'
     import * as yup from 'yup'
+    import Modal from '$lib/Modal.svelte'
     import { createEventDispatcher } from 'svelte';
+
+
     export let data
-    let branchList=[],sameAddrSelected=false
-    
+    let branchList=[],sameAddrSelected=false    
     let isDlgOpen=false
     let inquiry_contact='1001'
     const validationSchema=yup.object().shape({
@@ -110,6 +112,7 @@
     }
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
+
 		node.addEventListener('input', transform, { capture: true })		
 		transform()
 	}
