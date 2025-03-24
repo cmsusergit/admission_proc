@@ -3,14 +3,15 @@
     
     import {supabase} from "$lib/db"
     import { goto } from '$app/navigation'
-    import { onMount } from 'svelte';
+    import { onMount } from 'svelte';   
     import {createForm} from 'svelte-forms-lib'
     import { env } from '$env/dynamic/public'
     import * as yup from 'yup'
+    import { createEventDispatcher } from 'svelte';
     export let data
     let branchList=[],sameAddrSelected=false
     
-
+    let isDlgOpen=false
     let inquiry_contact='1001'
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
