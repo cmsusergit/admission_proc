@@ -7,7 +7,7 @@
     import {createForm} from 'svelte-forms-lib'
     import { env } from '$env/dynamic/public'
     import * as yup from 'yup'
-    import Modal from '$lib/Modal.svelte'
+    import Modal from '$lib/modal.svelte'
     import { createEventDispatcher } from 'svelte';
 
 
