@@ -7,10 +7,10 @@
     import pdfMake from "pdfmake/build/pdfmake"
     export let collectFeeRecord
     let amount,provAdmissionFeeRecord
+    let txnnumber=''
     const dispatch= createEventDispatcher()
 
     
-
     onMount(async()=>{
         let { data: provAdmissionFee, error } = await supabase
         .from('ProvAdmissionFee')
@@ -31,7 +31,7 @@
         const { data, error } = await supabase
         .from('ProvAdmissionFee')
         .insert(
-            { collected_on: new Date(),amount: amount,
+            { collected_on: new Date(),amount: amount,txn_number:txnnumber,
                 form_id:collectFeeRecord.id,academic_year:$academicYear.id,college_id:$college.id }
         ).select().single()
         if(error){
@@ -77,7 +77,8 @@
                 table:{
                     body:[
                         [{fontSize:10,alignment:'right',text:'(Student Copy)'}],
-                        [titleContent],                        
+                        [titleContent],      
+                        [{margin:[5,10,5,2],fontSize:10,alignment:'right',text:'TXN-Number: '+(record?.txn_number??'-')}],                  
                         [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
                         [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${$college.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
                         [{margin:[20,10,20,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
@@ -170,6 +171,8 @@
             <div class="flex flex-col">
                 <label class="font-bold text-sm" for="feetext">Fee Amount</label>
                 <input type="number" step="0.1" class="input" min="0" bind:value={amount} name="feetext">
+                <label class="font-bold text-sm" for="txntext">Txn. Number</label>
+                <input type="text" class="input" bind:value={txnnumber} name="txntext">
             </div>
         </div>                
     </div>
