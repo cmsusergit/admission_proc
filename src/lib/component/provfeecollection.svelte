@@ -65,7 +65,7 @@
             titleContent.columns.push({image:dataUri,width:50,fit:[50,50]})
         titleContent.columns.push({
             stack:[
-                {margin: [0, 10, 0, 0],style:'header',alignment:'center',width:'*',fontSize:12,bold:true,text:titleText.toUpperCase()},
+                {margin: [0, 10, 0, 0],style:'header',alignment:'center',width:'*',fontSize:11,bold:true,text:titleText.toUpperCase()},
                 {margin:[20,0,0,0],style:'subheader',alignment:'center',fontSize:10,text:subtitle1}
             ]
         }
@@ -78,8 +78,8 @@
                     body:[
                         [{fontSize:10,alignment:'right',text:'(Student Copy)'}],
                         [titleContent],      
-                        [{margin:[5,10,5,2],fontSize:10,alignment:'right',text:'TXN-Number: '+(record?.txn_number??'-')}],                  
-                        [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
+                        [{margin:[5,2,5,2],fontSize:10,alignment:'right',text:'TXN-Number: '+(record?.txn_number??'-')}],                  
+                        [{margin:[5,2,5,2],style:'subheader',fontSize:12,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
                         [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${$college.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
                         [{margin:[20,10,20,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
                         [{margin:[20,25,20,2],fontSize:10,bold:true,alignment:'right',text:`Receiver Signature\n${$college.alias},Vasad`}]
