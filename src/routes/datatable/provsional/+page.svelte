@@ -1,7 +1,7 @@
 <script>
     import { goto,invalidateAll } from '$app/navigation'
 
-    import { mesg,college } from '$lib/store.js'    
+    import { mesg,academicYear,college } from '$lib/store.js'    
     import {  onMount } from 'svelte'    
     import DataTable from '$lib/datatable.svelte'
     import Dialog from '$lib/dialog.svelte'
@@ -48,6 +48,7 @@
     }   
     onMount(()=>{          
         $college=data?.college
+        $academicYear=data?.academicYear
     })
     const updateRecord=(record)=>{        
         goto(`/admissionform/provsional?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${data?.college.id}`)        

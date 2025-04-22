@@ -3,14 +3,17 @@
     
     import {supabase} from "$lib/db"
     import { goto } from '$app/navigation'
-    import { onMount } from 'svelte';
+    import { onMount } from 'svelte';   
     import {createForm} from 'svelte-forms-lib'
     import { env } from '$env/dynamic/public'
     import * as yup from 'yup'
-    export let data
-    let branchList=[],sameAddrSelected=false
-    
+    import Modal from '$lib/modal.svelte'
+    import { createEventDispatcher } from 'svelte';
 
+
+    export let data
+    let branchList=[],sameAddrSelected=false    
+    let isDlgOpen=false
     let inquiry_contact='1001'
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
@@ -52,6 +55,7 @@
         }
     })
     let error_mesg='',loading=false
+    const dispatch= createEventDispatcher()
     $:{
         if(data){
             college.set(data.college)      
@@ -108,6 +112,7 @@
     }
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
+
 		node.addEventListener('input', transform, { capture: true })		
 		transform()
 	}
@@ -388,6 +393,7 @@
     
     
     <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
+        <button on:click={()=>{isDlgOpen=true}} class="w-48 button-primary" type="button">QR CODE</button>
         <button disabled={loading} type="submit" class="w-48 button-primary">
             {#if loading}
                 Please Wait....
@@ -397,6 +403,28 @@
         </button>
     </div>
 </form>
+{#if isDlgOpen}
+    <Modal on:close={()=>{isDlgOpen=false}}>
+        <div slot="header">Fee Collection</div>
+        <div slot="content">
+            {#if $college?.qrcode_image}
+                <div class="flex flex-col justify-center text-center px-2 py-4">
+                    <img class="mx-auto w-1/2" src={$college?.qrcode_image} alt="QR" width="250" height="250">
+
+                    <p class="bg-orange-800 text-white text-xl font-bold">Please, Don't use credit card for Payment</p>
+                </div>                            
+            {/if}
+        </div>
+        <div slot="foot">
+            <div class="">
+                <button on:click={()=>{isDlgOpen=false}} class="px-2 py-2 bg-orange-700 text-white hover:bg-orange-500 shadow shadow-orange-400 uppercase rounded disabled:bg-gray-400 w-48">Close</button>
+            </div>
+        </div>    
+    </Modal>
+{/if}
+
+
+
 
 
 
