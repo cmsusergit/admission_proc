@@ -24,7 +24,9 @@
             admission_category:yup.string().required(),
             acpcnumber:yup.string().notRequired(),
             acpc_meritnumber:yup.string().notRequired(),
-            course:yup.string().required(),
+            course:yup.string().required(), 
+            student_abc_id:yup.string().required(),
+            UDISE_Number:yup.string().required(),
             branch:yup.string().required(),
             entr_examnumber:yup.string().required(),
             title:yup.string().required(),
@@ -41,7 +43,8 @@
             nationality:yup.string().notRequired(),
             category:yup.string().notRequired(),
             caste:yup.string().notRequired(),
-            aadharnumber:yup.number().required(),
+            aadharnumber:yup.number().required(),            
+            name_as_per_aadhar:yup.string().required(),
             per_addr1:yup.string().required(),
             per_addr2:yup.string().notRequired(),
             per_city:yup.string().required(),
@@ -90,8 +93,6 @@
             $form.gender=($form.title=='Mr.')?'Male':'Female'
         }           
     }
-
-
     const fetchProvDt=async()=>{
         try{
             loading=true
@@ -109,10 +110,9 @@
             }
         }catch(error1){
             error_mesg=error1
+    
             console.log('****',error1)
-
         }finally{
-
             loading=false
         }
     }
@@ -384,7 +384,17 @@
                     <label for="entr_examnumber" class="font-bold">Entrance Exam Seat Number(GUJCET/NATA/NEET..)<span class="text-sm text-red-500"></span> </label>    
                     <input on:blur={handleChange} bind:value={$form.entr_examnumber} class:border-orange-700={$errors.entr_examnumber} class="border rounded px-1 py-2 border-blue-400" type="text" name="entr_examnumber" id="entr_examnumber"  required>
                 </div>
-            </div>               
+            </div>
+            <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1">
+                    <span><label for="student_abc_id" class="font-bold">ABC Id/APAAR Id</label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline" rel="noreferrer">Get More Information</a></span>
+                    <input on:blur={handleChange} bind:value={$form.student_abc_id} class:border-orange-700={$errors.student_abc_id} class="border rounded px-1 py-2 border-blue-400" type="text" name="student_abc_id" id="student_abc_id">
+                </div>
+                <div class="flex flex-col w-full m-1">
+                    <label for="UDISE_Number" class="font-bold">UDISE (According to Leaving Certificate)</label>    
+                    <input on:blur={handleChange} bind:value={$form.UDISE_Number} class:border-orange-700={$errors.UDISE_Number} class="border rounded px-1 py-2 border-blue-400" type="text" name="UDISE_Number" id="UDISE_Number">
+                </div>
+            </div>                       
         </div>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-800 rounded-t-lg md:w-1/4">Personal Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400">
@@ -466,7 +476,7 @@
                 </div>           
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col w-1/4 m-1">      
                     <label class="font-bold" for="category">Category</label>                
                     <select bind:value={$form.category} name="category" class="input" id="category">
                         {#each config.categoryList as category}
@@ -474,13 +484,17 @@
                         {/each}
                     </select>
                 </div>    
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col w-1/4 m-1">      
                     <label class="font-bold" for="caste">Caste</label>                
                     <input bind:value={$form.caste} class="input" use:uppercase type="text" id="caste">                
                 </div>  
-                <div class="flex flex-col w-full m-1">      
+                <div class="flex flex-col w-1/2 m-1">      
                     <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
                     <input on:blur={handleChange} bind:value={$form.aadharnumber}  class="input" class:border-orange-700={$errors.aadharnumber} type="text" id="aadharnumber" required>                
+                </div>  
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="name_as_per_aadhar">Name AS Per AadharCard <span class="text-sm text-red-500">*</span></label>                
+                    <input on:blur={handleChange} bind:value={$form.name_as_per_aadhar}  class="input" class:border-orange-700={$errors.name_as_per_aadhar} type="text" id="name_as_per_aadhar" required>                
                 </div>  
             </div>
         </div>
