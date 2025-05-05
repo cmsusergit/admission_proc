@@ -119,7 +119,11 @@
                         {:else}
                         <!-- <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/oJn4PnkUUQrW'>Payment</a>
                         <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a>  -->
+
                         <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/6IuYjePG0lpv'>Payment</a>  
+
+                        <a class="p-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/6IuYjePG0lpv'>Payment</a> 
+
                         {/if}  
                     {:else}
                         <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
