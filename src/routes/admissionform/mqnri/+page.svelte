@@ -351,11 +351,17 @@
             {#if $form.college_id!=5}
                 {#if $form.admission_category=="B"}
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                        To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a>
+                        <!-- To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a> 
+                        -->
+                        To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/qr16orXnJuCp'>Click Here</a>
+                        
                     </div>
                 {:else}
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
-                        To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>
+                        <!-- To Proceed For Payment: <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a> 
+                        -->
+                        To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/6IuYjePG0lpv'>Click Here</a>
+                        
                     </div>
                 {/if}
 
@@ -448,7 +454,7 @@
             </div>                           
             <div class="flex justify-between px-2 py-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
-                    <span><label for="student_abc_id" class="font-bold">ABC Id </label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline" rel="noreferrer">Get More Information</a></span>
+                    <span><label for="student_abc_id" class="font-bold">ABC Id/APAAR Id</label><a target="_blank" href="https://www.abc.gov.in" class="ml-2 text-blue-700 hover:text-blue-500 underline" rel="noreferrer">Get More Information</a></span>
                     <input on:blur={handleChange} bind:value={$form.student_abc_id} class:border-orange-700={$errors.student_abc_id} class="border rounded px-1 py-2 border-blue-400" type="text" name="student_abc_id" id="student_abc_id">
                 </div>
                 <div class="flex flex-col w-full m-1">

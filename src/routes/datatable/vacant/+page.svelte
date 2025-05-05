@@ -50,10 +50,11 @@
                 ob['admission_status']=ob.admission_status==2?'C':''
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
-        _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
-            ob['merit_number']=indx+1
-        })
-        _.forEach(_.filter(dataTable,ob=>ob.admission_category=='N' || ob.admission_category=='B'),(ob,indx)=>{      
+        // 
+        //  _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
+        //     ob['merit_number']=indx+1
+        // })
+        _.forEach(_.filter(dataTable,ob=>ob.admission_category=='V' ),(ob,indx)=>{      
             ob['merit_number']=indx+1
         })
     }   
@@ -109,8 +110,8 @@
             alert(error.message)
         invalidateAll()
         $mesg="Record Restored Successfully"
-        recordToRestore=-1
 
+        recordToRestore=-1
         console.log(error);
     }
     const exportToFile=()=>{

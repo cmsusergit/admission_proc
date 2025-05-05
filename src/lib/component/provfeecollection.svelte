@@ -2,15 +2,15 @@
     import {supabase} from '$lib/db.js'
 
     import Modal from '$lib/modal.svelte'
-    import {college,wordify} from '$lib/store.js'
+    import {academicYear,college,wordify} from '$lib/store.js'
     import { createEventDispatcher, onMount } from 'svelte'
     import pdfMake from "pdfmake/build/pdfmake"
     export let collectFeeRecord
     let amount,provAdmissionFeeRecord
+    let txnnumber=''
     const dispatch= createEventDispatcher()
 
     
-
     onMount(async()=>{
         let { data: provAdmissionFee, error } = await supabase
         .from('ProvAdmissionFee')
@@ -31,7 +31,8 @@
         const { data, error } = await supabase
         .from('ProvAdmissionFee')
         .insert(
-            { collected_on: new Date(),amount: amount,form_id:collectFeeRecord.id }
+            { collected_on: new Date(),amount: amount,txn_number:txnnumber,
+                form_id:collectFeeRecord.id,academic_year:$academicYear.id,college_id:$college.id }
         ).select().single()
         if(error){
             alert(error.message)
@@ -46,7 +47,6 @@
                 console.log('****',err1)
                 return
             }
-
             generateReceipt(data,form_number?.form_number)
             dispatch("close")
         }
@@ -65,7 +65,7 @@
             titleContent.columns.push({image:dataUri,width:50,fit:[50,50]})
         titleContent.columns.push({
             stack:[
-                {margin: [0, 10, 0, 0],style:'header',alignment:'center',width:'*',fontSize:12,bold:true,text:titleText.toUpperCase()},
+                {margin: [0, 10, 0, 0],style:'header',alignment:'center',width:'*',fontSize:11,bold:true,text:titleText.toUpperCase()},
                 {margin:[20,0,0,0],style:'subheader',alignment:'center',fontSize:10,text:subtitle1}
             ]
         }
@@ -77,17 +77,17 @@
                 table:{
                     body:[
                         [{fontSize:10,alignment:'right',text:'(Student Copy)'}],
-                        [titleContent],                        
-                        [{margin:[5,10,5,2],style:'subheader',fontSize:14,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
-                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number: ${collectFeeRecord.Course.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
-                        [{margin:[20,10,20,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
+                        [titleContent],      
+                        [{margin:[2,2,2,2],fontSize:10,alignment:'right',text:'TXN-Number: '+(record?.txn_number??'-')}],                  
+                        [{margin:[5,2,5,2],style:'subheader',fontSize:12,alignment:'center',text:"RECEIPT",decoration:'underline',bold:true}],
+                        [{columns:[{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'left',text:`Recipt Number:${$college.alias}-${form_number??'________'}`},{margin:[20,2,20,2],bold:true,fontSize:10,alignment:'right',text:"Date: "+currDtStr}]}],
+                        [{margin:[5,2,5,2],height:122,fontSize:10,alignment:'justify',text:contentText}],
                         [{margin:[20,25,20,2],fontSize:10,bold:true,alignment:'right',text:`Receiver Signature\n${$college.alias},Vasad`}]
                     ]
         }}
         const tbl2=JSON.parse(JSON.stringify(tbl1))
         tbl2.table.body[0][0].text="(Institute Copy)"
         const tbl1_1=JSON.parse(JSON.stringify(tbl1))
-
         tbl1_1.table.body[0][0].text="(Account Office Copy)"
         //  
         // const tbl2_1=JSON.parse(JSON.stringify(tbl2))
@@ -135,6 +135,12 @@
             <div class="font-bold p-1 text-center my-1 border-b">
                 {collectFeeRecord.title?collectFeeRecord.title:''} {collectFeeRecord.first_name?collectFeeRecord.first_name:''} {collectFeeRecord.middle_name?collectFeeRecord.middle_name:''} {collectFeeRecord.last_name?collectFeeRecord.last_name:''}
             </div>
+            {#if $college?.qrcode_image}
+                <div class="flex flex-col justify-center text-center px-2 py-4">
+                    <img class="mx-auto w-1/2" src={$college?.qrcode_image} alt="QR" width="250" height="250">
+                    <p class="bg-orange-800 text-white text-xl font-bold">Please, Don't use credit card for Payment</p>
+                </div>                            
+            {/if}
             <div>
                 {#if provAdmissionFeeRecord && provAdmissionFeeRecord.length>0}
                     <table class="my-4 border w-full text-center">
@@ -165,6 +171,8 @@
             <div class="flex flex-col">
                 <label class="font-bold text-sm" for="feetext">Fee Amount</label>
                 <input type="number" step="0.1" class="input" min="0" bind:value={amount} name="feetext">
+                <label class="font-bold text-sm" for="txntext">Txn. Number</label>
+                <input type="text" class="input" bind:value={txnnumber} name="txntext">
             </div>
         </div>                
     </div>
