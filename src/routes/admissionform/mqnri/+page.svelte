@@ -353,12 +353,7 @@
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
                         <!-- To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a> 
                         -->
-<<<<<<< HEAD
-                        
-=======
->>>>>>> 2c547eabdc8afcd0f4087979dc7749565772b665
                         To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/qr16orXnJuCp'>Click Here</a>
-                        
                     </div>
                 {:else}
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
