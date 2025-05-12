@@ -4,7 +4,7 @@
         {
             "college_id":1,
 
-            "list":[{"subList":["Mathematics"],"selected":0},{"subList":["Physics"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["English","Gujarati"],"selected":0},{"subList":["Computer"],"selected":0}]            
+            "list":[{"subList":["Physics"],"selected":0},{"subList":["Mathematics"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["English","Gujarati"],"selected":0},{"subList":["Computer"],"selected":0}]            
         },
         {
             "college_id":2,
@@ -28,7 +28,7 @@
     "subjectEntrList":[
         {
             "college_id":1,
-            "list":["Mathematics","Chemistry","Physics"]
+            "list":["Physics","Chemistry","Mathematics"]
         },
         {
             "college_id":2,

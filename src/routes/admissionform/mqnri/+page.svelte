@@ -251,29 +251,28 @@
                 error_mesg=''
                 $mesg='Form Record Inserted/Updated Successully.'    
                 window.scrollTo(0,50)
+                isSubmitted=true
                 if(!data.formDt){  
-                    const tempD1=new Date($form.dob)                    
-                    let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
-                    const { data, error } = await supabase.auth.signUp({
-                        email: $form.email,
-                        password:pwd1,
-                        email_confirm: false
-                    })
-                    if(error){
-                        console.log(error)
-                        return
-                    }
-                    
-                    if(data)
-                        isSubmitted=true
+                    // const tempD1=new Date($form.dob)                    
+                    // let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
+                    // const { data, error } = await supabase.auth.signUp({
+                    //     email: $form.email,
+                    //     password:pwd1,
+                    //     email_confirm: true
+                    // })
+                    // if(error){
+                    //     console.log(error)
+                    //     return
+                    // }
                 }
                 // if(error){                    
-                //     console.log(error)
-                // }
-                // else{
-                //     const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
-                // }
-            }            
+                    //     console.log(error)
+                    // }
+                    // else{
+                        //     const { data, error } = await supabase.auth.resetPasswordForEmail($form.email)
+                        // }    
+                        isSubmitted=true
+                    }            
         } catch (error) {
             error_mesg=error.message
             window.scrollTo(0,50)
@@ -353,8 +352,7 @@
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
                         <!-- To Proceed For Payment: <a href='https://pmny.in/kIvMHRAlgOIT'>Click Here</a> 
                         -->
-                        To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/qr16orXnJuCp'>Click Here</a>
-                        
+                        To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/qr16orXnJuCp'>Click Here</a>                        
                     </div>
                 {:else}
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
