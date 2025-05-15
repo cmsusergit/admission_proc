@@ -102,6 +102,7 @@
             
             if(!provFormInfo){
                 handleReset()
+                processBoardList(is_d2d)
                 return
             }
             const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number"])
@@ -109,8 +110,8 @@
                 $form[record]=temp1[record]
             }
         }catch(error1){
+
             error_mesg=error1
-    
             console.log('****',error1)
         }finally{
             loading=false
@@ -682,8 +683,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
                 {#if data?.courselist?.find(ob=>{return ($form.course==ob.id && ob.alias=="B.E.")})}
                     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
                     <div class="text-indigo-800 overflow-x-auto">

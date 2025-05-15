@@ -80,6 +80,7 @@
             loading=false
     }
 </script>
+
 <div class="">
     <div class="flex justify-between p-1 lg:flex-row flex-col">
         <div class="flex flex-col w-full m-1">
@@ -106,6 +107,10 @@
             <button on:click={exportToFile} class="bg-blue-700 text-white px-4 py-2 hover:bg-blue-500 rounded-md">Export Excel</button>
         </div>
     </div>
+
+
+
+
     <div class="flex md:flex-row flex-col w-full">
         {#if countbybranch}
             {#each countbybranch as college}

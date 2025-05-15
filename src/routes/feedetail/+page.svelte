@@ -12,12 +12,35 @@
     let loading=false,formDt={}
 
     let error_mesg=data?.error,branchList
-    let isConfirmInsertionDlg=false
+    let prov_mesg=''
+    let isConfirmInsertionDlg=false,prov_formnumber=''
     const getDateFormat=(dt)=>{
         const temp=''+(dt.getMonth()+1)
         const temp1=''+dt.getDate()
         return [dt.getFullYear(),temp.length<2?('0'+temp):temp,temp1.length<2?('0'+temp1):temp1].join('-')
     }
+    const fetchProvDt=async()=>{
+        try{
+            loading=true
+            let { data: provFormInfo, error:error1 } = await supabase.from('ProvFormInfo')                
+                .select(`*,ProvAdmissionFee(id,collected_on,amount,txn_number)`).eq('form_number',prov_formnumber).eq('academic_year',data?.formInfo?.AcademicYear?.id).single()
+            if(provFormInfo){
+                formDt.cash_amount=provFormInfo?.ProvAdmissionFee[0]?.amount 
+                error_mesg=''
+                prov_mesg="Entry Found"
+            }
+            if(!provFormInfo){
+                error_mesg='Provisional Admission Form Not Found.'
+                prov_mesg=''
+                return
+            }            
+        }catch(error1){
+            prov_mesg=''
+            error_mesg=error1.message
+            console.log(error1)            
+        }
+    }
+
     const initFormDt=()=>{
         formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
@@ -81,11 +104,13 @@
             else if(data?.form_type.includes('mqnri')) {
                 console.log('****',formDt.mqnri_form_id)
             }
-            console.log('----',formDt)
             const { data:dt, error:err1 } = await supabase
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
             .select('id')
+
+
+
             if(err1)
             {
                 error_mesg=error.message     
@@ -124,7 +149,6 @@
         initFormDt()
     }
 </script>
-
 <div class="">
     {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -157,6 +181,18 @@
             </div>
         {/if}
         <form class="text-sm p-2" on:submit|preventDefault={handleSubmit}>        
+        <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">ProvsionalAdmission Details</div>
+        <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
+            <div class="flex justify-between p-1 lg:flex-row flex-col">
+                <div class="flex flex-col w-full m-1 px-2">     
+                    {#if prov_mesg}       
+                        <p class="bg-green-500 text-white font-bold p-2">Provsional Record Found With {prov_formnumber}</p>
+                    {/if}
+                    <label for="prov_formnumber" class="font-bold">Provsional Admission Form Number</label>
+                    <input on:blur={fetchProvDt} bind:value={prov_formnumber}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_formnumber">                    
+                </div>
+            </div>
+        </div>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
             <div class="flex justify-between p-1 lg:flex-row flex-col">          

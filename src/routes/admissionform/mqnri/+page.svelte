@@ -17,7 +17,8 @@
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
     let boardListForDipl=['SSC']
-    let uploadFileList=[]
+    let uploadFileList=[],is_prov=false
+    let prov_contact_number=''
     let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
@@ -71,13 +72,13 @@
             mother_contact:yup.number().required(),
             mother_email:yup.string().email().notRequired(),
             mother_aadharnumber:yup.number().notRequired(),
-            mother_occupation:yup.string().notRequired(),
+            mother_occupation:yup.string().notRequired(),            
             board_name:yup.string().notRequired(),
             exam_seatnumber:yup.string().notRequired(),
             last_schoolname:yup.string().notRequired(),
             last_schoolcity:yup.string().notRequired(),
         })
-    const {form,errors,handleChange,handleSubmit}=createForm({
+    const {form,errors,handleChange,handleSubmit,handleReset}=createForm({
         initialValues:{title:'Mr.',per_country:'INDIA'},        
         validationSchema:validationSchema,
         onSubmit:value=>{
@@ -326,8 +327,30 @@
         uploadFileList=[...temp1]//....
         //....
         console.log(file1);
-
-    }   
+    }
+    const fetchProvDt=async()=>{
+        try{
+            loading=true
+            let { data: provFormInfo, error } = await supabase
+                .from('ProvFormInfo')
+                .select('*').eq('contact',prov_contact_number).single()
+            
+            if(!provFormInfo){
+                handleReset()
+                return
+            }
+            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number"])
+            for(const record in temp1){
+                $form[record]=temp1[record]
+            }
+        }catch(error1){
+            error_mesg=error1
+    
+            console.log('****',error1)
+        }finally{
+            loading=false
+        }
+    }
 </script>
 {#if error_mesg}
         <div id="errormesg" class="w-full flex justify-between mt-2 mb-4 p-2 bg-white shadow shadow-slate-500 rounded-lg">
@@ -372,6 +395,18 @@
         </div>
     {/if}
 {:else}
+    {#if $page.data?.session?.user?.user_metadata}
+        <div class="bg-slate-500 text-white p-2 m-2 justify-center text-lg flex items-center">
+            <input bind:checked={is_prov} type="checkbox" class="w-8 h-4" id="id_prov">            
+            <label for="id_prov">Is Provisional Admission Given?</label>
+        </div> 
+        {#if is_prov}
+            <div class="flex flex-col w-full m-1">
+                <label for="prov_contact_number" class="font-bold">Provisional Contact Number</label>
+                <input on:blur={fetchProvDt} bind:value={prov_contact_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_contact_number">
+            </div>
+        {/if}
+    {/if}
     <form class="text-sm p-2" on:submit={handleSubmit}>
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
