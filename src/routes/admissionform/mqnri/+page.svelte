@@ -22,7 +22,7 @@
     let isSubmitted=false,isEdit=false
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
-    let branchList=[]
+    let branchList=[],isPaymentDone=false
     // 
     // const subjectList1=['Mathematics','Chemistry','Physics']
     const validationSchema=yup.object().shape({
@@ -35,8 +35,9 @@
             entr_examnumber:yup.string().notRequired(),
             title:yup.string().required(),
             first_name:yup.string().required(),
-            middle_name:yup.string().required(),
+            middle_name:yup.string().required(),            
             last_name:yup.string().required(),
+            msheet_name:yup.string().required(),
             contact:yup.number().required(),
             email:yup.string().email().required(),
             dob:yup.date().required(),
@@ -107,9 +108,8 @@
         }
         if($form.entrnceExamDetail){
             total['entranceRsultTotal']=getEntrnceResultTotal()
-        }      
+        }            
     }
-
 
     const isExistEmail=async()=>{
         console.log($form.email);
@@ -117,9 +117,15 @@
             let { data, error:formErr } = await supabase.from('MQNRIFormInfo').select(`*`).eq('email',$form.email).single() 
             if(data){
                 alert("Record with Given Email already exists. For Further Enquiry Contact SVIT Help Line Number")
-
+                isPaymentDone=data?.is_payment_done
                 isSubmitted=true
             }   
+        }
+    }
+    const handleName=(ee)=>{        
+        if($form.first_name && $form.middle_name && $form.last_name){
+            $form.msheet_name=$form.first_name+" "+$form.middle_name+" "+$form.last_name
+            $form.name_as_per_aadhar=$form.first_name+" "+$form.middle_name+" "+$form.last_name
         }
     }
     onMount(()=>{
@@ -209,9 +215,6 @@
     const insertRecord=async(record)=>{
         try{
             loading = true
-
-
-
             const { data:dt, error:err1 } = await supabase
             .from('MQNRIFormInfo')
             .upsert(record)
@@ -311,6 +314,7 @@
     const removeFile= async(file1)=>{
         const { data, error } = await supabase
             .from('AdmissionDocumentMQNRI')
+
             .update({document_path:''})
             .eq('id', file1.id)
         if(error){
@@ -362,7 +366,7 @@
     <div class="text-slate-800 font-bold text-2xl text-center w-full">Management Quota/NRI Form - {data?.academicYear?.name}</div>
 </div>
 {#if isSubmitted}
-    {#if $form && $form.is_payment_done}
+    {#if $form && isPaymentDone}
         <div class="min-h-[500] w-full text-center flex flex-col gap-2">
             <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
             <a class="text-2xl bg-slate-500 text-center text-white p-2" href="/">Goto Dashboard</a>
@@ -405,6 +409,7 @@
                 <label for="prov_contact_number" class="font-bold">Provisional Contact Number</label>
                 <input on:blur={fetchProvDt} bind:value={prov_contact_number}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_contact_number">
             </div>
+
         {/if}
     {/if}
     <form class="text-sm p-2" on:submit={handleSubmit}>
@@ -520,7 +525,12 @@
                     <label class="font-bold" for="lname">Last Name/Surname <span class="text-sm text-red-500">*</span></label>
                     <input use:uppercase on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
                 </div>
-
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">                 
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="msheetname">Name As Per Marksheet <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:focus={handleName} on:blur={handleChange} bind:value={$form.msheet_name} name="msheet_name" class:border-orange-700={$errors.msheet_name} class="input" type="text" id="msheetname" required>            
+                </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
