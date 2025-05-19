@@ -13,7 +13,7 @@
 
     const fetchCountByBranch=async(id,branchlist)=>{
         if(!id)return
-        const { data:count1, error1 } = await supabase.rpc('countbybranch',{'academicyear_id':id})
+        const { data:count1, error1 } = await supabase.rpc('countbybranchv_1',{'academicyear_id':id,'is_d2d_flag':is_d2d})
         if(error1)    
             alert(error1.message)
         countbybranch=count1
@@ -32,7 +32,10 @@
         _.forEach(tt,(el,ob)=>{
             countbybranch.push({course:ob,dt:_.groupBy(el,ob=>ob.branch?.name)})
         })
-    }    
+    }
+    $:if(is_d2d){
+        fetchCountByBranch(selectedAyear,branchList)
+    }
     $:fetchCountByBranch(selectedAyear,branchList)
     onMount(async()=>{
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
@@ -45,8 +48,6 @@
         }
         fetchCountByBranch(selectedAyear,branchList)
     })
-
-
     const exportToFile=()=>{
             loading=true
             /*
@@ -80,7 +81,6 @@
             loading=false
     }
 </script>
-
 <div class="">
     <div class="flex justify-between p-1 lg:flex-row flex-col">
         <div class="flex flex-col w-full m-1">
@@ -102,14 +102,15 @@
             </select>
         </div>
     </div>
+    <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">                
+
+        <input bind:checked={is_d2d} on:change={(ee)=>{fetchCountByBranch(selectedAyear,branchList)}} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Is D2D</label>
+    </div>            
     <div>
         <div class="justify-end flex px-2 py-2">  
             <button on:click={exportToFile} class="bg-blue-700 text-white px-4 py-2 hover:bg-blue-500 rounded-md">Export Excel</button>
         </div>
     </div>
-
-
-
 
     <div class="flex md:flex-row flex-col w-full">
         {#if countbybranch}
@@ -133,7 +134,8 @@
             {/each}             
         {/if}
 
+
+
+
     </div>
 </div>
-
-

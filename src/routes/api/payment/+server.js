@@ -22,9 +22,7 @@ export async function POST({ url,request }) {
 		// const { data:data1, error:error1 } = await supabase
 		// .from('MQNRIFormInfo')
 		// .select("*").like('father_email', `%${record1.customerEmail}%`)
-		// console.log('dt::',data1)
-	
-	
+		// console.log('dt::',data1)	
 		// if(error1)
 		// 	console.log('error1::',error1)
 		const { data, error } = await supabase.from('MQNRIFormInfo')
@@ -35,14 +33,11 @@ export async function POST({ url,request }) {
 		if(error){
 			console.log('****',error);
 		}
-
-
 		if(data && data.length>0){
-			const dob_dt=data[0].dob_dt
+			const dob_dt=data[0].dob
 			const email=data[0].email
 			await createUser(email, dob_dt)
-		}
-		else{
+		}else{
 			const { data:data1_1, error:error1_1 } = await supabase.from('MQNRIFormInfo')
 			.update({ is_payment_done: true })
 			.like('father_email',`%${record1.customerEmail}%`)
@@ -52,7 +47,7 @@ export async function POST({ url,request }) {
 				console.log('Error::',error1_1);
 			}
 			if(data1_1){
-				const dob_dt=data1_1[0].dob_dt
+				const dob_dt=data1_1[0].dob
 				const email=data1_1[0].father_email
 				await createUser(email, dob_dt)
 			}

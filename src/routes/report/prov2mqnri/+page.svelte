@@ -62,12 +62,6 @@
         }
         else{
             dataTable=dt
-
-
-
-
-
-
             console.log(selectedCollege,dt);
         }        
         let { data:dtprov, error } = await supabase
@@ -82,7 +76,6 @@
         else {
             dataTable_provonly=dtprov.filter(ob=>ob.Course.college_id==selectedCollege)
         }
-
         let { data:dtmqnri, error1 } = await supabase
         .from('mqnri_without_prov')
         .select(`*,Course(*)`)
@@ -104,7 +97,6 @@
             ob['branch']=ob.Branch?.alias
         })         
     }   
-
     const processDataMQNRIOnly=(dataTable)=>{
         dataTable=_.forEach(dataTable,ob=>{
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
@@ -125,6 +117,9 @@
         else
             goto(`/profile/mqnri?id=${record.mqnri_id}`)
     }
+    const displayRecord_mqnri=(record)=>{
+        goto(`/profile/mqnri?id=${record.id}`)        
+    }
     const displayRecord1=(record)=>{
         goto(`/profile/provsional?id=${record.id}`)        
     }
@@ -142,8 +137,6 @@
 
 
 
-
-            
     }
 </script>
 <div class="">
@@ -177,8 +170,7 @@
         <div class="w-2 bg-slate-400 border text-white"></div>
         <button on:click={exportToFile} class="button-primary md:w-48">Export Excel</button>
     </div>
-    
-    {#if isMQNRIOrProv==0  && dataTable}
+    {#if isMQNRIOrProv==0  && dataTable}       
         <div class="flex flex-col justify-between md:flex-row">
             <p class="text-2xl bg-slate-400 text-center text-white p-2 border w-full">Total Matches Found {dataTable.length}</p>            
         </div>
@@ -207,13 +199,14 @@
                             </div>
                         </div>            
         </DataTable>
+
     {:else if isMQNRIOrProv==2 && dataTable_mqnrionly}
         <p class="text-2xl bg-slate-400 text-center text-white p-2 border">Total Matches Found {dataTable_mqnrionly.length}</p>
         <DataTable data={dataTable_mqnrionly} let:currRecord={record}
             columnlist={columnList_mqnrionly}>
             <div slot='action'>
                     <div class="flex justify-center space-x-2 items-center">
-                        <button on:click={()=>displayRecord1(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">
+                        <button on:click={()=>displayRecord_mqnri(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">
                             MQNRI
                         </button>
                     </div>
