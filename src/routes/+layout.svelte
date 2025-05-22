@@ -48,7 +48,7 @@
         <Header/>
         <div>
             {#if $page.data.session.user.user_metadata.role=='deo'}
-                {#if $page.route.id.includes('admissionform/acpc') ||$page.route.id.includes('admissionform/vacant') || $page.route.id.includes('admissionform/mqnri')}    
+                {#if $page.route.id.includes('admissionform/acpc') || $page.route.id.includes('admissionform/provsional') ||$page.route.id.includes('admissionform/vacant') || $page.route.id.includes('admissionform/mqnri')}    
                     <slot></slot>
                 {:else}
                     <DeoDashboard></DeoDashboard>
