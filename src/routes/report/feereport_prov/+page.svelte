@@ -5,7 +5,7 @@
     import {goto} from '$app/navigation'
     import _ from 'lodash'
     export let data    
-    let dataTable,selectedCourse=-1
+    let dataTable,selectedCourse
     let selectedAyear,selectedCollege=1
     import * as XLSX from 'xlsx/xlsx.mjs'
     import { onMount } from 'svelte'
@@ -43,21 +43,11 @@
             return
         }
         loading=true
-        // let { data:dt, error:dt_err } = await supabase.from('ProvFormInfo')
-        //     .select(`*,ProvAdmissionFee(*),Branch(*)`)
-        //     .eq('academic_year',selectedAyear)            
-            
-        //     .eq('course',selectedCourse)
-        //     .eq('is_d2d',is_d2d)   
-        let query = supabase.from('ProvFormInfo').select(`*, ProvAdmissionFee(*), Branch(*)`)
-        .eq('academic_year',selectedAyear)
-        .eq('college_id',selectedCollege)
-        .eq('is_d2d',is_d2d)
-        if(selectedCourse!==-1) {
-            query = query.eq('course', selectedCourse)
-        }
-
-        let { data: dt, error: dt_err } =await query
+        let { data:dt, error:dt_err } = await supabase.from('ProvFormInfo')
+            .select(`*,ProvAdmissionFee(*),Branch(*)`)
+            .eq('academic_year',selectedAyear)
+            .eq('course',selectedCourse)
+            .eq('is_d2d',is_d2d)           
         if(dt_err){
             console.log(dt_err)
             alert(dt_err.messaage)
@@ -171,7 +161,7 @@
         <div class="flex flex-col w-full m-1">
             <label for="course" class="text-slate-800 px-1 py-1 font-bold">Select Course</label>
             <select bind:value={selectedCourse} class="border rounded px-1 py-2 border-blue-400" type="text" id="course" required>
-                <option value=-1></option>
+                <option value=""></option>
                 {#each courseList as course}
                     <option value={course.id}>{course.name}</option>
                 {/each}
