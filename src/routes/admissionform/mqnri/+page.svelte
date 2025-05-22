@@ -210,6 +210,7 @@
         for (let indx = 0; indx < $form.subjectResultList.length; indx++) {
             total+=$form.subjectResultList[indx][id]            
         }
+
         return total
     }    
     const insertRecord=async(record)=>{
@@ -309,6 +310,7 @@
             $form.present_state=''
             $form.present_country='' 
             $form.present_zipcode=''
+
         }
     } 
     const removeFile= async(file1)=>{
@@ -337,13 +339,12 @@
             loading=true
             let { data: provFormInfo, error } = await supabase
                 .from('ProvFormInfo')
-                .select('*').eq('contact',prov_contact_number).single()
-            
+                .select('*').eq('contact',prov_contact_number).single()            
             if(!provFormInfo){
                 handleReset()
                 return
             }
-            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number"])
+            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number","reference_name"])
             for(const record in temp1){
                 $form[record]=temp1[record]
             }

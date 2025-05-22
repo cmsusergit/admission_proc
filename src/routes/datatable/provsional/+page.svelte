@@ -12,10 +12,11 @@
 
 
     export let data
-    let is_include_removed=false
+    let is_include_removed=false,isReference=-1
     let loading=false,branchList=[]
     let dataTable,recordToRemove=-1
     let collectFeeRecord=-1,role=null
+    let reference_name=''
     let columnList=[
         {name:'ID',field:'id',searchable:true,sortable:true},
         {name:'Form Number',field:'form_number',searchable:true,sortable:true},
@@ -24,6 +25,7 @@
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
+        {name:'Reference Name',field:'reference_name',searchable:true,sortable:true},
         {name:'Is D2D?',field:'isd2d',selectable:true,sortable:true},
         {slot:true}
     ]
@@ -68,6 +70,19 @@
         else
             invalidateAll()
     }
+    const editReferenceName=async()=>{
+        const { data, error } = await supabase
+            .from('ProvFormInfo')
+            .update({ reference_name: reference_name })
+            .eq('id', isReference)
+        if(error)
+            alert(error.message)
+        else{
+            invalidateAll()
+            alert("Reference Name Updated Successfully")
+            isReference=-1
+        }
+    }
     const removeRecord=async()=>{
         const { data, error } = await supabase
             .from('ProvFormInfo')
@@ -84,7 +99,7 @@
     const exportToFile=()=>{
             loading=true
             let list1=new Array()            
-            dataTable.map(ob=>{
+            dataTable.map(ob=>{                
                 let temp=_.omit(ob,["academic_year","is_removed","is_approved","is_d2d","name","approved_by","Course","Branch","Brach"])
                 list1.push(temp)
             })
@@ -94,7 +109,8 @@
                 console.log(temp1);
                 const wsheet=XLSX.utils.json_to_sheet(temp1)
                 let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-                .replace(/\s{2,}/g," ");
+                .replace(/\s{2,}/g," ")
+
                 XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
             })
             XLSX.writeFile(wb,"provforminfo.xlsx")
@@ -124,7 +140,7 @@
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>
-                        {#if role=='admin'}
+                    {#if role=='admin'}
                         <div class="flex justify-center space-x-2 items-center">
                             <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">
                                 <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
@@ -149,6 +165,17 @@
 
                                     <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
                             {/if}
+                            <button on:click={()=>isReference=record.id} class="hover:bg-yellow-400 bg-yellow-500 p-1 text-white rounded">
+                                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">
+                                    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#000000">
+                                        <path d="M1780 4275 c-85 -19 -229 -91 -305 -152 -116 -94 -213 -245 -252 -393 -24 -88 -23 -281 1 -370 57 -211 208 -393 401 -485 93 -44 178 -65 287 -72 l88 -6 0 59 c0 101 0 100 -94 107 -146 10 -269 68 -376 176 -67 68 -114 145 -146 241 -29 84 -26 263 5 350 61 173 195 310 367 372 72 26 234 36 316 19 73 -15 180 -68 246 -120 45 -36 112 -115 147 -175 9 -16 16 -15 78 13 37 17 67 36 67 42 0 28 -87 144 -155 207 -90 83 -160 126 -272 165 -77 27 -104 31 -213 34 -83 2 -147 -2 -190 -12z"/>
+                                        <path d="M2969 3798 c-376 -33 -708 -325 -801 -704 -30 -124 -30 -304 0 -428 75 -303 304 -558 592 -658 200 -69 449 -66 640 9 341 134 571 452 587 815 6 132 -6 233 -41 336 -143 420 -530 670 -977 630z m279 -173 c210 -49 409 -209 507 -408 102 -208 102 -466 -1 -675 -97 -199 -294 -356 -511 -409 -102 -24 -267 -22 -368 6 -284 79 -498 302 -555 583 -25 117 -25 199 -1 313 77 370 414 631 786 609 44 -3 108 -11 143 -19z"/>
+                                        <path d="M1314 2892 c-242 -145 -422 -359 -519 -616 -26 -70 -75 -257 -75 -287 0 -13 17 -19 72 -27 40 -6 76 -8 79 -4 3 4 14 45 23 92 52 253 219 517 408 644 l51 35 66 -51 c143 -110 313 -168 490 -168 101 1 185 11 198 23 3 3 -2 38 -12 77 l-18 72 -51 -8 c-219 -30 -406 29 -561 177 -45 44 -84 79 -86 78 -2 0 -32 -17 -65 -37z"/>
+                                        <path d="M1130 1888 c-208 -198 -314 -307 -313 -318 1 -10 14 -43 27 -74 l25 -56 131 0 c96 0 131 -3 134 -12 23 -87 66 -208 96 -268 114 -226 318 -405 583 -510 73 -28 254 -80 281 -80 6 0 24 32 40 71 26 65 27 73 12 81 -43 24 -149 124 -191 180 -104 138 -148 261 -180 495 l-5 42 132 3 131 3 28 68 28 67 -315 303 c-174 166 -319 303 -322 304 -4 2 -149 -133 -322 -299z m515 -103 l190 -184 -112 -1 -113 0 0 -70 c0 -241 62 -485 163 -642 20 -32 34 -58 32 -58 -3 0 -31 13 -63 29 -131 66 -270 198 -347 329 -50 85 -100 230 -117 336 l-12 76 -99 0 c-54 0 -97 4 -95 9 4 10 371 361 378 361 3 0 91 -83 195 -185z"/>
+                                        <path d="M2285 2034 c-98 -60 -216 -147 -254 -188 l-25 -26 54 -55 53 -54 71 58 c72 58 160 121 170 121 3 0 40 -28 83 -63 204 -164 482 -247 733 -217 224 26 372 91 575 254 l35 29 68 -46 c339 -227 524 -568 549 -1014 l6 -113 -1006 0 -1007 0 0 -75 0 -75 1079 0 1079 0 6 23 c3 12 6 71 6 130 1 602 -255 1057 -753 1337 l-57 32 -88 -83 c-91 -86 -186 -149 -282 -187 -319 -126 -673 -49 -921 198 -38 39 -73 70 -77 69 -4 0 -47 -25 -97 -55z"/>
+                                    </g>
+                                </svg>
+                            </button>
                         </div>
                         {:else}
                             {#if record.is_approved==2}
@@ -185,6 +212,7 @@
                     </div>            
             </DataTable>
         </div>
+
     {:else}
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
@@ -204,5 +232,17 @@
         <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
     {/if}
 </div>
+<div>
+    {#if isReference!=-1}
+        <Dialog>
+            <div slot="header">Reference Name</div>
+            <div slot="content">
 
-
+                <label for="rname">Reference Name</label>
+                <input type="text" id="rname" class="border-2 border-gray-300 rounded-md p-2 w-full" placeholder="Reference Name" bind:value={reference_name}/>
+            </div>
+            <button on:click={editReferenceName} slot="confirm" class="w-24 px-2 py-1 text-white bg-emerald-500 hover:bg-emerald-400 rounded">SUBMIT</button>                        
+            <button on:click={()=>isReference=-1} slot="close" class="w-24 px-2 py-1 text-white bg-red-500 hover:bg-red-400 rounded">Close</button>
+        </Dialog>
+    {/if}
+</div>
