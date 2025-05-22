@@ -6,8 +6,7 @@
     
     let selectedAyear
     let collegeList,error_mesg=''
-
-    const formList=[{name:"ACPC",path:"acpc"},{name:"VACANT",path:"vacant"}]
+    const formList=[{name:"ACPC",path:"acpc"},{name:"Prov",path:"provsional"},{name:"MQNRI",path:"mqnri"},{name:"VACANT",path:"vacant"}]
     onMount(async()=>{
         let { data:dt, error } = await supabase
             .from('AcademicYear').select('*').eq('is_current',true).single()
@@ -45,8 +44,7 @@
                 <div class="border bg-slate-50 px-2 py-2 text-slate-800 w-full mt-2 text-center text-lg shadow shadow-slate-500 rounded">
                     <div class="flex justify-center md:flex-row md:space-x-4 flex-col">
                         <ul>
-                        {#each formList as formType}                
-
+                        {#each formList as formType}       
                             <li>
                             <a class="text-blue-700 hover:font-bold" href={`/admissionform/${formType.path}?ayear_id=${selectedAyear.id}&college_id=${college.id}`}>
                                 {college.name}({formType.name})
