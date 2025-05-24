@@ -25,7 +25,7 @@
             let { data: provFormInfo, error:error1 } = await supabase.from('ProvFormInfo')                
                 .select(`*,ProvAdmissionFee(id,collected_on,amount,txn_number)`).eq('form_number',prov_formnumber).eq('academic_year',data?.formInfo?.AcademicYear?.id).single()
             if(provFormInfo){
-                formDt.cash_amount=provFormInfo?.ProvAdmissionFee[0]?.amount 
+                formDt.advance_amount=_.sumBy(provFormInfo?.ProvAdmissionFee,ob=>ob?.amount)
                 error_mesg=''
                 prov_mesg="Entry Found"
             }
@@ -38,9 +38,10 @@
             prov_mesg=''
             error_mesg=error1.message
             console.log(error1)            
+        }finally{
+            loading=false
         }
     }
-
     const initFormDt=()=>{
         formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
@@ -52,6 +53,8 @@
         formDt.admission_category=data?.formInfo?.admission_category
         formDt.course=data?.formInfo?.course
         formDt.branch=data?.formInfo?.branch
+        formDt.advance_amount=0.0
+        formDt.freeship_amount=0.0
         formDt.payment_status=1
         formDt.ACPC_amount=20000
         formDt.fees_collector_id=(data?.session?.user?.id)?(data?.session?.user?.id):-1
@@ -65,11 +68,13 @@
             formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
             return
         } 
+        formDt.freeship_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?10000:0.0
         initFormDt()
         calculateAmountExpected()
     })
     $:fetchBranchList(formDt.course)
     $:if(formDt.fees_scheme)calculateAmountExpected()
+
     const calculateAmountExpected=()=>{
         formDt.amount_expected=0.0
         const tempDetail=data?.feeSchemeList?.find(ob=>{
@@ -77,7 +82,6 @@
         })
         tempDetail.AdmissionSubFeesInfo?.map(record1=>{            
             if(record1.course==formDt.course){
-                console.log('$$$$',record1.name);
                 let temp1=record1.amount
                 if(record1.name.includes("Tution Fee") || record1.name.includes("Tution Fees")){
                         if(formDt.payment_status==0)
@@ -93,7 +97,6 @@
     }
     const handleSubmit=()=>{
         isConfirmInsertionDlg=true
-        console.log(formDt)
     }
     const insertRecord=async()=>{
         try{
@@ -108,8 +111,6 @@
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
             .select('id')
-
-
 
             if(err1)
             {
@@ -196,7 +197,7 @@
         <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Admission Details</div>
         <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
-                <div class="flex flex-col w-full m-1 px-2">                    
+                <div class="flex flex-col w-full m-1 px-2">        
                     <label for="course" class="font-bold">Select Category <span class="text-sm text-red-500">*</span></label>
                     <select bind:value={formDt.admission_category} class="input" type="text" name="admissioncategory" id="admissioncategory" disabled={data.formDt} required>
                         {#if config.admissionCategoryList}
@@ -277,19 +278,27 @@
                 College Payment Detail
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">          
+                
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
                     <input on:focus={()=>{
-                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount>0)?(formDt.amount_expected-formDt.ACPC_amount):0}}
-                                on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount;formDt.dd_amount=formDt.dd_amount>0?formDt.dd_amount:0}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
-            </div>    
+                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount>0)?(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount):0}}
+                                on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.advance_amount;formDt.dd_amount=formDt.dd_amount>0?formDt.dd_amount:0}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                </div>    
+                <div class="flex flex-col w-full m-1">
+                    <label for="advance_amount" class="font-bold">Advance Amount <span class="text-sm text-red-500">*</span></label>    
+                    <input type="number" step="0.001" bind:value={formDt.advance_amount} class="border rounded px-1 py-2 border-blue-400" id="advance_amount" required>
+                </div>    
+                <div class="flex flex-col w-full m-1">
+                    <label for="freeship_amount" class="font-bold">Freeship Amount <span class="text-sm text-red-500">*</span></label>    
+                    <input type="number" step="0.001" bind:value={formDt.freeship_amount} class="border rounded px-1 py-2 border-blue-400" id="freeship_amount" required>
+                </div>    
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col border-y-2 border-stone-200">          
                 <div class="flex flex-col w-full m-1">
                     <label for="ddamount" class="font-bold">DD/Cheque Amount</label>    
-                    <input type="number" step="0.001" bind:value={formDt.dd_amount}  
-                    
-                    on:blur={()=>{formDt.online_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.dd_amount;formDt.online_amount=formDt.online_amount>0?formDt.online_amount:0}} class="border rounded px-1 py-2 border-blue-400" id="ddamount">
+                    <input type="number" step="0.001" bind:value={formDt.dd_amount}    
+                    on:blur={()=>{formDt.online_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.dd_amount-formDt.advance_amount;formDt.online_amount=formDt.online_amount>0?formDt.online_amount:0}} class="border rounded px-1 py-2 border-blue-400" id="ddamount">
                 </div>
                 
                 <div class="flex flex-col w-full m-1">

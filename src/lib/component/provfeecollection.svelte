@@ -33,7 +33,7 @@
         .from('ProvAdmissionFee')
         .insert(
             { collected_on: new Date(),amount: amount,txn_number:txnnumber,
-                form_id:collectFeeRecord.id,academic_year:$academicYear,college_id:$college.id }
+                form_id:collectFeeRecord.id,academic_year:$academicYear.id,college_id:$college.id }
         ).select().single()
         if(error){
             alert(error.message)
