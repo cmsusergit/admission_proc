@@ -23,18 +23,6 @@ export async function load({ params,url }) {
         return {error:err1.message}
     const courselist=dt    
     
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
     
     
     let formDt
@@ -51,3 +39,5 @@ export async function load({ params,url }) {
     courselist,
     formDt
 }}
+
+

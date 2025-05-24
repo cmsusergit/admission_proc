@@ -110,7 +110,7 @@
                 const wsheet=XLSX.utils.json_to_sheet(temp1)
                 let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
                 .replace(/\s{2,}/g," ")
-
+                
                 XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
             })
             XLSX.writeFile(wb,"provforminfo.xlsx")
@@ -162,7 +162,6 @@
                                 {:else if record.is_approved==0}
                                     <span class="text-sm text-orange-800 p-2 bg-orange-400 rounded-md text-center">Rejected</span>
                                 {:else}
-
                                     <span class="text-sm text-blue-800 p-2 bg-yellow-200 rounded-md text-center">Pending</span>
                             {/if}
                             <button on:click={()=>isReference=record.id} class="hover:bg-yellow-400 bg-yellow-500 p-1 text-white rounded">
@@ -211,8 +210,8 @@
                         {/if}
                     </div>            
             </DataTable>
-        </div>
 
+        </div>
     {:else}
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
@@ -246,3 +245,6 @@
         </Dialog>
     {/if}
 </div>
+
+
+

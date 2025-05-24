@@ -1,5 +1,5 @@
 <script>
-    import { mesg,college } from '$lib/store.js'
+    import { mesg,academicYear,college } from '$lib/store.js'
     
     import {supabase} from "$lib/db"
     import { goto } from '$app/navigation'
@@ -9,12 +9,12 @@
     import * as yup from 'yup'
     import Modal from '$lib/modal.svelte'
     import { createEventDispatcher } from 'svelte';
-
+    import Provfeecollection from '$lib/component/provfeecollection.svelte';
 
     export let data
     let branchList=[],sameAddrSelected=false    
     let isDlgOpen=false
-    let inquiry_contact='1001'
+    let inquiry_contact='',collectFeeRecord=-1
     const validationSchema=yup.object().shape({
             course:yup.string().required(),
             is_d2d:yup.boolean().required(),
@@ -46,6 +46,35 @@
             mother_contact:yup.number().required(),
             mother_email:yup.string().email().required()
         })
+
+    const fetchProvDtFromEmail=async()=>{
+        try{
+            loading=true
+            $academicYear=data?.academicYear?.id                        
+            let { data:dt, error }=await supabase.from('ProvFormInfo').select(`*,Course!inner(*),Branch(name,alias)`)
+                .or('email.eq.'+$form.email+',contact.eq.'+$form.contact)
+                .eq('academic_year',data.academicYear.id)
+            if(dt && dt.length>0){
+                const rr=dt[0]
+                if(rr.is_approved==1)
+                    collectFeeRecord=rr
+                else{
+                    error_mesg="Approval Pending"
+                    window.scrollTo(0,50)
+                }
+            }
+            if(error){
+                error_mesg=error.message
+                console.log('****',error)               
+                window.scrollTo(0,50)
+            }
+        }catch(error1){
+            error_mesg=error1
+            console.log('****',error1)
+        }finally{
+            loading=false
+        }
+    }
     const {form,errors,handleChange,handleSubmit}=createForm({
         initialValues:{title:'Mr.',per_country:'INDIA'},        
         validationSchema:validationSchema,
@@ -55,7 +84,6 @@
         }
     })
     let error_mesg='',loading=false
-    const dispatch= createEventDispatcher()
     $:{
         if(data){
             college.set(data.college)      
@@ -110,9 +138,9 @@
             loading = false
         }
     }
+
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
-
 		node.addEventListener('input', transform, { capture: true })		
 		transform()
 	}
@@ -210,6 +238,7 @@
                         {/each}
                     {/if}
                 </select>
+
             </div>
             <div class="flex flex-col w-full md:w-1/2 mt-1 px-2">
                 <label for='mq' class="font-bold px-1">D2D Admission</label>
@@ -246,11 +275,11 @@
         <div class="flex justify-between p-1 lg:flex-row flex-col">
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="contact">Contact Number (Preferable WhatsApp) <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" >
+                <input on:blur={(ee)=>{handleChange(ee);fetchProvDtFromEmail()}} bind:value={$form.contact} name="contact" class:border-orange-700={$errors.contact} class="input" type="text" id="contact" >
             </div>
             <div class="flex flex-col w-full m-1">
                 <label class="font-bold" for="email">Email <span class="text-sm text-red-500">*</span></label>
-                <input on:blur={handleChange} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" >
+                <input on:blur={(ee)=>{handleChange(ee);fetchProvDtFromEmail()}} bind:value={$form.email} name="email" class:border-orange-700={$errors.email} class="input" type="text" id="email" >
             </div>
         </div>
         <div class="flex justify-between p-1 lg:flex-row flex-col">                
@@ -377,7 +406,6 @@
                     <input on:blur={handleChange} bind:value={$form.mother_email} name="mother_email" class:border-orange-700={$errors.mother_email} class="input" type="text" id="guardian1_email" required>
                 </div>
             </div>
-
         </div>
     </div>
     {#each Object.entries($errors) as [property,error]}    
@@ -385,13 +413,6 @@
             <p class="bg-orange-400 text-white w-full text-sm mx-2 my-1 p-2 border">{error}</p>
         {/if}
     {/each}
-    
-
-
-
-
-    
-    
     <div class="flex justify-end border flex-row border-blue-400 p-4 mt-4 bg-white shadow shadow-slate-400 rounded">
         <button on:click={()=>{isDlgOpen=true}} class="w-48 button-primary" type="button">QR CODE</button>
         <button disabled={loading} type="submit" class="w-48 button-primary">
@@ -403,6 +424,12 @@
         </button>
     </div>
 </form>
+
+<div>    
+    {#if collectFeeRecord!=-1}
+        <Provfeecollection collectFeeRecord={collectFeeRecord} on:close={()=>{collectFeeRecord=-1}}/>
+    {/if}
+</div>
 {#if isDlgOpen}
     <Modal on:close={()=>{isDlgOpen=false}}>
         <div slot="header">Fee Collection</div>

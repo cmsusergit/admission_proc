@@ -42,14 +42,18 @@
         <div class="mt-2 flex justify-center flex-col">
             {#each collegeList as college}            
                 <div class="border bg-slate-50 px-2 py-2 text-slate-800 w-full mt-2 text-center text-lg shadow shadow-slate-500 rounded">
-                    <div class="flex justify-center md:flex-row md:space-x-4 flex-col">
-                        <ul>
+                    <div class="flex justify-center md:space-y-2 flex-col">         
+                        <div class="bg-slate-500 text-white font-bold text-center text-xl p-2">{college.name}({college.alias})</div>
+                        <ul class="flex md:flex-row md:justify-center flex-col items-center md:space-x-2 md:space-y-0 space-y-2 my-2 w-full">
                         {#each formList as formType}       
-                            <li>
-                            <a class="text-blue-700 hover:font-bold" href={`/admissionform/${formType.path}?ayear_id=${selectedAyear.id}&college_id=${college.id}`}>
-                                {college.name}({formType.name})
-                            </a>
-                        </li>
+
+                            <li>  
+                                <div class="bg-blue-500 w-48 text-center text-lg font-bold text-slate-50 rounded-lg hover:bg-blue-800 cursor-pointer">
+                                    <a class="text-white hover:font-bold m-5 px-4 py-2" href={`/admissionform/${formType.path}?ayear_id=${selectedAyear.id}&college_id=${college.id}`}>
+                                        {formType.name}
+                                    </a>
+                                </div>
+                            </li>
                         {/each}</ul>
                     </div>
                 </div>
