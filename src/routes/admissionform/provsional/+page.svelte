@@ -53,7 +53,7 @@
             $academicYear=data?.academicYear?.id                        
             let { data:dt, error }=await supabase.from('ProvFormInfo').select(`*,Course!inner(*),Branch(name,alias)`)
                 .or('email.eq.'+$form.email+',contact.eq.'+$form.contact)
-                .eq('academic_year',data.academicYear.id)
+            .eq('academic_year',data.academicYear.id)
             if(dt && dt.length>0){
                 const rr=dt[0]
                 if(rr.is_approved==1)
