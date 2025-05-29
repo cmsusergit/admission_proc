@@ -79,8 +79,9 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
 
             {bold:true, fontSize:10,text:`CASH`},
             {bold:true, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
-            {bold:true, fontSize:10,text:`ADVANCE`},
-            {bold:true,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {bold:true, fontSize:10,text:`ADVANCE Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+
+            {bold:true,colSpan:2, fontSize:10,text:`Freeship Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             {text:''}
         ],
         [               
@@ -97,7 +98,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {text:''},
             {fontSize:10,colSpan:2,text:`Reference Number:  ${formDt.online_reference_number??'-'}`,border:[true, true, true, true]},{text:''}
         ],
-        [   {fontSize:10,bold:true,text:college.id==5?'ACPDC':'ACPC'},
+        [   {fontSize:10,bold:true,text:college.id==2?'GPNAMEC':(college.id==5?'ACPDC':'ACPC')},
             {fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             {fontSize:10,text:`Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
 
@@ -105,15 +106,13 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {text:''}
         ]  
     ]               
-
     const footText="Note:: In addition to above tuition fees, candiadate shall have to pay the fees of course/institute fixed by the Fees Regulatory Committee as and when declared from the acadamic year "+currAYear
     +"\n Note:: Rs.5,000/- refundable deposit after Final Semester clear and verification of original Marksheet"
     let reportDefination=[
         headerTbl1,
         reportHeading,
+
         reportHeading1,
-
-
         {margin:[10,2,10,2],style:"subheader",text:"Recieved From,"},
         {margin:[10,2,10,2],fontSize:10,style:"subheader",text:`${formDt?.stu_name}`},
         {

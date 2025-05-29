@@ -10,11 +10,10 @@ export async function load({ params,url }) {
         return {error:err1.message}
     let { data:college, error } = await supabase
         .from('College').select('*').eq('id',college_id).single()
+
     if(error)
         if(error instanceof Error)        
         return {error:error.message}
-
-
     let { data:dataTable, error:dt_err } = await supabase 
     .from('ProvFormInfo')
     .select(`*,Course!inner(*),Branch(name,alias)`)

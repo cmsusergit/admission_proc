@@ -316,7 +316,7 @@
                 handleReset()
                 return
             }
-            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number"])
+            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number","reference_name"])
             for(const record in temp1){
                 $form[record]=temp1[record]
             }
