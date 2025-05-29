@@ -1,6 +1,7 @@
 {
+    "isMeritDisplay":false,
+    
     "subjectList":[
-
         {
             "college_id":1,
             "list":[{"subList":["English","Gujarati"],"selected":0},{"subList":["Mathematics"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["Physics"],"selected":0},{"subList":["Computer"],"selected":0}]            

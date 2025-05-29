@@ -4,14 +4,14 @@
     import {supabase} from "$lib/db"   
     import { academicYear,college } from '$lib/store.js'    
     export let profile,uploadedFileList
+    import config from '$lib/config.json'
     import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
     import {goto} from '$app/navigation'
     import { LETTER } from 'pdfmake/src/standardPageSizes';
-    let userPhotoUrl=null
+    let userPhotoUrl=null,isMeritDisplay=config.isMeritDisplay
     let isEditEnabled=false
-    onMount(()=>{           
 
-            
+    onMount(()=>{                       
         //....
         let temp1=[...profile?.merit_number]//....
         temp1.map((dt)=>{
@@ -161,7 +161,7 @@
                     </h2>                
                     <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
                 </div>
-                {#if profile?.merit_number}
+                {#if profile?.merit_number && isMeritDisplay}
                     <div class="bg-slate-500 text-white my-4 p-2 text-center">
                         <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                         {#each profile?.merit_number as record}                   

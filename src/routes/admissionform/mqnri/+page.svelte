@@ -369,12 +369,12 @@
 {#if isSubmitted}
     {#if $form && isPaymentDone}
         <div class="min-h-[500] w-full text-center flex flex-col gap-2">
-            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
+            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form,<a href='http://www.svitvasad.ac.in' class="underline fomnt-bold">Visit our Website</a> You will be informed shortly....</h1>
             <a class="text-2xl bg-slate-500 text-center text-white p-2" href="/">Goto Dashboard</a>
         </div>
     {:else}
         <div class="min-h-[500] w-full">
-            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form, Check Your Email for confirmation</h1>
+            <h1 class="bg-white text-2xl text-slate-800 text-center font-bold p-4">Thank You for submitting a form,<a href='http://www.svitvasad.ac.in' class="underline fomnt-bold">Visit our Website</a> You will be informed shortly....</h1>
             {#if $form.college_id!=5}
                 {#if $form.admission_category=="B"}
                     <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">

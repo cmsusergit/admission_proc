@@ -177,6 +177,7 @@
             </div>
         </div>                
     </div>
+     
     <div slot="foot">
         <div class="">
             <button on:click={collectFee} class="px-2 py-2 bg-blue-500 text-white hover:bg-blue-400 shadow shadow-blue-400 rounded disabled:bg-gray-400 uppercase w-48" type="button">submit</button>

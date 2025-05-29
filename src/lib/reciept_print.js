@@ -78,8 +78,10 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         [
 
             {bold:true, fontSize:10,text:`CASH`},
-            {bold:true,colSpan:4, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
-            {text:''},{text:``},{text:''}
+            {bold:true, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {bold:true, fontSize:10,text:`ADVANCE`},
+            {bold:true,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {text:''}
         ],
         [               
             {bold:true,fontSize:10,text:'DD/Cheque'},
@@ -95,7 +97,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {text:''},
             {fontSize:10,colSpan:2,text:`Reference Number:  ${formDt.online_reference_number??'-'}`,border:[true, true, true, true]},{text:''}
         ],
-        [   {fontSize:10,bold:true,text:'ACPC'},
+        [   {fontSize:10,bold:true,text:college.id==5?'ACPDC':'ACPC'},
             {fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             {fontSize:10,text:`Rec.Number:  ${formDt.ACPC_receipt_number??'-'}`},
 
