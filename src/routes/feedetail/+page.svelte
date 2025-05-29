@@ -100,7 +100,7 @@
     }
     const insertRecord=async()=>{
         try{
-            loading = true
+            loading=true
             if(data?.form_type.includes('acpc')){
                 console.log('----',formDt.form_id)
             }
@@ -110,8 +110,8 @@
             const { data:dt, error:err1 } = await supabase
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
-            .select('id')
 
+            .select('id')
             if(err1)
             {
                 error_mesg=error.message     
@@ -119,6 +119,7 @@
                 if(err1 instanceof Error){
                     error_mesg=err1.message
                 }
+                loading=false
                 return
             }
             else{                
@@ -131,13 +132,13 @@
             error_mesg=error.message
             window.scrollTo(0,50)
             $mesg=''
+            loading=false
             return
         } finally {
             isConfirmInsertionDlg=false
             loading = false
         }
     }
-
     const printReciept=()=>{    
         const feeSchemeList=data?.feeSchemeList?.find(ob=>ob.id==data?.feeFormInfo[data?.feeFormInfo.length-1]?.fees_scheme)
         const feeTempList=feeSchemeList.AdmissionSubFeesInfo.filter(tt=>tt.course==data?.feeFormInfo[data?.feeFormInfo.length-1]?.course)

@@ -69,7 +69,7 @@
         dataTable=_.forEach(dataTable,async(ob)=>{
             const dt=new Date(ob['reciept_date'])
             ob['reciept_date']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
-            ob['total_amount']=(ob['cash_amount']??0)+(ob['dd_amount']??0)+(ob['online_amount']??0)+(ob['ACPC_amount']??0)
+            ob['total_amount']=(ob['cash_amount']??0)+(ob['dd_amount']??0)+(ob['online_amount']??0)+(ob['ACPC_amount']??0)+(ob['advance_amount']??0)+(ob['freeship_amount']??0)
             let user = await supabase.rpc('get_user_email_by_id',{id:ob['fees_collector_id']})
             console.log(user?.data[0]?.email);
             ob["fees_collector_id"]=user?.data[0]?.email
