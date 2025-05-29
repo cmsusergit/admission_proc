@@ -33,6 +33,8 @@
         {name:'DD/Cheque Amount',field:'dd_amount'},
         {name:'Online Amount',field:'online_amount'},
         {name:'ACPC Amount',field:'ACPC_amount'},
+        {name:'Advance Amount',field:'advance_amount'},
+        {name:'Freeship Amount',field:'freeship_amount'},
         {name:'Total Amount',field:'total_amount'},
         {name:"Comment",field:'comment'},
         {slot:true}
@@ -90,6 +92,8 @@
             let ddTotal=0.0
             let onlineTotal=0.0
             let acpcTotal=0.0
+            let advanceTotal=0.0
+            let freeshipTotal=0.0
             let total=0.0
             dataTable.forEach((record,indx)=>{
                 let temp1={}
@@ -106,15 +110,21 @@
                 ddTotal+=record['dd_amount']
                 temp1['Online Amount']=record['online_amount']
                 onlineTotal+=record['online_amount']
+
                 temp1['ACPC Amount']=record['ACPC_amount']
                 acpcTotal+=record['ACPC_amount']
+                temp1['Advance Amount']=record['advance_amount']
+                advanceTotal+=record['advance_amount']
+                temp1['Freeship Amount']=record['freeship_amount']
+                freeshipTotal+=record['freeship_amount']
                 temp1['Total Amount']=record['total_amount']
                 total+=record['total_amount']
                 temp1['CollectedBy']=record['fees_collector_id']
                 temp1['Comment']=record['comment']
                 list1.push(temp1)
             })
-            list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Total Amount':total})
+
+            list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Advance Amount':advanceTotal,'Freeship Amount':freeshipTotal,'Total Amount':total})
             const wb=XLSX.utils.book_new()     
             const wsheet=XLSX.utils.json_to_sheet([])
             const ayear=data?.aYearList.find(ob=>ob.id==selectedAyear)?.name??''

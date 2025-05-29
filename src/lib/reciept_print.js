@@ -118,7 +118,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         {
             margin:[10,2,10,5],style:"subheader",
             text:[
-                `The Following amount as Fees for the ${formDt.Course.alias} ${formDt.is_d2d?'(D2D)':''} for a `,
+                `The Following amount as Fees for the ${formDt.Course.alias} ${formDt.is_d2d?(college.id==5?'(C2D)':'(D2D)'):''} for a `,
                     {bold:true,fontSize:10,decoration:'underline',text:`${formDt.is_d2d?(formDt.payment_status==false?'THIRD':'SECOND'):'FIRST'} ${formDt?.payment_status==false?'SEMESTER':'YEAR'}`},` ${currAYear}`
             ]
         },   
