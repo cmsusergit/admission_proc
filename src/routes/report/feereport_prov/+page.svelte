@@ -5,7 +5,7 @@
     import {goto} from '$app/navigation'
     import _ from 'lodash'
     export let data    
-    let dataTable,selectedCourse
+    let dataTable,selectedCourse=-1
     let selectedAyear,selectedCollege=1
     import * as XLSX from 'xlsx/xlsx.mjs'
     import { onMount } from 'svelte'
@@ -35,7 +35,7 @@
         {slot:true}
     ],courseList=[]
     $:processData(dataTable)
-    $:if(selectedAyear && selectedCourse && from_dt && to_dt){
+    $:if(selectedAyear && selectedCourse && from_dt && to_dt && selectedCollege){
             fetchFeesRecord()
     }     
     const fetchFeesRecord=async()=>{
@@ -43,11 +43,16 @@
             return
         }
         loading=true
-        let { data:dt, error:dt_err } = await supabase.from('ProvFormInfo')
-            .select(`*,ProvAdmissionFee(*),Branch(*)`)
-            .eq('academic_year',selectedAyear)
-            .eq('course',selectedCourse)
-            .eq('is_d2d',is_d2d)           
+        // let { data:dt, error:dt_err } = await supabase.from('ProvFormInfo')
+        //     .select(`*,ProvAdmissionFee(*),Branch(*)`)
+        //     .eq('academic_year',selectedAyear)
+        //     .eq('course',selectedCourse)
+        //     .eq('is_d2d',is_d2d)                    
+        let query = supabase.from('ProvFormInfo').select(`*,ProvAdmissionFee(*),Course(*),Branch(*)`)
+            .eq('academic_year',selectedAyear).eq('is_d2d',is_d2d)
+        if(selectedCourse && selectedCourse!=-1)
+            query =query.eq('course',selectedCourse)        
+        let { data:dt, error:dt_err } =await query
         if(dt_err){
             console.log(dt_err)
             alert(dt_err.messaage)
@@ -59,7 +64,7 @@
                 let ob1_1=ob['ProvAdmissionFee'][0]
                 if(!ob1_1)
                     return false
-                return (new Date(ob1_1['collected_on'])>=new Date(from_dt) && new Date(ob1_1['collected_on'])<=new Date(to_dt))
+                return (new Date(ob1_1['collected_on'])>=new Date(from_dt) && new Date(ob1_1['collected_on'])<=new Date(to_dt) && ob1_1['college_id']==selectedCollege)  
             })
         }   
         loading=false
@@ -105,12 +110,12 @@
                 temp1['Contact']=record.contact
                 temp1['Branch']=record.branch
                 temp1['Collected On']=record.collected_on
+
                 temp1['TXN-Number']=record.txn_number
                 temp1['Amount']=record.amount
                 total+=record.amount
                 list1.push(temp1)
             })
-
             list1.push({'Amount':total})
             const wb=XLSX.utils.book_new()     
             const wsheet=XLSX.utils.json_to_sheet([])
@@ -161,7 +166,7 @@
         <div class="flex flex-col w-full m-1">
             <label for="course" class="text-slate-800 px-1 py-1 font-bold">Select Course</label>
             <select bind:value={selectedCourse} class="border rounded px-1 py-2 border-blue-400" type="text" id="course" required>
-                <option value=""></option>
+                <option value="-1"></option>
                 {#each courseList as course}
                     <option value={course.id}>{course.name}</option>
                 {/each}

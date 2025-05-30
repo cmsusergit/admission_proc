@@ -41,7 +41,7 @@
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
         let { data: Branch, error } = await supabase
         .from('Branch')
-        .select('*,Course(*)')
+        .select('*,Course(*)').order('name', { ascending: true })
         if (error) console.error(error)
         else {
             branchList=Branch
@@ -102,8 +102,7 @@
             </select>
         </div>
     </div>
-    <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">                
-
+    <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">  
         <input bind:checked={is_d2d} on:change={(ee)=>{fetchCountByBranch(selectedAyear,branchList)}} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Is D2D</label>
     </div>            
     <div>

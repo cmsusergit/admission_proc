@@ -25,6 +25,7 @@
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
+        {name:'College ID',field:'stu_college_id',searchable:true,sortable:true},
         {name:'Reference Name',field:'reference_name',searchable:true,sortable:true},
         {name:'Is D2D?',field:'isd2d',selectable:true,sortable:true},
         {slot:true}
@@ -40,12 +41,14 @@
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
             ob['isd2d']=ob.is_d2d?'Y':'N'
+            ob['stu_college_id']=(ob?.AdmissionFeesCollectionACPC[0]?.stu_college_id)?(ob?.AdmissionFeesCollectionACPC[0]?.stu_college_id):'-'
         })        
         branchList=[]
         _.forEach(_.uniqBy(dataTable,ob=>ob.branch),ob=>{
             branchList.push(ob.Branch)
         })
         dataTable=dataTable.filter(ob=>ob.is_removed==is_include_removed)
+
         dataTable=_.orderBy(dataTable,['created_at'],['desc'])
     }   
     onMount(()=>{          
@@ -63,7 +66,6 @@
         const { data1, error } = await supabase
             .from('ProvFormInfo')
             .update({ is_approved: flag,approved_by:user_id })
-
             .eq('id', record.id)
         if(error)
             alert(error.message)
@@ -108,9 +110,9 @@
                 const temp1=list1.filter(tt=>tt.branch==ob.name)
                 console.log(temp1);
                 const wsheet=XLSX.utils.json_to_sheet(temp1)
+
                 let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
-                .replace(/\s{2,}/g," ")
-                
+                .replace(/\s{2,}/g," ")                
                 XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
             })
             XLSX.writeFile(wb,"provforminfo.xlsx")
@@ -216,6 +218,7 @@
         <div class="text-2xl text-orange-800 p-2 text-center">Data Table is empty</div>
     {/if}
 </div>
+
 <div>
     {#if recordToRemove!=-1}
         <Dialog>
@@ -236,15 +239,17 @@
         <Dialog>
             <div slot="header">Reference Name</div>
             <div slot="content">
-
                 <label for="rname">Reference Name</label>
                 <input type="text" id="rname" class="border-2 border-gray-300 rounded-md p-2 w-full" placeholder="Reference Name" bind:value={reference_name}/>
             </div>
             <button on:click={editReferenceName} slot="confirm" class="w-24 px-2 py-1 text-white bg-emerald-500 hover:bg-emerald-400 rounded">SUBMIT</button>                        
             <button on:click={()=>isReference=-1} slot="close" class="w-24 px-2 py-1 text-white bg-red-500 hover:bg-red-400 rounded">Close</button>
         </Dialog>
-    {/if}
+
+        {/if}
 </div>
+
+
 
 
 

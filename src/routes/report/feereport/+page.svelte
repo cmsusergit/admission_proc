@@ -192,7 +192,6 @@
     {#if loading}
         <p class="text-4xl text-orange-700 text-center p-2">Loading....</p>
     {/if}
-
     <div class="w-full mb-2 border flex justify-end space-x-2 p-2">
         <div class="w-2 bg-slate-400 border text-white"></div>
         <button on:click={exportToFile} class="button-primary md:w-48">Export Excel</button>
@@ -211,5 +210,7 @@
                 </div>
             </div>            
         </DataTable>    
+
         {/if}
 </div>
+

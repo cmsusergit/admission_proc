@@ -12,7 +12,7 @@
     let loading=false,formDt={}
 
     let error_mesg=data?.error,branchList
-    let prov_mesg=''
+    let prov_mesg=''    
     let isConfirmInsertionDlg=false,prov_formnumber=''
     const getDateFormat=(dt)=>{
         const temp=''+(dt.getMonth()+1)
@@ -21,13 +21,14 @@
     }
     const fetchProvDt=async()=>{
         try{
-            loading=true
+            loading=true            
             let { data: provFormInfo, error:error1 } = await supabase.from('ProvFormInfo')                
-                .select(`*,ProvAdmissionFee(id,collected_on,amount,txn_number)`).eq('form_number',prov_formnumber).eq('academic_year',data?.formInfo?.AcademicYear?.id).single()
+                .select(`*,ProvAdmissionFee(id,collected_on,amount,txn_number)`).eq('form_number',prov_formnumber).eq('academic_year',data?.formInfo?.AcademicYear?.id).eq('course',data?.formInfo?.Course?.id).single()
             if(provFormInfo){
+                formDt.prov_form_number=provFormInfo.id
                 formDt.advance_amount=_.sumBy(provFormInfo?.ProvAdmissionFee,ob=>ob?.amount)
-                error_mesg=''
-                prov_mesg="Entry Found"
+                error_mesg=''                
+                prov_mesg=`Entry Found with Name: ${provFormInfo?.first_name} ${provFormInfo?.middle_name} ${provFormInfo?.last_name}`
             }
             if(!provFormInfo){
                 error_mesg='Provisional Admission Form Not Found.'
@@ -43,6 +44,7 @@
         }
     }
     const initFormDt=()=>{
+        formDt.prov_form_number=null
         formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
         formDt.academic_year=data?.formInfo?.AcademicYear?.id
         formDt.stu_name=data?.formInfo?.last_name+" "+data?.formInfo?.first_name+" "+data?.formInfo?.middle_name
@@ -68,7 +70,6 @@
             formDt.form_type=(data?.form_type.includes('acpc'))?'ACPC':(data?.form_type.includes('vacant'))?'VACANT':'MQNRI'
             return
         } 
-        formDt.freeship_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?10000:0.0
         initFormDt()
         calculateAmountExpected()
     })
@@ -90,6 +91,8 @@
                 formDt.amount_expected+=temp1                    
             }
         })       
+        // 
+        // formDt.freeship_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?(formDt?.amount_expected):0.0
     }
     const fetchBranchList=(course1)=>{
         const temp1=data?.courseList?.find(ob=>ob.id==course1)
@@ -107,10 +110,10 @@
             else if(data?.form_type.includes('mqnri')) {
                 console.log('****',formDt.mqnri_form_id)
             }
+    
             const { data:dt, error:err1 } = await supabase
             .from('AdmissionFeesCollectionACPC')
             .upsert(formDt)
-
             .select('id')
             if(err1)
             {
@@ -188,7 +191,7 @@
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1 px-2">     
                     {#if prov_mesg}       
-                        <p class="bg-green-500 text-white font-bold p-2">Provsional Record Found With {prov_formnumber}</p>
+                        <p class="bg-green-500 text-white font-bold p-2">{prov_mesg}</p>                        
                     {/if}
                     <label for="prov_formnumber" class="font-bold">Provsional Admission Form Number</label>
                     <input on:blur={fetchProvDt} bind:value={prov_formnumber}  class="border rounded px-1 py-2 border-blue-400" type="text" id="prov_formnumber">                    
