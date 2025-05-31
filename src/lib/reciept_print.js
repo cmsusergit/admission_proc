@@ -81,7 +81,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
             {bold:true, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
             {bold:true, fontSize:10,text:`ADVANCE Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
 
-            {bold:true,colSpan:2, fontSize:10,text:`Freeship Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {bold:true,colSpan:2, fontSize:10,text:`Freeship Amount:  ${Number.parseFloat(formDt.freeship_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             {text:''}
         ],
         [               

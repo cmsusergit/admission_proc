@@ -75,24 +75,24 @@
     })
     $:fetchBranchList(formDt.course)
     $:if(formDt.fees_scheme)calculateAmountExpected()
-
     const calculateAmountExpected=()=>{
         formDt.amount_expected=0.0
         const tempDetail=data?.feeSchemeList?.find(ob=>{
             return ob.id==formDt.fees_scheme
         })
+        let tution_fee=0.0
         tempDetail.AdmissionSubFeesInfo?.map(record1=>{            
             if(record1.course==formDt.course){
                 let temp1=record1.amount
                 if(record1.name.includes("Tution Fee") || record1.name.includes("Tution Fees")){
+                        tution_fee=record1.amount
                         if(formDt.payment_status==0)
                             temp1=temp1/2.0
                 }
                 formDt.amount_expected+=temp1                    
             }
         })       
-        // 
-        // formDt.freeship_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?(formDt?.amount_expected):0.0
+        formDt.freeship_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?tution_fee:0.0
     }
     const fetchBranchList=(course1)=>{
         const temp1=data?.courseList?.find(ob=>ob.id==course1)
@@ -286,8 +286,13 @@
                 <div class="flex flex-col w-full m-1">
                     <label for="cashamount" class="font-bold">Cash Amount <span class="text-sm text-red-500">*</span></label>    
                     <input on:focus={()=>{
-                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount>0)?(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount):0}}
-                                on:blur={()=>{formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.advance_amount;formDt.dd_amount=formDt.dd_amount>0?formDt.dd_amount:0}} type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
+                        formDt.cash_amount=(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount>0)?(formDt.amount_expected-formDt.ACPC_amount-formDt.advance_amount):0
+                        formDt.cash_amount=(formDt.admission_category=='GF' || formDt.admission_category=='VF')?0.0:formDt.cash_amount
+                        }}
+                        on:blur={()=>{
+                            formDt.dd_amount=formDt.amount_expected-formDt.ACPC_amount-formDt.cash_amount-formDt.advance_amount;formDt.dd_amount=formDt.dd_amount>0?formDt.dd_amount:0
+                        }} 
+                        type="number" step="0.001" bind:value={formDt.cash_amount} class="border rounded px-1 py-2 border-blue-400" id="cashamount" required>
                 </div>    
                 <div class="flex flex-col w-full m-1">
                     <label for="advance_amount" class="font-bold">Advance Amount <span class="text-sm text-red-500">*</span></label>    
