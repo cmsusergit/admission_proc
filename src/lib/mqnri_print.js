@@ -574,29 +574,32 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
 
 
 
-
-
-const mqnri_recipt_print=async (id,selectedCategory,selectedBranch)=>{    
-    const studentInfo=await getStudentInfo(id)
-    const stuName=`${studentInfo.stuTitle} ${studentInfo.stuFirstname} ${studentInfo.stuMiddlename} ${studentInfo.stuLastname}`        
-    const branchName=await getBranchName(selectedBranch)    
+const mqnri_recipt_print=async (studentInfo,selectedBranch)=>{    
+    console.log(studentInfo,selectedBranch)
+    
+    // 
+    // const studentInfo=await getStudentInfo(id)
+    const stuName=`${studentInfo.title} ${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name}`        
+    // 
+    // const branchName=await getBranchName(selectedBranch)    
     const titleText=`SARDAR VALLABHBHAI PATEL INSTITUTE OF TECHNOLOGY, VASAD
                     MQ/NRI/NRI sponsored Admission Order `
     const headerTbl1={         
         headerRows:0,
         widths:[140,'*'],
+        heights:[25,25,25,25,25,25,25,25,25,500],
         body:[
             [                
                 {alignment:'center',fontSize:18,bold:true,text:titleText,colSpan:2},{text:''}
             ],
             [{bold:true,text:'Date:'},{text:`${new Date().toDateString()}`}],
-            [{bold:true,text:'User ID:'},{text:`${studentInfo.formId}`}],
-            [{bold:true,text:'Admission Category:'},{text:`${selectedCategory}`}],
-            [{bold:true,text:'ACPC Merit Number:'},{text:`${studentInfo.stuACPC}`}],
-            [{bold:true,text:'Name of Candidate:'},{text:`${stuName}`}],
+            [{bold:true,text:'User ID:'},{text:`${studentInfo.id}`}],
+            [{bold:true,text:'Admission Category:'},{text:`${studentInfo.admission_category}`,bold:true}],
+            [{bold:true,text:'ACPC Merit Number:'},{text:`${studentInfo.acpcnumber}`}],
+            [{bold:true,text:'Name of Candidate:'},{text:`${stuName}`,bold:true}],
             [{bold:true,text:'Fees to be Paid:'},{text:''}],
-            [{bold:true,text:'Selected Branch:'},{text:`${branchName}`}],
-            [{bold:true,fontSize:18,text:'Signature:'},{text:``}],
+            [{bold:true,text:'Selected Branch:'},{text:`${selectedBranch}`,bold:true}],
+            [{bold:true,fontSize:25,text:'Signature:'},{text:``}],
         ]
     }
     let reportDefination=[
@@ -604,6 +607,20 @@ const mqnri_recipt_print=async (id,selectedCategory,selectedBranch)=>{
             table:headerTbl1,
         }        
     ]
+    pdfMake.fonts = {
+        Courier: {
+            normal: 'Courier',
+            bold: 'Courier-Bold',
+            italics: 'Courier-Oblique',
+            bolditalics: 'Courier-BoldOblique'
+        },
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
+        }
     pdfMake.createPdf({content:reportDefination,pageOrientation: 'landscape',pageSize: 'A5'}).open()
 }
 

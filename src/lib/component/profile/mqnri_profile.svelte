@@ -7,9 +7,9 @@
     import config from '$lib/config.json'
     import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
     import {goto} from '$app/navigation'
-    import { LETTER } from 'pdfmake/src/standardPageSizes';
     let userPhotoUrl=null,isMeritDisplay=config.isMeritDisplay
     let isEditEnabled=false
+    
 
     onMount(()=>{                       
         //....
@@ -166,30 +166,32 @@
                         <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                
                         {#each profile?.merit_number as record}                   
                             <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quota':'NRI/NRI Sponsored Quota'}-{record.number}</span>
-                            {#if record.category=='M' && record.number<=100}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 20/08/2024 (11.30 a.m. onwards)</p>
-                            {:else if record.category=='M' && (record.number>=51 && record.number<127)}                        
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (01.30 p.m. to 02.30 p.m.)</p>
-                            {:else if record.category=='M' && (record.number>=127 && record.number<=174)}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (10.30 a.m. to 11.30 a.m.)</p>
-                            {:else if record.category=='M' && (record.number>=175 && record.number<=225)}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (12.30 noon to 01.30 p.m.)</p>
-                            {:else if record.category=='M' && record.number>=225}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 15/06/2024 (01.30 p.m. to 02.30 p.m.)</p>
+                            {#if record.category=='M' && record.number<=50}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (11.00 a.m. to 01:00)</p>
+                            {:else if record.category=='M' && (record.number>=51 && record.number<=100)}                        
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (02.00 p.m. to 04.00 p.m.)</p>
+                            {:else if record.category=='M' && (record.number>=101 && record.number<=150)}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 17/06/2025 (11.00 a.m. to 01.00 a.m.)</p>
+                            {:else if record.category=='M' && (record.number>=151 && record.number<=200)}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 17/06/2025 (02.00 p.m. to 04.00 p.m.)</p>
+                            {:else if record.category=='M' && (record.number>=201 && record.number<=250)}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 18/06/2025 (11.00 a.m. to 01.00 p.m.)</p>
+                            {:else if record.category=='M' && record.number>=251}
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 18/06/2025 (02.00 p.m. to 04.00 p.m.)</p>
                             {:else if record.category!=='M' && record.number<=50}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 14/06/2024 (10.30 a.m. to 11.30 a.m.)</p>
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (10.00 a.m. to 11.00 a.m.)</p>
                             {/if}
                             {#if record.college_id==5 && record.category=='M'}
                                 <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/call%20lettr%20Diploma%202024.pdf">Download Call Letter</a>
                             {:else if record.category=='M'}
-                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/MQ_Call_letter.pdf">Download Call Letter</a>
+                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document//MQ%20Call%20Letter_2025.pdf">Download Call Letter</a>
                                 <br>
                             {:else}
-                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/NRI_Call_Letter__1_.pdf?t=2024-06-08T08%3A28%3A41.306Z">Download Call Letter (NRI/NRI Sponsored Quota)</a>
+                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document//NRI%20Call%20Letter_2025.pdf">Download Call Letter (NRI/NRI Sponsored Quota)</a>
                                 <br>
                             {/if}
                         {/each}
-                        <p class="bg-orange-500 text-white px-2 py-2 font-bold w-full mt-4 text-2xl">*Tuition fee are subjected to approval of FRC Technical for year 2024-25</p>
+                        <p class="bg-orange-500 text-white px-2 py-2 font-bold w-full mt-4 text-2xl">*Tuition fee are subjected to approval of FRC Technical for year 2025-26</p>
                     </div>
                 {/if}
                 <div class="text-gray-800 w-full shadow sm:rounded-lg">

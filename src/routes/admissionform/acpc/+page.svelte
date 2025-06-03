@@ -683,7 +683,7 @@
                         </tbody>
                     </table>
                 </div>
-                {#if data?.courselist?.find(ob=>{return ($form.course==ob.id && ob.alias=="B.E.")})}
+                {#if data?.courselist?.find(ob=>{return ($form.course==ob.id)})}
                     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
                     <div class="text-indigo-800 overflow-x-auto">
                         {#if $form.subjectResultList}

@@ -7,7 +7,7 @@
     import {supabase} from '$lib/db'
     export let data
     let selectedAyear,count
-    let role=null
+    let role=null,provCountByCollege
     const formList=[{name:"ACPC",path:"acpc"},{name:"Provisional",path:"provsional"},{name:"Management/NRI",path:"mqnri"},{name:"Vacant",path:"vacant"}]
     
     
@@ -22,6 +22,15 @@
         if(error1)    
             alert(error1.message)    
         count=count1
+        const {data:dt,error:err1}= await supabase.from('AdmissionFeesCollectionACPC').select('*,Course(*)').eq('academic_year',id)
+
+        if(dt){
+            provCountByCollege=_.countBy(dt,ob=>ob.Course.college_id)            
+        }
+        if(err1){
+            console.log('****',err1)            
+        }
+        
     }
     $:fetchCount(selectedAyear)
     onMount(()=>{
@@ -67,7 +76,12 @@
                                 <div class="bg-slate-50 px-2 py-2 text-slate-800">{formType.name}</div>                                
                                 <button type="button" on:click={()=>goto(`/datatable/${formType.path}?ayear_id=${selectedAyear}&college_id=${college.id}`)} class="my-2 p-2 border-t border-b w-full hover:bg-blue-700">
                                     {count[formType.name]?JSON.parse(count[formType.name])[college.id]:0}
-                                    {#if formType.path=='provsional'}=>{count['PROV2MQNRI']?JSON.parse(count['PROV2MQNRI'])[college.id]:0}{/if}
+                                    {#if formType.path=='provsional'}
+                                        =>{count['PROV2MQNRI']?JSON.parse(count['PROV2MQNRI'])[college.id]:0}
+                                        {#if provCountByCollege}
+                                            <b>[{(count[formType.name]?JSON.parse(count[formType.name])[college.id]:0)-(provCountByCollege[college.id]??0)}]</b>
+                                        {/if}
+                                    {/if}
                                     {#if formType.path=='mqnri'}=>{count['MQNRIDONE']?JSON.parse(count['MQNRIDONE'])[college.id]:0}{/if}
                                 </button><br/>  
                                 {#if role=='admin'}

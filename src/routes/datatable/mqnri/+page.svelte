@@ -11,6 +11,7 @@
     import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
     import * as XLSX from 'xlsx/xlsx.mjs'    
 
+    import {mqnri_recipt_print} from '$lib/mqnri_print.js' 
     export let data
     let loading=false,currRecord=null
     let dataTable,recordToRemove=-1
@@ -75,6 +76,7 @@
             alert("Please, Select Branch")
             return
         }
+
         const { data, error } = await supabase
             .from('MQNRIFormInfo')
             .update({ is_approved: flag ,branch:flag==1?record.branch:null})
@@ -82,9 +84,10 @@
         if(error)
             alert(error.message)
         else{
+            mqnri_recipt_print(record,_.find(branchList,ob=>ob.id==record.branch)?.name)
             invalidateAll()
             currRecord=null
-        }
+        }        
     }
     const removeRecord=async()=>{
         const { data, error } = await supabase
@@ -117,7 +120,7 @@
             dataTable.map(ob=>{
 
                 console.log(ob);
-                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit","admission_status","per_addr1","per_addr2","per_city","per_district","per_zipcode"])
+                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit","admission_status","per_addr1","per_addr2","per_city","per_district","per_zipcode","is_payment_done"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)
@@ -210,6 +213,7 @@
                 <div slot='action'>
                         {#if role=='admin'}
                             <div class="flex justify-center space-x-2 items-center">
+
                                 <button on:click={()=>displayRecord(record)} class="hover:bg-teal-400 bg-teal-500 p-1 text-white rounded">                          
                                     <svg width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"> <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/> <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/> </svg>                                
                                 </button>
