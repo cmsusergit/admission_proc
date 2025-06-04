@@ -4,20 +4,26 @@
     import Modal from '$lib/modal.svelte'
     import _ from 'lodash'
     export let meritRecord
+    let comment=''
     import { createEventDispatcher, onMount } from 'svelte'
     const dispatch= createEventDispatcher()
     $:calculateTotalMerit(meritRecord)
+    
+    
+    
     onMount(async()=>{        
+        if(meritRecord && meritRecord.comment){
+            comment=meritRecord.comment
+        }
     })    
-
-
     const calculateTotalMerit=(record)=>{
         console.log('record',record);
         if(record)
             meritRecord.total_merit=(meritRecord.pcm_percentile/2.0)+(meritRecord.gujcet_percentile/2.0)
     }
     const onsubmit=async()=>{
-        const temp1=_.pick(meritRecord,['acpc_meritnumber','pcm_percentile','gujcet_percentile','total_merit'])
+        meritRecord.comment={'comment':comment}
+        const temp1=_.pick(meritRecord,['acpc_meritnumber','pcm_percentile','gujcet_percentile','total_merit','comment'])   
         const { data, error } = await supabase
         .from('MQNRIFormInfo')
         .update(temp1)
@@ -28,17 +34,6 @@
         }
         alert('Record Updated')
         dispatch('close')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     }
 </script>
 <Modal on:close={()=>{dispatch('close')}}>
@@ -64,6 +59,10 @@
             <label class="font-bold text-sm" for="total_merit">Total merit</label>
             <input disabled type="number" step="0.1" class="input bg-gray-100" min="0" bind:value={meritRecord.total_merit} name="total_merit">
         </div>        
+        <div class="flex flex-col">
+            <label class="font-bold text-sm" for="comment">Comment</label>
+            <textarea class="input" rows="4" bind:value={comment} name="comment"></textarea>
+        </div>
     </div>
     <div slot="foot">
         <div class="">

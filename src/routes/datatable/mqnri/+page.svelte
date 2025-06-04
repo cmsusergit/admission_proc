@@ -33,10 +33,11 @@
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
         {name:'Prov_Branch',field:'prov_branch',selectable:true,sortable:true},
+        {name:'Comment',field:'comment',searchable:true},
         {slot:true}
     ]
     $:processData(data)    
-    $:{
+    $:{ 
         if(data.session?.user?.user_metadata)
             role=data.session?.user?.user_metadata.role
     }
@@ -47,6 +48,7 @@
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
                 ob['admission_status']=ob.admission_status==2?'C':''
+                ob['comment']=ob.comment?ob.comment.comment:''
             })         
         dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
         _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
@@ -109,6 +111,7 @@
         if(error)
             alert(error.message)
         invalidateAll()
+
         $mesg="Record Restored Successfully"
         recordToRestore=-1
         console.log(error);

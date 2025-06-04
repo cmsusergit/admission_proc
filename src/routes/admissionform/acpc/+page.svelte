@@ -105,7 +105,7 @@
                 processBoardList(is_d2d)
                 return
             }
-            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number","reference_name"])
+            const temp1=_.omit(provFormInfo,["id","is_removed","is_approved","approved_by","form_number","reference_name","comment"])
             for(const record in temp1){
                 $form[record]=temp1[record]
             }
