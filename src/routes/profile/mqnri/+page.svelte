@@ -18,6 +18,6 @@
     }
     let uploadedFileList=data?.uploadedFileList
 </script>
-<div class="min-h-screen w-full">
+<div class="min-h-screen w-full">   
     <Profile profile={profile} uploadedFileList={uploadedFileList}></Profile>        
 </div>

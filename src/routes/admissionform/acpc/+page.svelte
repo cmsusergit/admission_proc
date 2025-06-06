@@ -135,10 +135,12 @@
     onMount(()=>{
         if(data.formDt){               
             $form=data.formDt
+
+
+            console.log('formDt',data.formDt)            
             uploadFileList=[]     
             _.forEach(data.uploadLabelList,record=>{                
-                const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)
-            
+                const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)            
                 let temp1={
                     label:record.name,
                     f_label_id:record.id,

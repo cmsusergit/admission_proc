@@ -15,8 +15,9 @@
         //....
         let temp1=[...profile?.merit_number]//....
         temp1.map((dt)=>{
-            if(dt.category=='M' && dt.number>=4)
-                dt.number=dt.number
+            if(dt.category=='M' && dt.number>=5)
+            
+                dt.number=dt.number+25
         })
         let tempp={...profile}
         tempp.merit_number=[...temp1]

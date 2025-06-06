@@ -574,7 +574,7 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
 
 
 
-const mqnri_recipt_print=async (studentInfo,selectedBranch)=>{    
+const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year)=>{    
     console.log(studentInfo,selectedBranch)
     
     // 
@@ -583,7 +583,7 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch)=>{
     // 
     // const branchName=await getBranchName(selectedBranch)    
     const titleText=`SARDAR VALLABHBHAI PATEL INSTITUTE OF TECHNOLOGY, VASAD
-                    MQ/NRI/NRI sponsored Admission Order `
+                    MQ/NRI/NRI sponsored Admission Order-(${academic_year?.name})`
     const headerTbl1={         
         headerRows:0,
         widths:[140,'*'],
@@ -593,7 +593,7 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch)=>{
                 {alignment:'center',fontSize:18,bold:true,text:titleText,colSpan:2},{text:''}
             ],
             [{bold:true,text:'Date:'},{text:`${new Date().toDateString()}`}],
-            [{bold:true,text:'User ID:'},{text:`${studentInfo.id}`}],
+            [{bold:true,text:'Form ID:'},{text:`${studentInfo.id}`}],
             [{bold:true,text:'Admission Category:'},{text:`${studentInfo.admission_category}`,bold:true}],
             [{bold:true,text:'ACPC Merit Number:'},{text:`${studentInfo.acpcnumber}`}],
             [{bold:true,text:'Name of Candidate:'},{text:`${stuName}`,bold:true}],

@@ -86,7 +86,7 @@
         if(error)
             alert(error.message)
         else{
-            mqnri_recipt_print(record,_.find(branchList,ob=>ob.id==record.branch)?.name)
+            mqnri_recipt_print(record,_.find(branchList,ob=>ob.id==record.branch)?.name,$academicYear)
             invalidateAll()
             currRecord=null
         }        
