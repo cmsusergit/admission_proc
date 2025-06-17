@@ -11,7 +11,6 @@
             "list":[{"subList":["Mathematics","Biology"],"selected":0},{"subList":["English"],"selected":0},{"subList":["Computer"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["Physics"],"selected":0}]            
         },
 
-
         {
             "college_id":3,
             "list":[{"subList":["Mathematics"],"selected":0},{"subList":["Physics"],"selected":0},{"subList":["Chemistry"],"selected":0},{"subList":["Computer"],"selected":0}]            

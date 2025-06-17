@@ -1,4 +1,4 @@
-<script> 
+<script>  
     export let data,columnlist
     
     import _ from 'lodash'
