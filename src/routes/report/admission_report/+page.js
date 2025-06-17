@@ -1,4 +1,4 @@
-/** @type {import('./$types').PageLoad} */
+/** @type {import('./$types').PageLoad} */ 
 import { supabase } from '$lib/db'
 
 export async function load({ params,url }) {

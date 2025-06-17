@@ -110,6 +110,7 @@
             pdfMake.fonts = {
                     Courier: {
                         normal: 'Courier',
+
                         bold: 'Courier-Bold',
                         italics: 'Courier-Oblique',
                         bolditalics: 'Courier-BoldOblique'
