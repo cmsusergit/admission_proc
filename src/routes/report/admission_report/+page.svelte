@@ -9,8 +9,24 @@
     let selectedAyear,selectedCollege=1
     import * as XLSX from 'xlsx/xlsx.mjs'
     import { onMount } from 'svelte'
+    
+    
     let loading=false,is_d2d=false
+    let provAdmissionCount=0
 
+    const fetchProvCount=async(id,branchList)=>{
+        if(!id)return        
+        const {data:dt,error:err1}= await supabase.from('AdmissionFeesCollectionACPC').select('*,Course(*)').eq('academic_year',id)
+        if(dt){
+            let temp_dt=_.filter(dt,ob=>ob.prov_form_number)            
+            provAdmissionCount=_.countBy(temp_dt,ob=>ob.branch)
+        }        
+        if(err1){
+            console.log('****',err1)            
+        }
+        provAdmissionCount= provAdmissionCount || 0
+        console.log('provAdmissionCount',provAdmissionCount)        
+    }
     const fetchCountByBranch=async(id,branchlist)=>{
         if(!id)return
         const { data:count1, error1 } = await supabase.rpc('countbybranchv_1',{'academicyear_id':id,'is_d2d_flag':is_d2d})
@@ -47,6 +63,10 @@
             branchList=Branch
         }
         fetchCountByBranch(selectedAyear,branchList)
+
+
+
+        fetchProvCount(selectedAyear,branchList)
     })
     const exportToFile=()=>{
             loading=true
@@ -66,7 +86,7 @@
                     _.map(ob,(ob1,indx)=>{  
                         list1.push({course:"",branch:ob1.branch?.name,formType:ob1.formType,count:ob1.count})
                     })
-                    list1.push({course:record1.course,branch:"",formType:'Total',count:_.sumBy(ob,ob2=>Number.parseInt(ob2.count))})
+                    list1.push({course:record1.course,branch:"",formType:'Total',count:_.sumBy(ob,ob2=>Number.parseInt(ob2.count)),'ProvCount':provAdmissionCount[ob[0]?.branch?.id]??'-'})
                     list1.push({course:"",branch:"",formType:"",count:""})
                 })
             })
@@ -119,12 +139,19 @@
                         <p class="bg-slate-700 text-white px-2 w-full uppercase font-bold text-center">{college.course}</p>                
                     </div>
                     {#each Object.values(college?.dt) as rr,indx}
-                        <div class="bg-teal-700 text-white px-2 pb-2 w-full uppercase font-bold text-center">
+                        <div class="bg-teal-700 text-white px-2 pb-2 w-full uppercase font-bold text-center">                            
                             <div class="px-2 py-1">{rr[0].branch?.name} <b>({_.sumBy(rr,ob=>Number.parseInt(ob.count))})</b></div>
                             {#each rr as temp1}
                                 <div class="flex flex-row w-full bg-gray-100 p-1">                                    
                                     <p class="bg-blue-700 text-white px-1 w-full uppercase font-bold text-center">{temp1.formType}</p>
                                     <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">{temp1.count}</p>
+                                    {#if temp1.formType=='Provisional' && provAdmissionCount && provAdmissionCount[temp1.branch.id]}        
+                                        <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">
+                                            {provAdmissionCount[temp1.branch.id]}
+                                        </p>
+                                    {:else}
+                                        <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">-</p>
+                                    {/if}
                                 </div>
                             {/each}
                         </div>
@@ -132,9 +159,8 @@
                 </div>
             {/each}             
         {/if}
-
-
-
-
     </div>
 </div>
+
+
+

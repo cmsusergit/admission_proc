@@ -257,7 +257,6 @@
         <div class="flex flex-col justify-between md:flex-row">
             <p class="text-2xl bg-slate-400 text-center text-white p-2 border w-full">Total Matches Found {dataTable.length}</p>            
         </div>
-
         <DataTable data={dataTable} let:currRecord={record}
             columnlist={columnList}>
             <div slot='action'>
@@ -271,3 +270,8 @@
         </DataTable>    
     {/if}
 </div>
+
+
+
+
+
