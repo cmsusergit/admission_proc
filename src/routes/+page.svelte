@@ -23,9 +23,10 @@
             alert(error1.message)    
         count=count1
         const {data:dt,error:err1}= await supabase.from('AdmissionFeesCollectionACPC').select('*,Course(*)').eq('academic_year',id)
-
         if(dt){
-            provCountByCollege=_.countBy(dt,ob=>ob.Course.college_id)            
+            let temp_dt=_.filter(dt,ob=>ob.prov_form_number)
+            provCountByCollege=_.countBy(temp_dt,ob=>ob.Course.college_id)            
+            console.log('provCountByCollege',provCountByCollege)            
         }
         if(err1){
             console.log('****',err1)            
@@ -35,17 +36,11 @@
     $:fetchCount(selectedAyear)
     onMount(()=>{
         selectedAyear=data.aYearList.find(ob=>ob.is_current==true).id
+        if(typeof window !== 'undefined' && window.localStorage)
+            localStorage.setItem('datatable_currPage',1)
         college.set({})
     })
 </script>
-
-
-
-
-
-
-
-
 <div class="min-h-screen w-full">
     {#if $mesg}
         <div class="w-full flex justify-between p-2 bg-white shadow shadow-slate-500 rounded-lg">

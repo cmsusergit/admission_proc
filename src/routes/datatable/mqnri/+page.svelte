@@ -29,14 +29,6 @@
         {name:'Name',field:'name',searchable:true,sortable:true},
         {name:'Contact',field:'contact',searchable:true,sortable:true},
         {name:'Email',sortable:true,field:'email',searchable:true},
-
-
-
-
-
-
-
-
         {name:'BirthDate',field:'dob'},
         {name:'Amission Category',field:'admission_category',selectable:true,sortable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
@@ -132,7 +124,7 @@
             dataTable.map(ob=>{
 
                 console.log(ob);
-                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit","admission_status","per_addr1","per_addr2","per_city","per_district","per_zipcode","is_payment_done"])
+                let temp=_.pick(ob,["id","acpcnumber","acpc_meritnumber","student_college_id","admission_category","gender","city","title","first_name","middle_name","last_name","category","dob","email","contact","board_name","exam_seatnumber","entr_examnumber","course","branch","prov_branch","father_name","father_contact","mother_name","mother_contact","present_city","total_merit","admission_status","per_addr1","per_addr2","per_city","per_district","per_zipcode","is_payment_done","comment"])
                 list1.push(temp)
             })
             const wsheet=XLSX.utils.json_to_sheet(list1)

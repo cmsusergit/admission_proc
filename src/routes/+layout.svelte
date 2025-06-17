@@ -1,4 +1,4 @@
-<script>
+<script> 
     import "../app.css"
 
 	import Auth from '$lib/auth/login.svelte'

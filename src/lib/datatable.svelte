@@ -6,15 +6,19 @@
     let dataTable
     let sortableField,sortableOrder='asc'
     let selectableColumn={},totalPage=1
-    let currPage=1,pageSize=100
+    let currPage,pageSize=100
     let st,en
-    $:dataTable=[...data],currPage=1//....
-            //....
+    $:dataTable=[...data]//....
+    //....
 
     let searchParamList=[]
     $:getSelectableColumnList(data)
     $:st=(currPage-1)*pageSize
     $:en=(currPage-1)*pageSize+pageSize
+    $:if(currPage){        
+        if(typeof window !== 'undefined' && window.localStorage)
+            localStorage.setItem('datatable_currPage',currPage)        
+    }
     $:totalPage=Math.ceil(dataTable.length/pageSize)
     $:{
         if(sortableField){
@@ -29,6 +33,10 @@
     }
     onMount(()=>{        
         getSelectableColumnList(data)
+        if(window && window.localStorage)
+            currPage=parseInt(localStorage.getItem('datatable_currPage'))
+        else
+            currPage=1
     })
     const handleChange=(event,field)=>{
         const value=event.target.value.trim()
