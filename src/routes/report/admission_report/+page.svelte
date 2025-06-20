@@ -147,7 +147,7 @@
                                     <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">{temp1.count}</p>
                                     {#if temp1.formType=='Provisional' && provAdmissionCount && provAdmissionCount[temp1.branch.id]}        
                                         <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">
-                                            {provAdmissionCount[temp1.branch.id]}
+                                            {temp1.count-provAdmissionCount[temp1.branch.id]}
                                         </p>
                                     {:else}
                                         <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">-</p>
