@@ -16,15 +16,18 @@
 
     const fetchProvCount=async(id,branchList)=>{
         if(!id)return        
-        const {data:dt,error:err1}= await supabase.from('AdmissionFeesCollectionACPC').select('*,Course(*)').eq('academic_year',id)
-        if(dt){
-            let temp_dt=_.filter(dt,ob=>ob.prov_form_number)            
+        
+        const {data:dt,error:err1}= await supabase.from('AdmissionFeesCollectionACPC').select('*,ACPCFormInfo(is_d2d),Course(*),MQNRIFormInfo(is_d2d)').eq('academic_year',id)
+        if(dt){            
+            let temp_dt=_.filter(dt,ob=>{   
+                return ob.prov_form_number && (ob?.ACPCFormInfo?.is_d2d==is_d2d||ob?.MQNRIFormInfo?.is_d2d==is_d2d)
+            })            
             provAdmissionCount=_.countBy(temp_dt,ob=>ob.branch)
         }        
         if(err1){
             console.log('****',err1)            
         }
-        provAdmissionCount= provAdmissionCount || 0
+        provAdmissionCount= provAdmissionCount||0
         console.log('provAdmissionCount',provAdmissionCount)        
     }
     const fetchCountByBranch=async(id,branchlist)=>{
@@ -39,7 +42,7 @@
             _.forEach(branchlist,branch=>{            
                 const ob=JSON.parse(countbybranch[formType])
                 if(branch.Course?.college_id==selectedCollege){
-                    temp1.push({branch:branch,college:branch.Course?.College?.alias,formType:formType,course:branch.Course?.alias,count:ob[branch.id]??'-'})
+                    temp1.push({branch:branch,college:branch.Course?.College?.alias,formType:formType,course:branch.Course?.alias,count:ob[branch.id]??0})
                 }
             })
         })
@@ -48,9 +51,6 @@
         _.forEach(tt,(el,ob)=>{
             countbybranch.push({course:ob,dt:_.groupBy(el,ob=>ob.branch?.name)})
         })
-    }
-    $:if(is_d2d){
-        fetchCountByBranch(selectedAyear,branchList)
     }
     $:fetchCountByBranch(selectedAyear,branchList)
     onMount(async()=>{
@@ -63,9 +63,6 @@
             branchList=Branch
         }
         fetchCountByBranch(selectedAyear,branchList)
-
-
-
         fetchProvCount(selectedAyear,branchList)
     })
     const exportToFile=()=>{
@@ -83,10 +80,11 @@
             countbybranch.forEach(record1=> {
                 record1.dt=_.map(record1.dt,ob=>{                    
                     list1.push({course:record1.course,branch:"",formType:"",count:""})
-                    _.map(ob,(ob1,indx)=>{  
-                        list1.push({course:"",branch:ob1.branch?.name,formType:ob1.formType,count:ob1.count})
+                    _.map(ob,(ob1,indx)=>{                          
+                        const temp_count1=(ob1.formType=='Provisional' && provAdmissionCount[ob1.branch.id])?(ob1.count-provAdmissionCount[ob1.branch.id]):'-'
+                        list1.push({course:"",branch:ob1.branch?.name,formType:ob1.formType,count:ob1.count,Prov_Count:temp_count1})
                     })
-                    list1.push({course:record1.course,branch:"",formType:'Total',count:_.sumBy(ob,ob2=>Number.parseInt(ob2.count)),'ProvCount':provAdmissionCount[ob[0]?.branch?.id]??'-'})
+                    list1.push({course:record1.course,branch:"",formType:'Total',count:_.sumBy(ob,ob2=>Number.parseInt(ob2.count))})
                     list1.push({course:"",branch:"",formType:"",count:""})
                 })
             })
@@ -123,7 +121,7 @@
         </div>
     </div>
     <div class="border-t border-b px-2 mt-2 bg-gray-100 border-blue-500 py-2">  
-        <input bind:checked={is_d2d} on:change={(ee)=>{fetchCountByBranch(selectedAyear,branchList)}} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Is D2D</label>
+        <input bind:checked={is_d2d} on:change={(ee)=>{fetchCountByBranch(selectedAyear,branchList);fetchProvCount(selectedAyear,branchList)}} type="checkbox" class="border w-4 p-2" id="sameaddr"><label class="mx-2 font-bold" for="sameaddr">Is D2D</label>
     </div>            
     <div>
         <div class="justify-end flex px-2 py-2">  
