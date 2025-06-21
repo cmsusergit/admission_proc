@@ -16,7 +16,7 @@ export async function load({ params,url }) {
         return {error:error.message}
     let { data:dataTable, error:dt_err } = await supabase 
     .from('ProvFormInfo')    
-    .select(`*,AdmissionFeesCollectionACPC(stu_college_id),Course!inner(*),Branch(name,alias)`)
+    .select(`*,AdmissionFeesCollectionACPC(stu_college_id,MQNRIFormInfo(*)),Course!inner(*),Branch(name,alias)`)
     .filter('academic_year','eq',ayear_id)
     //
     // .filter('is_removed','eq',false)

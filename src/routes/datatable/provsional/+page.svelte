@@ -25,7 +25,8 @@
         {name:'Email',sortable:true,field:'email',searchable:true},
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
-        {name:'College ID',field:'stu_college_id',searchable:true,sortable:true},
+        {name:'College ID',field:'stu_college_id',searchable:true,sortable:true},        
+        {name:'MQNRI Comment',field:'mqnri_comment',searchable:true,sortable:true},
         {name:'Reference Name',field:'reference_name',searchable:true,sortable:true},
         {name:'Is D2D?',field:'isd2d',selectable:true,sortable:true},
         {slot:true}
@@ -36,12 +37,13 @@
             role=data.session?.user?.user_metadata.role
     }
     const processData=(data,is_include_removed)=>{
-        dataTable=_.forEach(data.dataTable,ob=>{
+            dataTable=_.forEach(data.dataTable,ob=>{
             ob['name']=(ob.title?ob.title:'')+' '+(ob.first_name?ob.first_name:'')+' '+(ob.middle_name?ob.middle_name:'')+' '+(ob.last_name?ob.last_name:'')            
             ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
             ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
             ob['isd2d']=ob.is_d2d?'Y':'N'
             ob['stu_college_id']=(ob?.AdmissionFeesCollectionACPC[0]?.stu_college_id)?(ob?.AdmissionFeesCollectionACPC[0]?.stu_college_id):'-'
+            ob['mqnri_comment']=((ob?.AdmissionFeesCollectionACPC) && (ob?.AdmissionFeesCollectionACPC.length>0) && (ob?.AdmissionFeesCollectionACPC[0]?.MQNRIFormInfo) && (ob?.AdmissionFeesCollectionACPC[0]?.MQNRIFormInfo.comment))?(ob?.AdmissionFeesCollectionACPC[0]?.MQNRIFormInfo?.comment?.comment):'-'
         })        
         branchList=[]
         _.forEach(_.uniqBy(dataTable,ob=>ob.branch),ob=>{
@@ -109,8 +111,8 @@
             branchList.forEach(ob=>{            
                 const temp1=list1.filter(tt=>tt.branch==ob.name)
                 console.log(temp1);
-                const wsheet=XLSX.utils.json_to_sheet(temp1)
 
+                const wsheet=XLSX.utils.json_to_sheet(temp1)
                 let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
                 .replace(/\s{2,}/g," ")                
                 XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
@@ -131,14 +133,13 @@
             <div class="flex justify-end">            
                 <button on:click={exportToFile} disabled={loading} class="bg-blue-500 p-2 hover:bg-blue-400 w-48 text-white rounded">
                     {#if !loading}Export Excel{:else}Loading....{/if}
-    
                 </button>
             </div>
             <div class="flex flex-col w-full m-1 px-1">
                 <div class="flex flex-row p-2 w-full justify-end rounded">
                     <input type="checkbox" bind:checked={is_include_removed} class="border w-4 p-2" id="mq"/><label class="mx-2 font-bold" for="mq">Show Removed?</label>
                 </div>
-            </div>
+            </div>            
             <DataTable data={dataTable} let:currRecord={record}
                 columnlist={columnList}>
                 <div slot='action'>

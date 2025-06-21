@@ -1,4 +1,4 @@
-<script> 
+<script>  
     import { supabase } from '$lib/db'
 
     import DataTable from '$lib/datatable.svelte'
@@ -79,12 +79,16 @@
             let list1=[]
             countbybranch.forEach(record1=> {
                 record1.dt=_.map(record1.dt,ob=>{                    
+                    let temp_count=0
                     list1.push({course:record1.course,branch:"",formType:"",count:""})
                     _.map(ob,(ob1,indx)=>{                          
                         const temp_count1=(ob1.formType=='Provisional' && provAdmissionCount[ob1.branch.id])?(ob1.count-provAdmissionCount[ob1.branch.id]):'-'
+                        if(ob1.formType=='Provisional' && provAdmissionCount[ob1.branch.id])
+                            temp_count=provAdmissionCount[ob1.branch.id]
                         list1.push({course:"",branch:ob1.branch?.name,formType:ob1.formType,count:ob1.count,Prov_Count:temp_count1})
-                    })
-                    list1.push({course:record1.course,branch:"",formType:'Total',count:_.sumBy(ob,ob2=>Number.parseInt(ob2.count))})
+                    })                    
+                    const total_count1=_.sumBy(ob,ob2=>Number.parseInt(ob2.count))
+                    list1.push({course:record1.course,branch:"",formType:'Total',count:total_count1,'Prov_Count':total_count1+(temp_count-ob.find(tt=>tt.formType=='Provisional')?.count)})
                     list1.push({course:"",branch:"",formType:"",count:""})
                 })
             })
@@ -110,6 +114,7 @@
                 {/each}
             </select>
         </div>
+
         <div class="flex flex-col w-full m-1">
             <label for="college" class="text-slate-800 px-1 py-1 font-bold">Select AcademicYear</label>
             <select on:change={()=>fetchCountByBranch(selectedAyear,branchList)} bind:value={selectedCollege} class="border rounded px-1 py-2 border-blue-400" type="text" id="college" required>
@@ -138,11 +143,11 @@
                     </div>
                     {#each Object.values(college?.dt) as rr,indx}
                         <div class="bg-teal-700 text-white px-2 pb-2 w-full uppercase font-bold text-center">                            
-                            <div class="px-2 py-1">{rr[0].branch?.name} <b>({_.sumBy(rr,ob=>Number.parseInt(ob.count))})</b></div>
+                            <div class="px-2 py-1">{rr[0].branch?.name} <b>({_.sumBy(rr,ob=>Number.parseInt(ob.count))-(rr.find(tt=>tt.formType=='Provisional')?.count-provAdmissionCount[rr[0].branch?.id])})</b></div>
                             {#each rr as temp1}
                                 <div class="flex flex-row w-full bg-gray-100 p-1">                                    
                                     <p class="bg-blue-700 text-white px-1 w-full uppercase font-bold text-center">{temp1.formType}</p>
-                                    <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">{temp1.count}</p>
+                                    <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">{temp1.count}</p>                                   
                                     {#if temp1.formType=='Provisional' && provAdmissionCount && provAdmissionCount[temp1.branch.id]}        
                                         <p class="bg-blue-700 text-white px-1 w-1/4 uppercase font-bold text-center">
                                             {temp1.count-provAdmissionCount[temp1.branch.id]}
