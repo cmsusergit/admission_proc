@@ -237,8 +237,67 @@
 
 
 
-            
-            {#if profile?.subjectResultList && profile?.subjectResultList.length>0}
+            {#if profile?.subjectResultList && profile?.subjectResultList.length>4}
+            <div class="bg-white border rounded my-2 text-gray-800">                    
+                <table class="border-slate-500 border w-full">                        
+                    <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
+                        <td class="text-lg px-2 py-2 font-bold" colspan="5">Board Result Details</td>                            
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr class="border-slate-500 border-b w-full px-2 py-2">
+                        <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
+                        <td class="border-slate-500 border-b text-center font-bold p-2">Theory (Obtained)</td>
+                        <td class="border-slate-500 border-b text-center font-bold p-2">Theory (Out of)</td>
+                        <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Obtained)</td>
+                        <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Out of)</td>
+                    </tr>
+                    {#each profile?.subjectResultList as record}
+                        <tr class="border-slate-500 border-b w-full px-2 py-2">
+                            <td class="text-lg px-2 py-2 text-center">
+                                {record?.subName[record.selectedIndx]}                                
+                            </td>
+                            <td class="text-center text-lg px-2 py-2">                                        
+                                {record?.theoryObtained} 
+                            </td>                        
+                            <td class="text-center text-lg px-2 py-2">                                        
+                                {record?.theoryOutof}       
+                            </td>
+                            <td class="text-center text-lg px-2 py-2">                                        
+                                {record?.practicalObtained}
+                            </td>                         
+                            <td class="text-center text-lg px-2 py-2">
+                                {record?.practicalOutof}
+                            </td>       
+                        </tr>
+                    {/each}
+                </table>
+            </div>
+            {/if}
+            {#if profile?.entrnceExamDetail && profile?.entrnceExamDetail.length>0}
+                <div class="bg-white border rounded my-2 text-gray-800">                    
+                    <table class="border-slate-500 border w-full">                        
+                        <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
+                            <td class="text-lg px-2 py-2 font-bold" colspan="5">Entrnce Examination Result Details</td>                            
+                            <td></td>
+                        </tr>
+                        <tr class="border-slate-500 border-b w-full px-2 py-2">
+                            <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
+                            <td class="border-slate-500 border-b text-center font-bold p-2">GUJCET</td>
+                        </tr>
+                        {#each profile?.entrnceExamDetail as record}
+                            <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                <td class="text-lg px-2 py-2 text-center">
+                                    {record?.subName}                                
+                                </td>
+                                <td class="text-center text-lg px-2 py-2">                                        
+                                    {record?.gujcetReult} 
+                                </td>       
+                            </tr>
+                        {/each}
+                    </table>
+                </div>        
+            {/if} 
+            <!-- {#if profile?.subjectResultList && profile?.subjectResultList.length>0}
                 <div class="bg-white border rounded my-2 text-gray-800">                    
                     <table class="border-slate-500 border w-full">                        
                         <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">
@@ -262,7 +321,7 @@
                         {/each}
                     </table>
                 </div>
-            {/if}
+            {/if} -->
             <div class="bg-white border rounded my-2 text-gray-800">                    
                 <table class="border-slate-500 border w-full">                        
                     <tr class="border-slate-500 bg-slate-500 text-white border-b w-full px-2 py-2">

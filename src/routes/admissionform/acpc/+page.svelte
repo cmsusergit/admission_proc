@@ -18,6 +18,7 @@
     let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
     let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
+    let boardListForDipl=['SSC']    
     let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let uploadFileList=[]
     let isSubmitted=false
@@ -145,23 +146,36 @@
     }
     onMount(()=>{
         if(data.formDt){               
-            $form=data.formDt
-            console.log('formDt',data.formDt)            
-            uploadFileList=[]     
-            _.forEach(data.uploadLabelList,record=>{                
-                const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)            
-                let temp1={
-                    label:record.name,
-                    f_label_id:record.id,
-                    document_path:uploadedFile?uploadedFile.document_path:'',                                          
-                    is_required:record.is_required,
-                    f_form_id:data.formDt.id
+                $form=data.formDt
+                console.log('formDt',data.formDt)            
+                if(!$form.subjectResultList || $form.subjectResultList.length<4)
+                {
+                    $form.subjectResultList=[]
+                    _.forEach(subjectList,ob=>{
+                        $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
+                    })
                 }
-                if(uploadedFile){                    
-                    temp1['id']=uploadedFile.id
+                if(!$form.entrnceExamDetail){   
+                    $form.entrnceExamDetail=[]
+                    _.forEach(subjectList1,ob=>{
+                        $form.entrnceExamDetail.push({subName:ob,gujcetReult:0.0})
+                    })
                 }
-                uploadFileList.push(temp1)
-            })            
+                uploadFileList=[]     
+                _.forEach(data.uploadLabelList,record=>{                
+                    const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)            
+                    let temp1={
+                        label:record.name,
+                        f_label_id:record.id,
+                        document_path:uploadedFile?uploadedFile.document_path:'',                                          
+                        is_required:record.is_required,
+                        f_form_id:data.formDt.id
+                    }
+                    if(uploadedFile){                    
+                        temp1['id']=uploadedFile.id
+                    }
+                    uploadFileList.push(temp1)
+                })            
         }
         else{
             $form.academic_year=data.academicYear?.id
@@ -196,6 +210,7 @@
             // })   
             uploadFileList=[]
             _.forEach(data?.uploadLabelList,label=>{
+
                 let temp1={
                     label:label.name,
                     f_label_id:label.id,
@@ -395,6 +410,7 @@
                             {/each}
                         {/if}
                     </select>
+
                 </div>
                 <div class="flex flex-col w-full m-1">
                     <label for="course" class="font-bold">Select Course <span class="text-sm text-red-500">*</span></label>
@@ -682,8 +698,6 @@
                     </div>
                 </div>
                 <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Academic Details</div>
-               
-               
                 <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                     <div class="flex justify-between p-1 lg:flex-row flex-col">
                         <div class="flex flex-col w-full m-1">
@@ -731,7 +745,7 @@
                         </tbody>
                     </table>
                 </div>
-                {#if data?.courselist?.find(ob=>{return ($form.course==ob.id)})}
+                <!-- {#if data?.courselist?.find(ob=>{return ($form.course==ob.id)})}
                     <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
                     <div class="text-indigo-800 overflow-x-auto">
                         {#if $form.subjectResultList}
@@ -755,7 +769,8 @@
                             </table>
                         {/if}
                     </div>
-                {/if}<div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
+                {/if} -->
+                <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
                 <div class="text-indigo-800 overflow-x-auto">
                     {#if $form.subjectResultList}
                         <table class="w-full bg-white">
@@ -797,36 +812,6 @@
                                     <td class="py-1 border border-blue-400 px-1">{total['practicalOutof']}</td>
                                 </tr>
                             </tbody>
-                            <!-- <tbody class="w-full p-1 border text-center">
-                                {#each subjectList as subject,indx}
-                                    <tr>
-                                        <td class="w-1/2 border border-blue-400 p-1">                                
-                                            {#if subject.length>1}
-                                                    <div class="flex flex-col md:flex-row justify-center">
-                                                        {#each subject as subjectEntry,indx1}
-                                                            <span>
-                                                                <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
-                                                            </span>
-                                                        {/each}
-                                                    </div>
-                                            {:else}
-                                                {subject[0]}
-                                            {/if}
-                                        </td>
-                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
-                                    </tr>
-                                {/each}
-                                <tr>
-                                    <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
-                                    <td class="py-1 border border-blue-400 px-1"></td>
-                                    <td class="py-1 border border-blue-400 px-1"></td>
-                                    <td class="py-1 border border-blue-400 px-1"></td>
-                                    <td class="py-1 border border-blue-400 px-1"></td>
-                                </tr>
-                            </tbody> -->
                         </table>
                     {/if}
                 </div>
