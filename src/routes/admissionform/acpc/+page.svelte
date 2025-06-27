@@ -14,11 +14,13 @@
     export let data
     let is_prov=false,prov_contact_number=''
     let sameAddrSelected=false,is_d2d=false
-    let isAICTEAccepted=false,isConditionAccepted=false    
+    let isAICTEAccepted=false,isConditionAccepted=false        
+    let total={'theoryObtained':0,'theoryOutof':0,'practicalObtained':0,'practicalOutof':0,'entranceRsultTotal':0}
+    let subjectList1=config.subjectEntrList.find(ob=>ob.college_id==data?.college?.id)?.list
     let boardList=['SSC','HSC']
+    let subjectList=config.subjectList.find(ob=>ob.college_id==data?.college?.id)?.list
     let uploadFileList=[]
     let isSubmitted=false
-    const subjectList1=['Mathematics','Chemistry','Physics']
     let branchList=[]
     const validationSchema=yup.object().shape({
             admission_category:yup.string().required(),
@@ -91,7 +93,16 @@
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
-        }           
+        } 
+        if($form.subjectResultList){
+            total['theoryObtained']=getTotal('theoryObtained')
+            total['theoryOutof']=getTotal('theoryOutof')
+            total['practicalObtained']=getTotal('practicalObtained')
+            total['practicalOutof']=getTotal('practicalOutof')
+        }
+        if($form.entrnceExamDetail){
+            total['entranceRsultTotal']=getEntrnceResultTotal()
+        }                
     }
     const fetchProvDt=async()=>{
         try{
@@ -135,8 +146,6 @@
     onMount(()=>{
         if(data.formDt){               
             $form=data.formDt
-
-
             console.log('formDt',data.formDt)            
             uploadFileList=[]     
             _.forEach(data.uploadLabelList,record=>{                
@@ -159,14 +168,32 @@
             $form.college_id=data.college?.id    
             $form.admission_category="G"
             $form.is_d2d=false
-            $form.boardList=[]
-            _.forEach(boardList,ob=>{
-                $form.boardList.push({board:ob,result:0.0})
-            })   
+            $form.boardList=[] 
+            if ($form.college_id==5) {
+                _.forEach(boardListForDipl,ob=>{
+                    $form.boardList.push({board:ob,result:0.0})
+                })       
+            }
+            else{
+                _.forEach(boardList,ob=>{
+                    $form.boardList.push({board:ob,result:0.0})
+                })   
+            }
             $form.subjectResultList=[]
-            _.forEach(subjectList1,ob=>{
-                $form.subjectResultList.push({subName:ob,result:0.0})
+            _.forEach(subjectList,ob=>{
+                $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
             })   
+            $form.entrnceExamDetail=[]
+            _.forEach(subjectList1,ob=>{
+                $form.entrnceExamDetail.push({subName:ob,gujcetReult:0.0})
+            })
+            // _.forEach(boardList,ob=>{
+            //     $form.boardList.push({board:ob,result:0.0})
+            // })   
+            // $form.subjectResultList=[]
+            // _.forEach(subjectList1,ob=>{
+            //     $form.subjectResultList.push({subName:ob,result:0.0})
+            // })   
             uploadFileList=[]
             _.forEach(data?.uploadLabelList,label=>{
                 let temp1={
@@ -184,6 +211,23 @@
 		node.addEventListener('input', transform, { capture: true })		
 		transform()
 	}
+
+
+    const getEntrnceResultTotal=()=>{
+        let total=0        
+        for (let indx = 0; indx < $form.entrnceExamDetail.length; indx++) {
+            total+=$form.entrnceExamDetail[indx]['gujcetReult']            
+        }
+        return total
+    }
+    const getTotal=(id)=>{
+        let total=0        
+        for (let indx = 0; indx < $form.subjectResultList.length; indx++) {
+            total+=$form.subjectResultList[indx][id]            
+        }
+
+        return total
+    }    
     const insertRecord=async(record)=>{
         try{
             loading = true
@@ -638,6 +682,8 @@
                     </div>
                 </div>
                 <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Academic Details</div>
+               
+               
                 <div class="flex justify-between border flex-col border-blue-400 p-2 bg-white shadow shadow-slate-400 rounded">
                     <div class="flex justify-between p-1 lg:flex-row flex-col">
                         <div class="flex flex-col w-full m-1">
@@ -708,6 +754,111 @@
                                 </tbody>                          
                             </table>
                         {/if}
+                    </div>
+                {/if}<div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Board Subject Details</div>  
+                <div class="text-indigo-800 overflow-x-auto">
+                    {#if $form.subjectResultList}
+                        <table class="w-full bg-white">
+                            <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                                <th class="w-1/2 px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Obtained)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Theory (Out of)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Obtained)</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Practical (Out of)</th>
+                            </thead>
+                            <tbody class="w-full p-1 border text-center">
+                                {#each $form.subjectResultList as subject,indx}
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">  
+                                            {#if subject.subName.length>1}
+                                                    <div class="flex flex-col md:flex-row justify-center">
+                                                        {#each subject.subName as subjectEntry,indx1}
+                                                            <span>
+                                                                <input on:change={()=>{subject.selectedIndx=indx1}} checked={indx1==subject.selectedIndx} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/>
+                                                                <label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                            </span>
+                                                        {/each}
+                                                    </div>
+                                            {:else}
+                                                {subject.subName[0]}
+                                            {/if}
+                                        </td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.theoryOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalObtained} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input bind:value={subject.practicalOutof} type="number" step='0.01' class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    </tr>
+                                {/each}
+                                <tr>
+                                    <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['theoryObtained']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['theoryOutof']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['practicalObtained']}</td>
+                                    <td class="py-1 border border-blue-400 px-1">{total['practicalOutof']}</td>
+                                </tr>
+                            </tbody>
+                            <!-- <tbody class="w-full p-1 border text-center">
+                                {#each subjectList as subject,indx}
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">                                
+                                            {#if subject.length>1}
+                                                    <div class="flex flex-col md:flex-row justify-center">
+                                                        {#each subject as subjectEntry,indx1}
+                                                            <span>
+                                                                <input checked={indx1==0} type="radio" name={indx} class="border w-4 p-2" id={subjectEntry}/><label for={subjectEntry} class="mx-2">{subjectEntry}</label>                                                                                                
+                                                            </span>
+                                                        {/each}
+                                                    </div>
+                                            {:else}
+                                                {subject[0]}
+                                            {/if}
+                                        </td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                        <td class="p-1 border border-blue-400"><input type="number" class="w-full border hover:border-blue-400 rounded p-1"></td>
+                                    </tr>
+                                {/each}
+                                <tr>
+                                    <td class="w-1/2 font-bold p-1 border border-blue-400" >Total</td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                    <td class="py-1 border border-blue-400 px-1"></td>
+                                </tr>
+                            </tbody> -->
+                        </table>
+                    {/if}
+                </div>
+                {#if $form.entrnceExamDetail && $form.entrnceExamDetail.length>0}
+                    <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Entrance Examination Details</div>  
+                    <div class="text-indigo-800 overflow-x-auto">
+                        <table class="w-full bg-white">
+                            <thead class="bg-blue-500 px-1 py-2 text-white">                        
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">Subject Name</th>
+                                <th class="px-1 py-2 border border-blue-400 border-t-white">RESULT</th>
+                                <!-- <th class="px-1 py-2 border border-blue-400 border-t-white">JEE(Best of Two)</th> -->
+                            </thead>
+                            <tbody class="w-full p-1 border border-blue-400 text-center">                                
+                                {#each $form.entrnceExamDetail as subject}                    
+                                    <tr>
+                                        <td class="w-1/2 border border-blue-400 p-1">{subject.subName}</td>
+                                        <td class="p-1 border border-blue-400">
+                                            <input bind:value={subject.gujcetReult} step='0.01' class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                        </td>
+                                        <!-- <td class="p-1 border border-blue-400"><input class="w-full border hover:border-blue-400 rounded p-1" type="number">
+                                        </td> -->
+                                    </tr>
+                                {/each}
+                                <tr>
+                                    <td class="font-bold p-1 border border-blue-400" >Total</td>
+                                    <td class="p-1 border border-blue-400">{total['entranceRsultTotal']}</td>
+                                    <!-- <td class="p-1 border border-blue-400"><input type="number">
+                                    </td> -->
+                                </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                 {/if}
                 <div class="font-bold bg-blue-500 px-2 text-white text-lg mt-2 py-2 shadow-lg shadow-slate-500 rounded-t-lg md:w-1/4">Upload Documents</div>
