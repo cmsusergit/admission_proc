@@ -38,6 +38,8 @@
             photo:yup.string().notRequired(),
             blood_group:yup.string().notRequired(),
             religion:yup.string().notRequired(),
+            msheet_name:yup.string().required(),
+            name_as_per_aadhar:yup.string().required(),
             nationality:yup.string().notRequired(),
             category:yup.string().notRequired(),
             caste:yup.string().notRequired(),
@@ -127,16 +129,6 @@
             _.forEach(boardList,ob=>{
                 $form.boardList.push({board:ob,result:0.0})
             })   
-
-
-
-
-
-
-
-
-
-
             if($form.college_id==6){
                 $form.boardList.push({board:'BBA/B.Com',result:0.0})
             }
@@ -151,7 +143,12 @@
             fetchUploadFileList()
             }
     })
-
+    const handleName=(ee)=>{        
+        if($form.first_name && $form.middle_name && $form.last_name){
+            $form.msheet_name=$form.first_name+" "+$form.middle_name+" "+$form.last_name
+            $form.name_as_per_aadhar=$form.first_name+" "+$form.middle_name+" "+$form.last_name
+        }
+    }
     const fetchUploadFileList=async()=>{
         uploadFileList=[]
         _.forEach(data?.uploadLabelList,label=>{
@@ -300,11 +297,6 @@
         //....
         console.log(file1);
     }
-    
-    
-    
-    
-    
     const fetchProvDt=async()=>{
         try{
             loading=true
@@ -378,12 +370,12 @@
 
             
             {:else if $form.college_id==5}
-                To Proceed For Payment: <a href='https://pmny.in/OrXjLv0h2DZz'>Click Here</a>
+                To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/krv66NdSguWv'>Click Here</a>
             {:else}            
                 {#if $form.course==10 || $form.course==5+1}
                     <a href="https://pmny.in/DrZ5yTtOQLzs">Click Here</a>                
                 {:else}
-                    <a href='https://pmny.in/sJm4MSoHvJO0'>Click Here</a>            
+                    <a href='https://u.payu.in/PAYUMN/yrEiy35RZD15'>Click Here</a>            
                 {/if}
             {/if}
         </div>
@@ -477,7 +469,12 @@
                     <label class="font-bold" for="lname">Last Name/Surname <span class="text-sm text-red-500">*</span></label>
                     <input use:uppercase on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>
                 </div>
-
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">                 
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="msheetname">Name As Per Marksheet <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:focus={handleName} on:blur={handleChange} bind:value={$form.msheet_name} name="msheet_name" class:border-orange-700={$errors.msheet_name} class="input" type="text" id="msheetname" required>            
+                </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
                 <div class="flex flex-col w-full m-1">
@@ -550,6 +547,10 @@
                 <div class="flex flex-col w-full m-1">      
                     <label class="font-bold" for="aadharnumber">Aadhar Card Number <span class="text-sm text-red-500">*</span></label>                
                     <input on:blur={handleChange} bind:value={$form.aadharnumber}  class="input" class:border-orange-700={$errors.aadharnumber} type="text" id="aadharnumber" required>                
+                </div>   
+                <div class="flex flex-col w-full m-1">      
+                    <label class="font-bold" for="name_as_per_aadhar">Name AS Per AadharCard <span class="text-sm text-red-500">*</span></label>                
+                    <input on:blur={handleChange} bind:value={$form.name_as_per_aadhar}  class="input" class:border-orange-700={$errors.name_as_per_aadhar} type="text" id="name_as_per_aadhar" required>                
                 </div>  
             </div>
         </div>

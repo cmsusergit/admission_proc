@@ -71,15 +71,19 @@
             {#if !profile.is_payment_done} 
                 {#if profile.college_id==1}        
                 
-                    {#if profile.course==10 || profile.course==5+1}
+                    {#if profile.course==10}
                         <a class="p-2 mr-2 text-center bg-blue-700 text-white cursor-pointer hover:bg-blue-500 w-48 rounded" href="https://pmny.in/DrZ5yTtOQLzs">Payment</a>
+                    
+                    {:else if profile.course==5+1}
+                        <a class="p-2 mr-2 text-centr bg-blue-700 text-white cursor-pointr hover:bg-blue-500 w-48 rounded" href="https://u.payu.in/PAYUMN/VITY0ZqpLpGd">Payment</a>                    
                     {:else}
-                    <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/sJm4MSoHvJO0'>Payment</a>
+                        <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/yrEiy35RZD15'>Payment</a>
                     {/if}
-                {:else if profile.college_id==6}            
-                    <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/DrZ5yTtOQLzs'>Payment</a>                
-
-                {/if}
+                    {:else if profile.college_id==5}
+                        <a class="p-2 mr-2 text-centr bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://u.payu.in/PAYUMN/krv66NdSguWv'>Payment</a>                
+                    {:else if profile.college_id==6}                    
+                        <a class="p-2 mr-2 text-center bg-blue-700 text-white hover:bg-blue-500 w-48 cursor-pointer rounded" href='https://pmny.in/DrZ5yTtOQLzs'>Payment</a>                
+                    {/if}
             {/if}
             <button on:click={acpcPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 mr-4 w-48 rounded">Profile Report</button>
             <button on:click={vacantPrint} class="bg-blue-700 hover:bg-blue-500 text-white p-2 w-48 rounded">VACANT Report</button>

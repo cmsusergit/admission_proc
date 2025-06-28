@@ -39,6 +39,7 @@
             contact:yup.number().required(),
             email:yup.string().email().required(),
             dob:yup.date().required(),
+            msheet_name:yup.string().required(),
             gender:yup.string().required(),
             photo:yup.string().notRequired(),
             blood_group:yup.string().notRequired(),
@@ -221,6 +222,12 @@
             })
         }
     })
+    const handleName=(ee)=>{        
+        if($form.first_name && $form.middle_name && $form.last_name){
+            $form.msheet_name=$form.first_name+" "+$form.middle_name+" "+$form.last_name
+            $form.name_as_per_aadhar=$form.first_name+" "+$form.middle_name+" "+$form.last_name
+        }
+    }
     function uppercase(node) {
 		const transform = () => node.value = node.value.toUpperCase()		
 		node.addEventListener('input', transform, { capture: true })		
@@ -481,6 +488,12 @@
                 <div class="flex flex-col w-full m-1">
                     <label class="font-bold" for="lname">Last Name/Surname <span class="text-sm text-red-500">*</span></label>
                     <input use:uppercase on:blur={handleChange} bind:value={$form.last_name} name="last_name" class:border-orange-700={$errors.last_name} class="input" type="text" id="lname" required>               
+                </div>
+            </div>
+            <div class="flex justify-between p-1 lg:flex-row flex-col">                 
+                <div class="flex flex-col w-full m-1">
+                    <label class="font-bold" for="msheetname">Name As Per Marksheet <span class="text-sm text-red-500">*</span></label>
+                    <input use:uppercase on:focus={handleName} on:blur={handleChange} bind:value={$form.msheet_name} name="msheet_name" class:border-orange-700={$errors.msheet_name} class="input" type="text" id="msheetname" required>            
                 </div>
             </div>
             <div class="flex justify-between p-1 lg:flex-row flex-col">
