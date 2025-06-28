@@ -86,7 +86,7 @@
         }
         if($form.course){
             const temp1=data.courselist.find(ob=>ob.id==$form.course)
-            branchList=temp1?.Branch
+            branchList=temp1?.Branch.filter(ob=>ob.is_mqnri)
         }
         if($form.title){
             $form.gender=($form.title=='Mr.')?'Male':'Female'
@@ -222,22 +222,23 @@
                     return
                 }
                 error_mesg=''
+                isSubmitted=true
                 $mesg='Form Record Inserted/Updated Successully.'    
-                if(!data.formDt){  
-                    const tempD1=new Date($form.dob)                    
-                    let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
+                // if(!data.formDt){  
+                //     const tempD1=new Date($form.dob)                    
+                //     let pwd1=(''+tempD1.getDate()).padStart(2,'0')+(''+(tempD1.getMonth()+1)).padStart(2,'0')+tempD1.getFullYear()
 
-                    const { data, error } = await supabase.auth.signUp({
-                        email: $form.email,
-                        password:pwd1,
-                        email_confirm: true
-                    })
+                //     const { data, error } = await supabase.auth.signUp({
+                //         email: $form.email,
+                //         password:pwd1,
+                //         email_confirm: true
+                //     })
 
-                    if(error){
-                        console.log(error)
-                        return
-                    }
-                }
+                //     if(error){
+                //         console.log(error)
+                //         return
+                //     }
+                // }
                 // if(error){                    
                 //     console.log(error)
                 // }
@@ -365,16 +366,15 @@
         <div class="my-4 text-lg text-center text-blue-700 hover:text-blue-500">
             To Proceed For Payment:
             {#if $form.college_id==5+1}
-            
                 <a href='https://pmny.in/DrZ5yTtOQLzs'>Click Here</a>
-
-            
             {:else if $form.college_id==5}
                 To Proceed For Payment: <a href='https://u.payu.in/PAYUMN/krv66NdSguWv'>Click Here</a>
             {:else}            
-                {#if $form.course==10 || $form.course==5+1}
+                {#if $form.course==10}
                     <a href="https://pmny.in/DrZ5yTtOQLzs">Click Here</a>                
-                {:else}
+            {:else if $form.course==5+1}
+                    <a href="https://u.payu.in/PAYUMN/VITY0ZqpLpGd">Click Here</a>
+            {:else}
                     <a href='https://u.payu.in/PAYUMN/yrEiy35RZD15'>Click Here</a>            
                 {/if}
             {/if}
