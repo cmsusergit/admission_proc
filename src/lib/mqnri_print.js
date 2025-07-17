@@ -574,7 +574,7 @@ const mqnri_profile_print1=async(college,currAYear,profile)=>{
 
 
 
-const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year)=>{    
+const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year,is_vacant)=>{    
     console.log(studentInfo,selectedBranch)
     
     // 
@@ -582,8 +582,8 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year)=>{
     const stuName=`${studentInfo.title} ${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name}`        
     // 
     // const branchName=await getBranchName(selectedBranch)    
-    const titleText=`SARDAR VALLABHBHAI PATEL INSTITUTE OF TECHNOLOGY, VASAD
-                    MQ/NRI/NRI sponsored Admission Order-(${academic_year?.name})`
+    const titleText=`SARDAR VALLABHBHAI PATEL INSTITUTE OF TECHNOLOGY, VASAD                    
+                        ${is_vacant?'VACANT':'MQ/NRI/NRI'} sponsored Admission Order-(${academic_year?.name})`
     const headerTbl1={         
         headerRows:0,
         widths:[140,'*'],
@@ -598,7 +598,7 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year)=>{
             [{bold:true,text:'ACPC Merit Number:'},{text:`${studentInfo.acpcnumber}`}],
             [{bold:true,text:'Name of Candidate:'},{text:`${stuName}`,bold:true}],
             [{bold:true,text:'Fees to be Paid:'},{text:''}],
-            [{bold:true,text:'Selected Branch:'},{text:`${selectedBranch}`,bold:true}],
+            [{bold:true,text:'Selected Branch:'},{text:`${selectedBranch} ${studentInfo.is_d2d?(studentInfo.college_id==5?'C2D':'D2D'):''}`,bold:true}],
             [{bold:true,fontSize:25,text:'Signature:'},{text:``}],
         ]
     }
@@ -623,8 +623,21 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year)=>{
         }
     pdfMake.createPdf({content:reportDefination,pageOrientation: 'landscape',pageSize: 'A5'}).open()
 }
-
-
 const acpc_recipt_print=async (id,selectedCategory,selectedBranch)=>{}    
 export {acpc_profile_print,acpc_recipt_print,mqnri_profile_print,mqnri_recipt_print,mqnri_profile_print1}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

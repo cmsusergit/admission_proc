@@ -11,6 +11,7 @@
     import MeritDlg from '$lib/component/mqnri_meritdlg.svelte'
     import * as XLSX from 'xlsx/xlsx.mjs'    
 
+    import {mqnri_recipt_print} from '$lib/mqnri_print.js' 
     export let data
     let loading=false,currRecord=null
     let dataTable,recordToRemove=-1
@@ -85,6 +86,7 @@
         if(error)
             alert(error.message)
         else{
+            mqnri_recipt_print(record,_.find(branchList,ob=>ob.id==record.branch)?.name,$academicYear,true)
             invalidateAll()
             currRecord=null
         }
