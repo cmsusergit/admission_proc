@@ -19,8 +19,15 @@ export async function load({ params,url }) {
             if(err1_1)
                 return {error:err1_1.message}   
             let merit_number1
-            const ordered1=_.orderBy(meritdt1,ob=>ob.total_merit,['desc'])
-            ordered1.forEach((ob,indx) => {
+            const ordered1=_.orderBy(meritdt1,ob=>Number(ob.acpc_meritnumber),['asc'])
+            const ordered1_1=_.filter(ordered1,ob=>{
+                if(ob.acpc_meritnumber && ob.acpc_meritnumber!=null && ob.acpc_meritnumber!='' && ob.acpc_meritnumber!='-' && Number(ob.acpc_meritnumber)!=0)
+                    return true
+                else
+                    return false
+            })
+            ordered1_1.forEach((ob,indx) => {
+                console.log('ob.acpc_meritnumber',ob.acpc_meritnumber)                
                 if(ob.id==profile.id)
                     merit_number1=indx+1
             });

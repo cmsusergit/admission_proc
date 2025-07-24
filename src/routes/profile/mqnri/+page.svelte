@@ -16,6 +16,7 @@
             profile['merit_number']='-'
         }
     }
+    
     let uploadedFileList=data?.uploadedFileList
 </script>
 <div class="min-h-screen w-full">   

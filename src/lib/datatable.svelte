@@ -37,7 +37,7 @@
             currPage=parseInt(localStorage.getItem('datatable_currPage'))
         else
             currPage=1
-    })
+     })
     const handleChange=(event,field)=>{
         const value=event.target.value.trim()
         if(value && field){

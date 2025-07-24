@@ -48,6 +48,7 @@
                 ob['course']=ob.Course?.name?ob.Course.name.trim():'-'
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
+                ob['acpc_meritnumber']=ob.acpc_meritnumber?Number(ob.acpc_meritnumber):'-'
                 ob['admission_status']=ob.admission_status==2?'C':''
                 ob['comment']=ob.comment?ob.comment.comment:''
             })         

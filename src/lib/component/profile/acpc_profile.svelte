@@ -252,6 +252,7 @@
                         <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Out of)</td>
                     </tr>
                     {#each profile?.subjectResultList as record}
+                        <p>{JSON.stringify(record)}</p>
                         <tr class="border-slate-500 border-b w-full px-2 py-2">
                             <td class="text-lg px-2 py-2 text-center">
                                 {record?.subName[record.selectedIndx]}                                

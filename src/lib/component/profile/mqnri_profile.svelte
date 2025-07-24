@@ -3,6 +3,7 @@
 
     import {supabase} from "$lib/db"   
     import { academicYear,college } from '$lib/store.js'    
+    import _ from 'lodash'
     export let profile,uploadedFileList
     import config from '$lib/config.json'
     import {mqnri_profile_print1,mqnri_profile_print} from '$lib/mqnri_print.js' 
@@ -10,19 +11,45 @@
     let userPhotoUrl=null,isMeritDisplay=config.isMeritDisplay
     let isEditEnabled=false
     
-
-    onMount(()=>{                       
-        //....
-        let temp1=[...profile?.merit_number]//....
-        temp1.map((dt)=>{
-            if(dt.category=='M' && dt.number>=5)
-            
-                dt.number=dt.number+25
-        })
-        let tempp={...profile}
-        tempp.merit_number=[...temp1]
-        profile={...tempp}
-        console.log('----',profile);
+    onMount(async()=>{              
+        if(profile.college_id==5){
+            let { data:meritdt1, error:err1_1 } = await supabase.from('MQNRIFormInfo').select(`*`).eq('college_id',5)
+            if(err1_1)
+                return {error:err1_1.message}   
+            let merit_number1
+            const ordered1=_.orderBy(meritdt1,ob=>Number(ob.acpc_meritnumber),['asc'])
+            const ordered1_1=_.filter(ordered1,ob=>{
+                if(ob.acpc_meritnumber && ob.acpc_meritnumber!=null && ob.acpc_meritnumber!='' && ob.acpc_meritnumber!='-' && Number(ob.acpc_meritnumber)!=0)
+                    return true
+                else
+                    return false
+            })
+            ordered1_1.forEach((ob,indx) => {
+                if(ob.id==profile.id)
+                    merit_number1=indx+1
+            });
+            let temp1=[...profile?.merit_number]
+            temp1.map((dt)=>{
+                if(dt.category=='M')            
+                    dt.number=merit_number1
+            })
+            let tempp={...profile}
+            tempp.merit_number=[...temp1]
+            profile={...tempp}
+            console.log('----',profile)            
+        }      
+        else{
+            //....
+            let temp1=[...profile?.merit_number]//....
+            temp1.map((dt)=>{
+                if(dt.category=='M' && dt.number>=5)            
+                    dt.number=dt.number+25
+            })
+            let tempp={...profile}
+            tempp.merit_number=[...temp1]
+            profile={...tempp}
+            console.log('----',profile);
+        }
     })
     const downloadImage = async (path) => {
 		try {
@@ -81,9 +108,10 @@
         goto(`/admissionform/mqnri?ayear_id=${record.academic_year}&is_update=${record.id}&college_id=${record?.college_id}`)        
     }
 </script>
+
+
 {#if profile?.is_removed}
     <p class="text-4xl text-center">Your Profile has been Removed</p>
-
     <p class="text-xl text-center">Please, Contact Admission Officer</p>
 {:else if !profile?.is_payment_done}
 
@@ -168,9 +196,9 @@
                         {#each profile?.merit_number as record}                   
                             <span class="text-2xl text-white px-4 font-bold">{record.category=='M'?'Management Quota':'NRI/NRI Sponsored Quota'}-{record.number}</span>
                             {#if record.category=='M' && record.number<=50}
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (11.00 a.m. to 01:00)</p>
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 01/08/2025 (10.30 a.m. to 12:30)</p>
                             {:else if record.category=='M' && (record.number>=51 && record.number<=100)}                        
-                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (02.00 p.m. to 04.00 p.m.)</p>
+                                <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 01/08/2025 (01.30 p.m. onwards)</p>
                             {:else if record.category=='M' && (record.number>=101 && record.number<=150)}
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 17/06/2025 (11.00 a.m. to 01.00 a.m.)</p>
                             {:else if record.category=='M' && (record.number>=151 && record.number<=200)}
@@ -183,7 +211,7 @@
                                 <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 16/06/2025 (10.00 a.m. to 11.00 a.m.)</p>
                             {/if}
                             {#if record.college_id==5 && record.category=='M'}
-                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document/call%20lettr%20Diploma%202024.pdf">Download Call Letter</a>
+                                <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document//Call%20Letter%20Diploma%202025.pdf">Download Call Letter</a>
                             {:else if record.category=='M'}
                                 <a class="text-white text-xl p-2 underline" href="https://mhazmbcbujixalspvqrz.supabase.co/storage/v1/object/public/document//MQ%20Call%20Letter_2025.pdf">Download Call Letter</a>
                                 <br>
