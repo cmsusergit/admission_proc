@@ -141,8 +141,34 @@
                     goto('/')
                 }
             }
+            console.log('----',$form.boardList);            
+            if (!$form.boardList || $form.boardList.length<0) {
+                $form.boardList=[]
+                if ($form.college_id==5) {
+                    _.forEach(boardListForDipl,ob=>{
+                        $form.boardList.push({board:ob,result:0.0})
+                    })       
+                }
+                else{
+                    _.forEach(boardList,ob=>{
+                        $form.boardList.push({board:ob,result:0.0})
+                    })   
+                }
+            }
+            if(!$form.subjectResultList || $form.subjectResultList.length<0){
+                $form.subjectResultList=[]
+                _.forEach(subjectList,ob=>{
+                    $form.subjectResultList.push({subName:ob.subList,selectedIndx:ob.selected,theoryObtained:0.0,theoryOutof:100.0,practicalObtained:0.0,practicalOutof:50.0})
+                })   
+            }
+            if(!$form.entrnceExamDetail || $form.entrnceExamDetail.length<0){
+                $form.entrnceExamDetail=[]
+                _.forEach(subjectList1,ob=>{
+                    $form.entrnceExamDetail.push({subName:ob,gujcetReult:0.0})
+                }) 
+            }
             uploadFileList=[]     
-            _.forEach(data.uploadLabelList,record=>{                
+            _.forEach(data.uploadLabelList,record=>{               
                 const uploadedFile =_.find(data.uploadFileList,ob=>ob.f_label_id==record.id)
                 let temp1={
                     label:record.name,

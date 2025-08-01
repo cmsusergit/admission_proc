@@ -388,16 +388,18 @@
                                 <td class="text-lg px-2 py-2 text-center font-bold">Board Name</td>
                                 <td class="text-center text-lg px-2 py-2 font-bold">Result</td> 
                             </tr>
-                            {#each profile?.boardList as record}                            
-                                <tr class="border-slate-500 border-b w-full px-2 py-2">
-                                    <td class="text-lg px-2 py-2 text-center">
-                                        {record?.board}                                
-                                    </td>
-                                    <td class="text-lg px-2 py-2 text-center">                                        
-                                        {record?.result}
-                                    </td>                                
-                                </tr>
-                            {/each}
+                            {#if profile?.boardList && profile?.boardList.length!=0}
+                                {#each profile?.boardList as record}                            
+                                    <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                        <td class="text-lg px-2 py-2 text-center">
+                                            {record?.board}                                
+                                        </td>
+                                        <td class="text-lg px-2 py-2 text-center">                                        
+                                            {record?.result}
+                                        </td>                                
+                                    </tr>
+                                {/each}
+                            {/if}
                         </table>
                     </div>
                     <div class="bg-white border rounded my-2 text-gray-800">                    
@@ -413,25 +415,27 @@
                                 <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Obtained)</td>
                                 <td class="border-slate-500 border-b text-center font-bold p-2">Practical (Out of)</td>
                             </tr>
-                            {#each profile?.subjectResultList as record}
-                                <tr class="border-slate-500 border-b w-full px-2 py-2">
-                                    <td class="text-lg px-2 py-2 text-center">
-                                        {record?.subName[record.selectedIndx]}                                
-                                    </td>
-                                    <td class="text-center text-lg px-2 py-2">                                        
-                                        {record?.theoryObtained} 
-                                    </td>                        
-                                    <td class="text-center text-lg px-2 py-2">                                        
-                                        {record?.theoryOutof}       
-                                    </td>
-                                    <td class="text-center text-lg px-2 py-2">                                        
-                                        {record?.practicalObtained}
-                                    </td>                         
-                                    <td class="text-center text-lg px-2 py-2">
-                                        {record?.practicalOutof}
-                                    </td>       
-                                </tr>
-                            {/each}
+                            {#if profile?.subjectResultList && profile?.subjectResultList.length!=0}
+                                {#each profile?.subjectResultList as record}
+                                    <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                        <td class="text-lg px-2 py-2 text-center">
+                                            {record?.subName[record.selectedIndx]}                                
+                                        </td>
+                                        <td class="text-center text-lg px-2 py-2">                                        
+                                            {record?.theoryObtained} 
+                                        </td>                        
+                                        <td class="text-center text-lg px-2 py-2">                                        
+                                            {record?.theoryOutof}       
+                                        </td>
+                                        <td class="text-center text-lg px-2 py-2">                                        
+                                            {record?.practicalObtained}
+                                        </td>                         
+                                        <td class="text-center text-lg px-2 py-2">
+                                            {record?.practicalOutof}
+                                        </td>       
+                                    </tr>
+                                {/each}
+                            {/if}
                         </table>
                     </div>
                     <div class="bg-white border rounded my-2 text-gray-800">                    
