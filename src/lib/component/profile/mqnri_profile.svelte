@@ -444,16 +444,18 @@
                                 <td class="border-slate-500 border-b text-center font-bold p-2">Subject Name</td>
                                 <td class="border-slate-500 border-b text-center font-bold p-2">GUJCET</td>
                             </tr>
-                            {#each profile?.entrnceExamDetail as record}
-                                <tr class="border-slate-500 border-b w-full px-2 py-2">
-                                    <td class="text-lg px-2 py-2 text-center">
-                                        {record?.subName}                                
-                                    </td>
-                                    <td class="text-center text-lg px-2 py-2">                                        
-                                        {record?.gujcetReult} 
-                                    </td>       
-                                </tr>
-                            {/each}
+                            {#if profile?.entrnceExamDetail && profile?.entrnceExamDetail?.length!=0}
+                                {#each profile?.entrnceExamDetail as record}
+                                    <tr class="border-slate-500 border-b w-full px-2 py-2">
+                                        <td class="text-lg px-2 py-2 text-center">
+                                            {record?.subName}                                
+                                        </td>
+                                        <td class="text-center text-lg px-2 py-2">                                        
+                                            {record?.gujcetReult} 
+                                        </td>       
+                                    </tr>
+                                {/each}
+                            {/if}
                         </table>
                     </div>            
                     <div class="bg-white border rounded my-2 text-gray-800">                    

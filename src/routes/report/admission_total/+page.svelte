@@ -156,7 +156,6 @@
                 let temp1={}
                 temp1['Sr.']=indx+1
                 const dt=new Date(record['dob'])     
-                
                 temp1['College ID']=record['student_college_id']
                 temp1['Student Name']=record['stu_name']                
                 temp1['Branch']=record['branch']
@@ -180,6 +179,7 @@
                 temp1['dob']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['Father Contact']=record['father_contact']
                 temp1['Mother Contact']=record['mother_contact'],
+                temp1['Receipt Date']=record['reciept_date']
                 temp1['Admission Status']=record['admission_status']
                 list1.push(temp1)
             })
