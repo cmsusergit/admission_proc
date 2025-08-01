@@ -193,16 +193,16 @@
             const filename=`report_${new Date().getDate().toString().padStart(2,0)}_${(new Date().getMonth()+1).toString().padStart(2,0)}`
             branchList.forEach(ob=>{            
                 const temp1=list1.filter(tt=>{
-                    return tt.Branch.toString().trim()==ob.name.toString().trim()
+                    return tt?.Branch?.toString().trim()==ob?.name?.toString().trim()
                 })
                 const wsheet=XLSX.utils.json_to_sheet([])
                 XLSX.utils.sheet_add_aoa(wsheet, [[`${college1}-${ayear}-${course}`]])                
                 XLSX.utils.sheet_add_aoa(wsheet, [[`${course}`]],{origin:"A2"})            
                 wsheet["!merges"] = merge
                 XLSX.utils.sheet_add_json(wsheet,temp1,{origin:"A4"})
-                let fname=ob.alias.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+                let fname=ob?.alias?.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
                 .replace(/\s{2,}/g," ");
-                XLSX.utils.book_append_sheet(wb,wsheet,fname.length>28?fname.substr(0,28):fname)
+                XLSX.utils.book_append_sheet(wb,wsheet,fname?.length>28?fname?.substr(0,28):fname)
             })
             XLSX.writeFile(wb,`${filename}.xlsx`)
             loading=false    
