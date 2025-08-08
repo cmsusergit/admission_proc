@@ -583,7 +583,7 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year,is_vaca
     // 
     // const branchName=await getBranchName(selectedBranch)    
     const titleText=`SARDAR VALLABHBHAI PATEL INSTITUTE OF TECHNOLOGY, VASAD                    
-                        ${is_vacant?'VACANT':'MQ/NRI/NRI'} sponsored Admission Order-(${academic_year?.name})`
+                        ${is_vacant?'VACANT':'MQ/NRI/NRI sponsored Admission Order'}-(${academic_year?.name})`
     const headerTbl1={         
         headerRows:0,
         widths:[140,'*'],
@@ -598,7 +598,7 @@ const mqnri_recipt_print=async (studentInfo,selectedBranch,academic_year,is_vaca
             [{bold:true,text:'ACPC Merit Number:'},{text:`${studentInfo.acpcnumber}`}],
             [{bold:true,text:'Name of Candidate:'},{text:`${stuName}`,bold:true}],
             [{bold:true,text:'Fees to be Paid:'},{text:''}],
-            [{bold:true,text:'Selected Branch:'},{text:`${selectedBranch} ${studentInfo.is_d2d?(studentInfo.college_id==5?'C2D':'D2D'):''}`,bold:true}],
+            [{bold:true,text:'Selected Branch:'},{text:`${selectedBranch} ${(studentInfo.is_d2d && studentInfo.is_d2d=='true')?(studentInfo.college_id==5?'C2D':'D2D'):''}`,bold:true}],
             [{bold:true,fontSize:25,text:'Signature:'},{text:``}],
         ]
     }

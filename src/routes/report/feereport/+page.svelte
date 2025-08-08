@@ -125,6 +125,8 @@
             })
 
             list1.push({'Cash Amount':cashTotal,'DD/Cheque Amount':ddTotal,'Online Amount':onlineTotal,'ACPC Amount':acpcTotal,'Advance Amount':advanceTotal,'Freeship Amount':freeshipTotal,'Total Amount':total})
+            list1=_.orderBy(list1, ['College ID'], ['asc'])
+            
             const wb=XLSX.utils.book_new()     
             const wsheet=XLSX.utils.json_to_sheet([])
             const ayear=data?.aYearList.find(ob=>ob.id==selectedAyear)?.name??''

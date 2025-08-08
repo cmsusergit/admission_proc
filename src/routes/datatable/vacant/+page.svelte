@@ -73,6 +73,7 @@
     const displayRecord=(record)=>{
         goto(`/profile/vacant?id=${record.id}`)  
     }
+
     const setApproved=async(record,flag)=>{
         console.log('****',record.branch)
         if(!record.branch){

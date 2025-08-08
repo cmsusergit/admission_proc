@@ -85,12 +85,15 @@
                 }
                 else{
                     dtList.map((record)=>{
+                        record['reciept_date']=feeCollectionList.find(ob=>ob.form_id==record.id || ob.mqnri_form_id==record.id || ob.vacantform_id==record.id)?.reciept_date
                         record['stu_name']=record?.last_name+" "+record?.first_name+" "+record?.middle_name
                         record['admission_category']=record?.admission_category
                         record['branch']=record?.Branch?.name
                         record['admission_status']=record?.admission_status==1?'DONE':(record?.admission_status==2?'CANCEL':'-')
                         templist.push(record)
                     })
+                    console.log(templist);
+                    
                 }
                 dataTable=[...templist]//....
                 //....
@@ -107,6 +110,7 @@
                     f_id=record.mqnri_form_id
                     tableToFetch='MQNRIFormInfo'
                 }
+
                 else if(record.form_type=='VACANT' && record.vacant_form_id){
                     f_id=record.vacant_form_id
                     tableToFetch='VacantFormInfo'
@@ -179,8 +183,8 @@
                 temp1['dob']=`${dt.getDate().toString().padStart(2,'0')}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getFullYear()}`
                 temp1['Father Contact']=record['father_contact']
                 temp1['Mother Contact']=record['mother_contact'],
-                temp1['Receipt Date']=record['reciept_date']
                 temp1['Admission Status']=record['admission_status']
+                temp1['Reciept Date']=record['reciept_date']?new Date(record['reciept_date']).toLocaleDateString():'-'
                 list1.push(temp1)
             })
             const wb=XLSX.utils.book_new()             
