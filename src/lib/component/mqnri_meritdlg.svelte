@@ -22,10 +22,19 @@
             meritRecord.total_merit=(meritRecord.pcm_percentile/2.0)+(meritRecord.gujcet_percentile/2.0)
     }
     const onsubmit=async()=>{
+        console.log('onsubmit',meritRecord);        
         meritRecord.comment={'comment':comment}
-        const temp1=_.pick(meritRecord,['acpc_meritnumber','pcm_percentile','gujcet_percentile','total_merit','comment'])   
+        let tabelname='MQNRIFormInfo'
+        let temp1={}
+        if(meritRecord && meritRecord.admission_category=='V'){
+            tabelname='VacantFormInfo'
+            temp1=_.pick(meritRecord,['acpc_meritnumber','pcm_percentile','gujcet_percentile','total_merit'])
+        }
+        else{
+            temp1=_.pick(meritRecord,['acpc_meritnumber','pcm_percentile','gujcet_percentile','total_merit','comment'])   
+        }
         const { data, error } = await supabase
-        .from('MQNRIFormInfo')
+        .from(tabelname)
         .update(temp1)
         .eq('id', meritRecord.id)
         if(error){
@@ -38,7 +47,7 @@
 </script>
 <Modal on:close={()=>{dispatch('close')}}>
     <div slot="header">Merit Information</div>
-    <div slot="content">  
+    <div slot="content"> 
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">ACPC Number: {meritRecord.acpcnumber}</p>
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">{meritRecord.title??''} {meritRecord.first_name??''} {meritRecord.middle_name??''} {meritRecord.last_name??''}</p>
         <p class="bg-slate-400 px-2 py-2 text-center text-white mb-2 text-lg font-bold">Board Name: {meritRecord.board_name}</p>

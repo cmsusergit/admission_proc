@@ -1,4 +1,4 @@
-<script> 
+<script>  
     import {supabase} from '$lib/db.js'
 
     import { mesg,college } from '$lib/store.js'    

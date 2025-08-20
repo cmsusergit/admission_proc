@@ -77,19 +77,19 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
     let detailTable=[
         [
 
-            {bold:true, fontSize:10,text:`CASH`},
-            {bold:true, fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
-            {bold:true, fontSize:10,text:`ADVANCE Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {bold:true, fontSize:8,text:`CASH`},
+            {bold:true, fontSize:8,text:`Amount:  ${Number.parseFloat(formDt.cash_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
+            {bold:true, fontSize:8,text:`ADVANCE Amount:  ${Number.parseFloat(formDt.advance_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},            
 
-            {bold:true,colSpan:2, fontSize:10,text:`Freeship Amount:  ${Number.parseFloat(formDt.freeship_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {bold:true,colSpan:2, fontSize:8,text:`Freeship Amount:  ${Number.parseFloat(formDt.freeship_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             {text:''}
         ],
         [               
-            {bold:true,fontSize:10,text:'DD/Cheque'},
-            {border:[true,true,true,false],fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.dd_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
-            {fontSize:10,text:`Bank Name:  ${formDt.payment_bank_name?formDt.payment_bank_name:'-'}`,border:[true,true,true,false]},      
-            {fontSize:10,text:`Ref.:  ${formDt.payment_reference_number??'-'}`,border:[true, false, true, true]}, 
-            {border:[true,true,true,false],fontSize:10,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
+            {bold:true,fontSize:8,text:'DD/Cheque'},
+            {border:[true,true,true,false],fontSize:8,text:`Amount:  ${Number.parseFloat(formDt.dd_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {fontSize:8,text:`Bank Name:  ${formDt.payment_bank_name?formDt.payment_bank_name:'-'}`,border:[true,true,true,false]},      
+            {fontSize:8,text:`Ref.:  ${formDt.payment_reference_number??'-'}`,border:[true, false, true, true]}, 
+            {border:[true,true,true,false],fontSize:8,text:`Date:  ${new Date(formDt.payment_date).toLocaleString('en-IN',{day:"numeric",month:"numeric",year:"numeric"})}`},
         ],
         [   
             {bold:true,fontSize:10,text:'Online'},
@@ -130,7 +130,7 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
                 body:reportTable
                 }
         },
-        {margin:[10,10,10,10],bold:true,text:'In Words:'+ wordify(Number.parseFloat(formDt.amount_expected)) +" Only"},
+        {margin:[10,10,10,10],fontSize:8,bold:true,text:'In Words:'+ wordify(Number.parseFloat(formDt.amount_expected)) +" Only"},
         {
             table:{
                 headerRows:0,
