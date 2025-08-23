@@ -47,10 +47,10 @@
                 ob['branch']=ob.Branch?.name?ob.Branch.name.trim():'-'
                 ob['is_d2d']=ob.is_d2d?"Y":'N'
                 ob['prov_branch']=ob.prov_branch?.name?.trim()??'-'
-
                 ob['admission_status']=ob.admission_status==2?'C':''
             })         
-        dataTable=_.orderBy(dataTable,['total_merit'],['desc'])
+        
+        dataTable=_.orderBy(dataTable,ob=>Number.parseInt(ob['acpc_meritnumber']),['asc'])
         // 
         //  _.forEach(_.filter(dataTable,ob=>ob.admission_category=='M' || ob.admission_category=='B'),(ob,indx)=>{      
         //     ob['merit_number']=indx+1

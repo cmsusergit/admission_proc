@@ -27,23 +27,23 @@
 			}
 		}
 	}
-    const mqnriPrint=async()=>{
-        let { data: college, error } = await supabase
-        .from('College')
-        .select('*').eq('id',profile.college_id).single()        
-        if(error){
-            console.log('****',error)
-            return
-        }        
-        let { data: ayear, error1 } = await supabase
-        .from('AcademicYear')
-        .select('*').eq('id',profile.academic_year).single()
-        if(error1){
-            console.log('****',error1)
-            return
-        }
-        mqnri_profile_print(college,ayear?.name,profile)
-    }
+    // const mqnriPrint=async()=>{
+    //     let { data: college, error } = await supabase
+    //     .from('College')
+    //     .select('*').eq('id',profile.college_id).single()        
+    //     if(error){
+    //         console.log('****',error)
+    //         return
+    //     }        
+    //     let { data: ayear, error1 } = await supabase
+    //     .from('AcademicYear')
+    //     .select('*').eq('id',profile.academic_year).single()
+    //     if(error1){
+    //         console.log('****',error1)
+    //         return
+    //     }
+    //     mqnri_profile_print(college,ayear?.name,profile)
+    // }
     const vacantPrint=async()=>{
         let { data: college, error } = await supabase
         .from('College')
@@ -61,19 +61,20 @@
         }
         mqnri_profile_print(college,ayear?.name,profile)
     }
+    
     const acpcPrint=()=>{        
         mqnri_profile_print1($college,$academicYear?.name,profile)
     }
 </script>
+
 {#if profile}
     <div class="min-h-screen w-full">    
         <div class="flex justify-end">        
             {#if !profile.is_payment_done} 
-                {#if profile.college_id==1}        
-                
+                {#if profile.college_id==1}                        
                     {#if profile.course==10}
+
                         <a class="p-2 mr-2 text-center bg-blue-700 text-white cursor-pointer hover:bg-blue-500 w-48 rounded" href="https://pmny.in/DrZ5yTtOQLzs">Payment</a>
-                    
                     {:else if profile.course==5+1}
                         <a class="p-2 mr-2 text-centr bg-blue-700 text-white cursor-pointr hover:bg-blue-500 w-48 rounded" href="https://u.payu.in/PAYUMN/VITY0ZqpLpGd">Payment</a>                    
                     {:else}
@@ -100,14 +101,28 @@
                 {/if}
                 {:catch error1}
                     <p>{error1.message}</p>
-                {/await}
-                    
+                {/await}                    
                 <!-- <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">
                     {#if profile.form_number['M']}MQ Form Number - {profile.form_number['M']}{/if} |
                     {#if profile.form_number['N']}NRI Form Number - {profile.form_number['N']}{/if}
                 </h2>                 -->
                 <h2 class="text-2xl px-4 font-medium text-gray-800 h-full">User Profile - {profile.id}</h2>
             </div>
+
+
+
+            {#if profile?.merit_number}
+                <div class="bg-orange-500 my-4 p-2 text-center">
+                    <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>
+                    <span class="text-2xl text-white px-4 font-bold">Vacant Quota-{profile?.merit_number}</span>
+                    {#if profile?.college_id==6}
+                        <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 08/08/2025 (10.00 a.m. to 12.00 a.m.)</p>
+                    {/if}
+                    {#if profile?.college_id==1 && profile?.course==10}
+                        <p class="text-xl text-white px-4 font-bold">Counseling Schedule: 08/08/2025 (01.00 p.m. Onward)</p>
+                    {/if}
+                </div>
+            {/if}
             <!-- {#if profile?.merit_number}
                 <div class="bg-orange-500 my-4 p-2 text-center">
                     <h2 class="text-xl text-white px-4 font-bold">Merit Number</h2>                

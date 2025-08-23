@@ -27,7 +27,7 @@ export async function load({ params,url }) {
     
     
     
-        let { data:dataTable, error:dt_err } = await supabase
+    let { data:dataTable, error:dt_err } = await supabase
     .from('VacantFormInfo')
     .select(`*,Course!inner(*),Branch(*)`)
     .filter('academic_year','eq',ayear_id)
