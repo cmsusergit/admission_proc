@@ -93,10 +93,10 @@ const acpc_recipt_print=async (formDt,feeSchemeList)=>{
         ],
         [   
             {bold:true,fontSize:10,text:'Online'},
-            {border:[true,true,true,false],colSpan:2,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.online_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
+            {border:[true,true,true,false],colSpan:1,fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.online_amount).toLocaleString('en-IN',{maximumFractionDigits:2})}`},
             
+            {fontSize:10,colSpan:2+1,text:`Ref.Number:  ${formDt.online_reference_number??'-'}`,border:[true, true, true, true]},{text:''},
             {text:''},
-            {fontSize:10,colSpan:2,text:`Reference Number:  ${formDt.online_reference_number??'-'}`,border:[true, true, true, true]},{text:''}
         ],
         [   {fontSize:10,bold:true,text:college.id==2?'GPNAMEC':(college.id==5?'ACPDC':'ACPC')},
             {fontSize:10,text:`Amount:  ${Number.parseFloat(formDt.ACPC_amount??0.0).toLocaleString('en-IN',{maximumFractionDigits:2})}`},

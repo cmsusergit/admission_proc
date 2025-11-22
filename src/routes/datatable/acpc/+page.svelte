@@ -24,6 +24,7 @@
         {name:'Course',field:'course',selectable:true,sortable:true},
         {name:'Branch',field:'branch',selectable:true,sortable:true},
         {name:'CollegeId',field:'student_college_id',searchable:true,sortable:true},
+        {name:'Status',field:'admission_status',selectable:true},
         {slot:true}
     ]
     $:processData(data)    
